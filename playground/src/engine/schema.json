@@ -1,0 +1,64 @@
+{
+  "elements": {
+    "root": {
+      "type": "container",
+      "props": {}
+    },
+    "topContainer": {
+      "type": "container",
+      "props": {
+        "style": {
+          "marginBottom": 4
+        }
+      }
+    },
+    "bottomContainer": {
+      "type": "container",
+      "props": {
+        "style": {
+          "display": "flex",
+          "gap": 10
+        }
+      }
+    },
+    "label": {
+      "type": "text",
+      "props": {
+        "text": "Count：",
+        "style": {
+          "marginRight": 4
+        }
+      }
+    },
+    "countText": {
+      "type": "text",
+      "props": {
+        "text": 0,
+        "style": {
+          "color": "red"
+        }
+      }
+    },
+    "increaseBtn": {
+      "type": "button",
+      "props": {
+        "text": "Increase"
+      }
+    },
+    "decreaseBtn": {
+      "type": "button",
+      "props": {
+        "text": "Decrease"
+      }
+    }
+  },
+  "layout": {
+    "root": "root",
+    "structure": {
+      "root": ["topContainer", "bottomContainer"],
+      "topContainer": ["label", "countText"],
+      "bottomContainer": ["increaseBtn", "decreaseBtn"]
+    }
+  },
+  "extensions": {}
+}
