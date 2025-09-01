@@ -11,12 +11,13 @@ import { Operation } from './components/operation';
 import { CanvasEditor } from './components/canvas-editor';
 import { MaterialPanel } from './components/material-panel';
 import { AttributePanel } from './components/attribute-panel';
-import { uniqueId } from './utils';
 import { useEditorStore } from './hooks/editor';
+import { historyPlugin } from './plugins/history';
+import { usePluginStore } from './hooks/plugin';
+import { uniqueId } from './utils';
 import type { Material } from './interface/material';
 import './editor.css';
-import historyPlugin from './plugins/history';
-import { usePluginStore } from './hooks/plugin';
+
 
 interface EditorProps {
   materials: Material[];
@@ -74,9 +75,7 @@ export const Editor = (props: EditorProps) => {
           type: dragData.type,
           props: dragData.defaultProps || {},
         };
-        // history?.transformSchema?.beforeInsertElement?.(schema, dropData.id, newElement);
         newSchema = SchemaUtils.insertElement(schema, dropData.id, newElement);
-        // history?.transformSchema?.afterInsertElement?.(newSchema);
       }
       // 插入到同级元素中
       if (dropData.position && !String(active.id).endsWith('-move')) {
@@ -85,24 +84,20 @@ export const Editor = (props: EditorProps) => {
           type: dragData.type,
           props: dragData.defaultProps || {},
         };
-        // history?.transformSchema?.beforeInsertElement?.(schema, dropData.id, newElement);
         newSchema = SchemaUtils.insertAdjacentElement(
           schema,
           dropData.id,
           newElement,
           dropData.position,
         );
-        // history?.transformSchema?.afterInsertElement?.(newSchema);
       }
       // 移动元素
       if (String(active.id).endsWith('-move')) {
         const dragElement = dragData as unknown as { id: string; material: Material };
-        // history?.transformSchema?.beforeMoveElement?.(schema, dragElement.id, dropData.id);
         newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
           mode: 'same-level',
           position: dropData.position || 'after',
         });
-        // history?.transformSchema?.afterMoveElement?.(newSchema);
       }
 
       // debugger
