@@ -1,4 +1,4 @@
-import type { Elements, LayoutTree, Schema } from '../';
+import type { Elements, LayoutTree, Schema, InsertElement } from '../';
 
 /**
  * 往 schema 里插入元素
@@ -7,16 +7,7 @@ import type { Elements, LayoutTree, Schema } from '../';
  * @param insertElement
  * @returns 返回插入后的 schema
  */
-const insertElement = (
-  schema: Schema,
-  originElementId: string,
-  insertElement: {
-    id: string;
-    type: string;
-    props?: Record<string, unknown>;
-    hidden?: boolean;
-  },
-) => {
+const insertElement = (schema: Schema, originElementId: string, insertElement: InsertElement) => {
   const { elements, layout } = schema;
   const newElements: Elements = {
     ...elements,
@@ -142,12 +133,7 @@ const getParents = (schema: Schema, elementId: string): string[] => {
 const insertAdjacentElement = (
   schema: Schema,
   targetElementId: string,
-  insertElement: {
-    id: string;
-    type: string;
-    props?: Record<string, unknown>;
-    hidden?: boolean;
-  },
+  insertElement: InsertElement,
   position: 'before' | 'after',
 ) => {
   const { elements, layout } = schema;

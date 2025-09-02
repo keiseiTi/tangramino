@@ -4,10 +4,10 @@ import { SchemaUtils } from '@tangramino/engine';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { cn } from '../utils';
 import { useEditorStore, type activeElement } from '../hooks/editor';
+import { usePluginStore } from '../hooks/plugin';
 import { Placeholder } from './placeholder';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import type { Material } from '../interface/material';
-
 interface EnhancedCompProps {
   material: Material;
   materials: Material[];
@@ -18,6 +18,7 @@ interface EnhancedCompProps {
 export const EnhancedComp = (props: EnhancedCompProps) => {
   const { material, materials, elementProps, renderComp } = props;
   const { activeElement, setActiveElement, engine, setSchema, insertPosition } = useEditorStore();
+  const { beforeRemoveElement, afterRemoveElement } = usePluginStore();
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const elementId = elementProps['data-element-id'] as string;
@@ -84,14 +85,22 @@ export const EnhancedComp = (props: EnhancedCompProps) => {
   };
 
   const deleteElement = () => {
+    beforeRemoveElement(schema!, elementId);
     const nextSchema = SchemaUtils.removeElement(schema!, elementId);
+    afterRemoveElement(nextSchema);
     setSchema(nextSchema);
     setActiveElement(null);
   };
 
   const extraCompProps = material.isContainer
     ? {
-        dropPlaceholder: <Placeholder onSelected={selectedElement} elementProps={elementProps} material={material} />,
+        dropPlaceholder: (
+          <Placeholder
+            onSelected={selectedElement}
+            elementProps={elementProps}
+            material={material}
+          />
+        ),
       }
     : {};
 
@@ -128,9 +137,13 @@ export const EnhancedComp = (props: EnhancedCompProps) => {
         className={cn({
           'inline-block': !material.isContainer,
           'border-l-4 border-yellow-500':
-            !material.isContainer && insertPosition?.id === elementId && insertPosition.position === 'before',
+            !material.isContainer &&
+            insertPosition?.id === elementId &&
+            insertPosition.position === 'before',
           'border-r-4 border-yellow-500':
-            !material.isContainer && insertPosition?.id === elementId && insertPosition.position === 'after',
+            !material.isContainer &&
+            insertPosition?.id === elementId &&
+            insertPosition.position === 'after',
         })}
       >
         <PopoverTrigger asChild>

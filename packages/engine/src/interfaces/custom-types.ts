@@ -8,3 +8,10 @@ export type LayoutNode = {
 };
 
 export type LayoutTree = LayoutNode[];
+
+export interface InsertElement {
+  id: string;
+  type: string;
+  props?: Record<string, unknown>;
+  hidden?: boolean;
+}

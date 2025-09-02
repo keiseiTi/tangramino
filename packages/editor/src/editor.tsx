@@ -16,24 +16,25 @@ import { historyPlugin } from './plugins/history';
 import { usePluginStore } from './hooks/plugin';
 import { uniqueId } from './utils';
 import type { Material } from './interface/material';
+import type { Plugin } from './interface/plugin';
 import './editor.css';
-
 
 interface EditorProps {
   materials: Material[];
   schema?: Schema;
+  plugins?: Plugin[];
 }
 
 export const Editor = (props: EditorProps) => {
-  const { materials, schema: outerSchema } = props;
+  const { materials, schema: outerSchema, plugins } = props;
   const { schema, setSchema, setActiveElement, setInsertPosition } = useEditorStore();
   const [dragElement, setDragElement] = useState<Material | null>(null);
 
-  const { addPlugin } = usePluginStore();
+  const { addPlugin, beforeInsertElement, afterInsertElement, beforeMoveElement, afterMoveElement, beforeRemoveElement, afterRemoveElement } = usePluginStore();
 
   useEffect(() => {
-    addPlugin(historyPlugin());
-  }, [addPlugin]);
+    addPlugin([historyPlugin(), ...(plugins || [])]);
+  }, [addPlugin, plugins]);
 
   useEffect(() => {
     if (outerSchema) {
@@ -75,7 +76,9 @@ export const Editor = (props: EditorProps) => {
           type: dragData.type,
           props: dragData.defaultProps || {},
         };
+        beforeInsertElement(schema, dropData.id, newElement);
         newSchema = SchemaUtils.insertElement(schema, dropData.id, newElement);
+        afterInsertElement(newSchema);
       }
       // 插入到同级元素中
       if (dropData.position && !String(active.id).endsWith('-move')) {
@@ -84,20 +87,24 @@ export const Editor = (props: EditorProps) => {
           type: dragData.type,
           props: dragData.defaultProps || {},
         };
+        beforeInsertElement(schema, dropData.id, newElement);
         newSchema = SchemaUtils.insertAdjacentElement(
           schema,
           dropData.id,
           newElement,
           dropData.position,
         );
+        afterInsertElement(newSchema);
       }
       // 移动元素
       if (String(active.id).endsWith('-move')) {
         const dragElement = dragData as unknown as { id: string; material: Material };
+        beforeMoveElement(schema, dragElement.id, dropData.id);
         newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
           mode: 'same-level',
           position: dropData.position || 'after',
         });
+        afterMoveElement(newSchema);
       }
 
       // debugger

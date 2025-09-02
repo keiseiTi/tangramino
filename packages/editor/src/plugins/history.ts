@@ -4,10 +4,12 @@ import type { Schema } from '@tangramino/engine';
 type InsertOperation = {
   type: 'insert';
   targetId: string;
-  insertElementId: string;
+  insertElement: {
+    id: string;
+    type: string;
+    props?: Record<string, unknown>;
+  };
   position?: 'before' | 'after';
-  // 当在 undo 时保存快照，以便 redo 可以重新插入
-  elementSnapshot?: RemoveElement;
 };
 
 type MoveOperation = {
@@ -181,7 +183,7 @@ export const historyPlugin = (options?: HistoryOptions): HistoryPlugin => {
     id: 'history',
     transformSchema: {
       beforeInsertElement: (schema, targetId, element) => {
-        undos.push({ type: 'insert', targetId, insertElementId: element.id });
+        undos.push({ type: 'insert', targetId, insertElement: element });
         if (limit > 0 && undos.length > limit) {
           undos.shift();
         }
@@ -215,68 +217,68 @@ export const historyPlugin = (options?: HistoryOptions): HistoryPlugin => {
       switch (operation.type) {
         case 'insert': {
           // 撤销插入：删除刚插入的元素（并保存快照以便 redo 可以重新插入）
-          const insertId = operation.insertElementId;
-          const snapshot = findNodeAndChildren(nextSchema, insertId);
-          if (snapshot && nextSchema.elements[insertId]) {
-            // remove from schema
-            applyRemove(nextSchema, snapshot);
-            // push inverse（redo 时需要知道如何重新插入，保存快照在 elementSnapshot 字段）
-            const inverse: InsertOperation = {
-              type: 'insert',
-              targetId: operation.targetId,
-              insertElementId: insertId,
-              elementSnapshot: snapshot,
-            };
-            redos.push(inverse);
-            if (limit > 0 && redos.length > limit) redos.shift();
-          } else {
-            // 元素不存在 — 仍然将簡單的 inverse push 到 redos（无法重做）
-            redos.push(operation);
-            if (limit > 0 && redos.length > limit) redos.shift();
-          }
-          break;
+          // const insertId = operation.insertElementId;
+          // const snapshot = findNodeAndChildren(nextSchema, insertId);
+          // if (snapshot && nextSchema.elements[insertId]) {
+          //   // remove from schema
+          //   applyRemove(nextSchema, snapshot);
+          //   // push inverse（redo 时需要知道如何重新插入，保存快照在 elementSnapshot 字段）
+          //   const inverse: InsertOperation = {
+          //     type: 'insert',
+          //     targetId: operation.targetId,
+          //     insertElementId: insertId,
+          //     elementSnapshot: snapshot,
+          //   };
+          //   redos.push(inverse);
+          //   if (limit > 0 && redos.length > limit) redos.shift();
+          // } else {
+          //   // 元素不存在 — 仍然将簡單的 inverse push 到 redos（无法重做）
+          //   redos.push(operation);
+          //   if (limit > 0 && redos.length > limit) redos.shift();
+          // }
+          // break;
         }
         case 'remove': {
           // 撤销删除：将快照插回去
-          const removeOp = operation.removeElement;
-          applyInsertFromSnapshot(nextSchema, removeOp.parentId, removeOp.removeIndex, removeOp);
-          // redo 时应该再次删除，所以把原来的 removeOp push 到 redos
-          redos.push(operation);
-          if (limit > 0 && redos.length > limit) redos.shift();
-          break;
+          // const removeOp = operation.removeElement;
+          // applyInsertFromSnapshot(nextSchema, removeOp.parentId, removeOp.removeIndex, removeOp);
+          // // redo 时应该再次删除，所以把原来的 removeOp push 到 redos
+          // redos.push(operation);
+          // if (limit > 0 && redos.length > limit) redos.shift();
+          // break;
         }
         case 'move': {
           // 撤销移动：把元素移回原来的父容器/位置
-          const mv = operation as MoveOperation;
-          // 当前元素应该在 mv.targetId (移动后的位置)，我们需要把它移回 prevParentId
-          const prevParentId = mv.prevParentId ?? '';
-          const prevIndex = typeof mv.prevIndex === 'number' ? mv.prevIndex : -1;
-          // remove from current position and insert back to prevParentId
-          // 使用 applyMove 从当前所在位置（通过 element id 查找）移动到 prevParentId
-          applyMove(nextSchema, mv.sourceId, prevParentId, prevIndex);
-          // redo 应该再次把它移到 targetId（即原始移动），所以把原始操作 push 到 redos
-          redos.push(operation);
-          if (limit > 0 && redos.length > limit) redos.shift();
-          break;
+          // const mv = operation as MoveOperation;
+          // // 当前元素应该在 mv.targetId (移动后的位置)，我们需要把它移回 prevParentId
+          // const prevParentId = mv.prevParentId ?? '';
+          // const prevIndex = typeof mv.prevIndex === 'number' ? mv.prevIndex : -1;
+          // // remove from current position and insert back to prevParentId
+          // // 使用 applyMove 从当前所在位置（通过 element id 查找）移动到 prevParentId
+          // applyMove(nextSchema, mv.sourceId, prevParentId, prevIndex);
+          // // redo 应该再次把它移到 targetId（即原始移动），所以把原始操作 push 到 redos
+          // redos.push(operation);
+          // if (limit > 0 && redos.length > limit) redos.shift();
+          // break;
         }
         case 'setProps': {
           // 撤销 setProps：交换 props（假设 operation.props 存的是被替换前的旧 props）
-          const op = operation as SetPropsOperation;
-          const el = nextSchema.elements[op.targetId];
-          const oldProps = el?.props ?? {};
-          // 恢复旧 props（operation.props）
-          if (el) {
-            el.props = op.props ?? {};
-          }
-          // 将 inverse 推到 redo（保存当前 props 以便 redo 时恢复）
-          const inverse: SetPropsOperation = {
-            type: 'setProps',
-            targetId: op.targetId,
-            props: oldProps,
-          };
-          redos.push(inverse);
-          if (limit > 0 && redos.length > limit) redos.shift();
-          break;
+          // const op = operation as SetPropsOperation;
+          // const el = nextSchema.elements[op.targetId];
+          // const oldProps = el?.props ?? {};
+          // // 恢复旧 props（operation.props）
+          // if (el) {
+          //   el.props = op.props ?? {};
+          // }
+          // // 将 inverse 推到 redo（保存当前 props 以便 redo 时恢复）
+          // const inverse: SetPropsOperation = {
+          //   type: 'setProps',
+          //   targetId: op.targetId,
+          //   props: oldProps,
+          // };
+          // redos.push(inverse);
+          // if (limit > 0 && redos.length > limit) redos.shift();
+          // break;
         }
       }
 
@@ -290,69 +292,69 @@ export const historyPlugin = (options?: HistoryOptions): HistoryPlugin => {
       switch (operation.type) {
         case 'insert': {
           // redo 插入：如果有快照则从快照插回；否则尝试基于 id 简单插入（如果无法找到快照则无操作）
-          const op = operation as InsertOperation;
-          if (op.elementSnapshot) {
-            applyInsertFromSnapshot(nextSchema, op.targetId, -1, op.elementSnapshot);
-            // redo 的 inverse 是删除该元素 -> push 对应的 remove 快照到 undos
-            const inverseRemove: RemoveOperation = {
-              type: 'remove',
-              removeElement: op.elementSnapshot,
-            };
-            undos.push(inverseRemove);
-            if (limit > 0 && undos.length > limit) undos.shift();
-          } else {
-            // 没有快照：尝试从 schema.elements 中查找 id，如果元素已经存在则不再插入
-            // 在不能保证能重建的情况下，只把操作放回 undos 以保持状态
-            undos.push(operation);
-            if (limit > 0 && undos.length > limit) undos.shift();
-          }
+          // const op = operation as InsertOperation;
+          // if (op.elementSnapshot) {
+          //   applyInsertFromSnapshot(nextSchema, op.targetId, -1, op.elementSnapshot);
+          //   // redo 的 inverse 是删除该元素 -> push 对应的 remove 快照到 undos
+          //   const inverseRemove: RemoveOperation = {
+          //     type: 'remove',
+          //     removeElement: op.elementSnapshot,
+          //   };
+          //   undos.push(inverseRemove);
+          //   if (limit > 0 && undos.length > limit) undos.shift();
+          // } else {
+          //   // 没有快照：尝试从 schema.elements 中查找 id，如果元素已经存在则不再插入
+          //   // 在不能保证能重建的情况下，只把操作放回 undos 以保持状态
+          //   undos.push(operation);
+          //   if (limit > 0 && undos.length > limit) undos.shift();
+          // }
           break;
         }
         case 'remove': {
           // redo 删除：应用 remove 快照
-          const op = operation as RemoveOperation;
-          applyRemove(nextSchema, op.removeElement);
-          // inverse（undo）应该恢复该快照，所以把 op 推回 undos
-          undos.push(operation);
-          if (limit > 0 && undos.length > limit) undos.shift();
-          break;
+          // const op = operation as RemoveOperation;
+          // applyRemove(nextSchema, op.removeElement);
+          // // inverse（undo）应该恢复该快照，所以把 op 推回 undos
+          // undos.push(operation);
+          // if (limit > 0 && undos.length > limit) undos.shift();
+          // break;
         }
         case 'move': {
           // redo 移动：将元素从当前所在位置移动到 operation.targetId
-          const mv = operation as MoveOperation;
-          // 为了能够再次 undo，需要在 undos 中保存移动前的位置（即当前所在位置）
-          // 在执行移动前先捕获当前父信息
-          const beforeSnapshot = findNodeAndChildren(nextSchema, mv.sourceId);
-          // 执行移动（将元素移动到 targetId）
-          applyMove(nextSchema, mv.sourceId, mv.targetId);
-          // 推回一个包含 prevParentId/prevIndex 的 move 到 undos，以便可以 undo（回到 beforeSnapshot）
-          const inverse: MoveOperation = {
-            type: 'move',
-            sourceId: mv.sourceId,
-            targetId: mv.targetId,
-            prevParentId: beforeSnapshot.parentId || undefined,
-            prevIndex: beforeSnapshot.removeIndex,
-          };
-          undos.push(inverse);
-          if (limit > 0 && undos.length > limit) undos.shift();
-          break;
+          // const mv = operation as MoveOperation;
+          // // 为了能够再次 undo，需要在 undos 中保存移动前的位置（即当前所在位置）
+          // // 在执行移动前先捕获当前父信息
+          // const beforeSnapshot = findNodeAndChildren(nextSchema, mv.sourceId);
+          // // 执行移动（将元素移动到 targetId）
+          // applyMove(nextSchema, mv.sourceId, mv.targetId);
+          // // 推回一个包含 prevParentId/prevIndex 的 move 到 undos，以便可以 undo（回到 beforeSnapshot）
+          // const inverse: MoveOperation = {
+          //   type: 'move',
+          //   sourceId: mv.sourceId,
+          //   targetId: mv.targetId,
+          //   prevParentId: beforeSnapshot.parentId || undefined,
+          //   prevIndex: beforeSnapshot.removeIndex,
+          // };
+          // undos.push(inverse);
+          // if (limit > 0 && undos.length > limit) undos.shift();
+          // break;
         }
         case 'setProps': {
-          const op = operation as SetPropsOperation;
-          const el = nextSchema.elements[op.targetId];
-          const oldProps = el?.props ?? {};
-          if (el) {
-            el.props = op.props ?? {};
-          }
-          // 推回 inverse 到 undos
-          const inverse: SetPropsOperation = {
-            type: 'setProps',
-            targetId: op.targetId,
-            props: oldProps,
-          };
-          undos.push(inverse);
-          if (limit > 0 && undos.length > limit) undos.shift();
-          break;
+          // const op = operation as SetPropsOperation;
+          // const el = nextSchema.elements[op.targetId];
+          // const oldProps = el?.props ?? {};
+          // if (el) {
+          //   el.props = op.props ?? {};
+          // }
+          // // 推回 inverse 到 undos
+          // const inverse: SetPropsOperation = {
+          //   type: 'setProps',
+          //   targetId: op.targetId,
+          //   props: oldProps,
+          // };
+          // undos.push(inverse);
+          // if (limit > 0 && undos.length > limit) undos.shift();
+          // break;
         }
       }
 

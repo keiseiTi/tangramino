@@ -1,6 +1,8 @@
-import React, { act, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
+import { SchemaUtils } from '@tangramino/engine';
 import { useEditorStore, type activeElement } from '../hooks/editor';
+import { usePluginStore } from '../hooks/plugin';
 import { cn } from '../utils';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
@@ -21,7 +23,6 @@ import type {
   TextAttributeConfig,
   CustomAttributeConfig,
 } from '../interface/editor-config';
-import { SchemaUtils } from '@tangramino/engine';
 
 interface AttributePanelProps {
   className?: string;
@@ -42,6 +43,7 @@ const renderLabel = (props: { label?: React.ReactNode; field?: string; className
 export const AttributePanel = (props: AttributePanelProps) => {
   const { className } = props;
   const { activeElement, setActiveElement, engine, schema, setSchema } = useEditorStore();
+  const { beforeSetElementProps, afterSetElementProps } = usePluginStore();
   const [attributeValue, setAttributeValue] = useState<Record<string, unknown>>({});
   const [activePanel, setActivePanel] = useState<string>('0');
 
@@ -74,9 +76,13 @@ export const AttributePanel = (props: AttributePanelProps) => {
 
   const setElementProps = (field: string, value: unknown) => {
     setAttributeValue((prev) => ({ ...prev, [field]: value }));
+    beforeSetElementProps(schema, activeElement!.id, {
+      [field]: value,
+    });
     const newSchema = SchemaUtils.setElementProps(schema, activeElement!.id, {
       [field]: value,
     });
+    afterSetElementProps(newSchema);
     setSchema(newSchema);
   };
 
