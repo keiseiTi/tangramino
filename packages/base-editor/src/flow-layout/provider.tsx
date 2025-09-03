@@ -13,13 +13,14 @@ import type { Material } from '../interface/material';
 import type { Plugin } from '../interface/plugin';
 
 export interface TangraminoProviderProps {
-  children?: React.ReactNode;
   schema?: Schema;
   plugins?: Plugin[];
+  materials: Material[];
+  children?: React.ReactNode;
 }
 export const FlowLayoutProvider = (props: TangraminoProviderProps) => {
-  const { schema: outerSchema, plugins, children } = props;
-  const { schema, setSchema, setActiveElement, setInsertPosition, setDragElement } =
+  const { schema: outerSchema, materials, plugins, children } = props;
+  const { schema, setSchema, setMaterials, setActiveElement, setInsertPosition, setDragElement } =
     useEditorStore();
 
   const {
@@ -31,14 +32,20 @@ export const FlowLayoutProvider = (props: TangraminoProviderProps) => {
   } = usePluginStore();
 
   useEffect(() => {
-    addPlugin([...(plugins || [])]);
-  }, [addPlugin, plugins]);
-
-  useEffect(() => {
     if (outerSchema) {
       setSchema(outerSchema);
     }
   }, [outerSchema, setSchema]);
+
+  useEffect(() => {
+    if (Array.isArray(materials) && materials.length) {
+      setMaterials(materials);
+    }
+  }, [materials]);
+
+  useEffect(() => {
+    addPlugin([...(plugins || [])]);
+  }, [addPlugin, plugins]);
 
   const onDragStart = (event: DragStartEvent) => {
     const { active } = event;

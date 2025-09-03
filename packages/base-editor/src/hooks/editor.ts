@@ -17,11 +17,13 @@ export type InsertPosition = {
 };
 
 export interface EditorStore {
-  activeElement: activeElement | null;
-  setActiveElement: (activeElement: activeElement | null) => void;
   engine: Engine | null;
   schema: Schema;
   setSchema: (schema: Schema) => void;
+  materials: Material[];
+  setMaterials: (materials: Material[]) => void;
+  activeElement: activeElement | null;
+  setActiveElement: (activeElement: activeElement | null) => void;
   insertPosition: InsertPosition | null;
   setInsertPosition: (insertPosition: InsertPosition | null) => void;
   dragElement: Material | null;
@@ -29,11 +31,13 @@ export interface EditorStore {
 }
 
 export const useEditorStore = create<EditorStore>((set) => ({
-  activeElement: null,
-  setActiveElement: (activeElement) => set(() => ({ activeElement })),
   engine: createEngine(defaultSchema),
   schema: defaultSchema,
   setSchema: (schema) => set(() => ({ schema })),
+  materials: [],
+  setMaterials: (materials) => set(() => ({ materials })),
+  activeElement: null,
+  setActiveElement: (activeElement) => set(() => ({ activeElement })),
   insertPosition: null,
   setInsertPosition: (insertPosition) => set(() => ({ insertPosition })),
   dragElement: null,

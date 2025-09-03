@@ -1,5 +1,21 @@
-import { FlowLayoutProvider, Draggable, DragOverlay } from '@tangramino/base-editor';
+import {
+  FlowLayoutProvider,
+  Draggable,
+  DragOverlay,
+  useEditorStore,
+} from '@tangramino/base-editor';
 import materials from './materials';
+
+const DragOverlayMaterial = () => {
+  const { dragElement } = useEditorStore();
+  return (
+    <DragOverlay>
+      <div className='w-full p-1 text-xs flex justify-center items-center rounded-sm border border-slate-600 bg-[#fafafabf] cursor-copy'>
+        <span className='text-store-600'>{dragElement?.title}</span>
+      </div>
+    </DragOverlay>
+  );
+};
 export default function App() {
   return (
     <FlowLayoutProvider>
@@ -16,13 +32,8 @@ export default function App() {
           ))}
         </div>
         <div className='flex-1'>editor</div>
-
-        <DragOverlay>
-          <div className='w-full p-1 text-xs flex justify-center items-center rounded-sm border border-slate-600 bg-[#fafafabf] cursor-copy'>
-            <span className='text-store-600'>abc</span>
-          </div>
-        </DragOverlay>
       </div>
+      <DragOverlayMaterial />
     </FlowLayoutProvider>
   );
 }

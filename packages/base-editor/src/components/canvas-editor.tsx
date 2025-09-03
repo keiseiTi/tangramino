@@ -3,16 +3,13 @@ import { createEngine } from '@tangramino/engine';
 import { ReactView } from '@tangramino/react';
 import { EnhancedComp } from './enhanced-comp';
 import { useEditorStore } from '../hooks/editor';
-import { cn } from '../utils';
-import type { Material } from '../interface/material';
 
 interface CanvasEditorProps {
   className?: string;
-  materials?: Material[];
 }
 export const CanvasEditor = (props: CanvasEditorProps) => {
-  const { className, materials } = props;
-  const { schema } = useEditorStore();
+  const { className } = props;
+  const { schema, materials } = useEditorStore();
   const engine = useMemo(() => createEngine(schema), [schema]);
 
   useEffect(() => {
@@ -28,7 +25,6 @@ export const CanvasEditor = (props: CanvasEditorProps) => {
             <EnhancedComp
               elementProps={props}
               material={cur}
-              materials={materials || []}
               renderComp={(extraProps: Record<string, unknown>) => (
                 <Comp {...props} {...extraProps} />
               )}
@@ -42,7 +38,7 @@ export const CanvasEditor = (props: CanvasEditorProps) => {
   }, [materials]);
 
   return (
-    <div className={cn('p-4 bg-gray-50', className)}>
+    <div className={className}>
       <ReactView engine={engine} components={components} />
     </div>
   );

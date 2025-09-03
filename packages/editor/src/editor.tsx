@@ -30,7 +30,7 @@ export const Editor = (props: EditorProps) => {
   const { schema, setSchema, setActiveElement, setInsertPosition } = useEditorStore();
   const [dragElement, setDragElement] = useState<Material | null>(null);
 
-  const { addPlugin, beforeInsertElement, afterInsertElement, beforeMoveElement, afterMoveElement, beforeRemoveElement, afterRemoveElement } = usePluginStore();
+  const { addPlugin, beforeInsertElement, afterInsertElement, beforeMoveElement, afterMoveElement } = usePluginStore();
 
   useEffect(() => {
     addPlugin([historyPlugin(), ...(plugins || [])]);

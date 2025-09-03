@@ -1,3 +1,4 @@
+import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import type { Material } from '../interface/material';
 
