@@ -20,7 +20,7 @@ export default defineConfig({
   ],
   plugins: [
     postcss({
-      extract: 'style.css'
+      extract: 'style.css',
     }),
     typescript({
       tsconfig: './tsconfig.json',

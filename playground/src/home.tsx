@@ -11,6 +11,9 @@ const Home = () => {
       <Link to='/editor' className='text-blue-700 text-3xl hover:underline'>
         editor demo
       </Link>
+      <Link to='/base-editor' className='text-blue-700 text-3xl hover:underline'>
+        base editor demo
+      </Link>
     </div>
   );
 };
