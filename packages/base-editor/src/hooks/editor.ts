@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { defaultSchema } from '../constant';
 import { createEngine, type Engine, type Schema } from '@tangramino/engine';
 import type { Material } from '../interface/material';
 
@@ -29,6 +28,22 @@ export interface EditorStore {
   dragElement: Material | null;
   setDragElement: (dragElement: Material | null) => void;
 }
+
+const defaultSchema = {
+  elements: {
+    basicPage: {
+      type: 'basicPage',
+      props: {},
+    },
+  },
+  layout: {
+    root: 'basicPage',
+    structure: {
+      basicPage: [],
+    },
+  },
+  extensions: {},
+};
 
 export const useEditorStore = create<EditorStore>((set) => ({
   engine: createEngine(defaultSchema),

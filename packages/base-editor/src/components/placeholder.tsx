@@ -1,15 +1,21 @@
 import React from 'react';
-import { cn } from '../utils';
 import { useDroppable } from '@dnd-kit/core';
 import type { Material } from '../interface/material';
+
+export interface DropPlaceholderProps {
+  isOver: boolean;
+  material: Material;
+}
 
 export interface PlaceholderProps {
   material: Material;
   elementProps: Record<string, unknown>;
   onSelected: (e: React.MouseEvent) => void;
+  renderDropPlaceholder?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
 }
+
 export const Placeholder = (props: PlaceholderProps) => {
-  const { material, elementProps, onSelected } = props;
+  const { material, elementProps, onSelected, renderDropPlaceholder } = props;
   const { 'data-element-id': elementId, children, ...rest } = elementProps;
 
   const { isOver, setNodeRef } = useDroppable({
@@ -25,15 +31,10 @@ export const Placeholder = (props: PlaceholderProps) => {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      onClick={selectedElement}
-      className={cn('w-full h-50 flex justify-center text-gray-500 items-center bg-gray-200 transition-colors', {
-        'bg-blue-100': isOver,
-        'h-full': material.type !== 'basicPage',
-      })}
-    >
-      <span>请将物料拖拽到此处</span>
+    <div ref={setNodeRef} onClick={selectedElement}>
+      {renderDropPlaceholder
+        ? renderDropPlaceholder({ isOver, material })
+        : 'Please drag the material here'}
     </div>
   );
 };

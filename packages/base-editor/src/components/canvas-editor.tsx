@@ -3,12 +3,23 @@ import { createEngine } from '@tangramino/engine';
 import { ReactView } from '@tangramino/react';
 import { EnhancedComp } from './enhanced-comp';
 import { useEditorStore } from '../hooks/editor';
+import type { Material } from '../interface/material';
+import type { DropPlaceholderProps } from './placeholder';
+
+export interface EnhancedComponentProps {
+  children: React.ReactNode;
+  elementProps: Record<string, unknown>;
+  material: Material;
+}
 
 interface CanvasEditorProps {
   className?: string;
+  renderComponent?: (props: EnhancedComponentProps) => React.ReactNode;
+  renderDropPlaceholder?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
 }
+
 export const CanvasEditor = (props: CanvasEditorProps) => {
-  const { className } = props;
+  const { className, renderComponent, renderDropPlaceholder } = props;
   const { schema, materials } = useEditorStore();
   const engine = useMemo(() => createEngine(schema), [schema]);
 
@@ -21,15 +32,26 @@ export const CanvasEditor = (props: CanvasEditorProps) => {
       (acc, cur) => {
         if (cur.Component) {
           const Comp = cur.Component as React.ComponentType<Record<string, unknown>>;
-          acc[cur.type] = (props: Record<string, unknown>) => (
-            <EnhancedComp
-              elementProps={props}
-              material={cur}
-              renderComp={(extraProps: Record<string, unknown>) => (
-                <Comp {...props} {...extraProps} />
-              )}
-            />
-          );
+          acc[cur.type] = (props: Record<string, unknown>) => {
+            const enhancedComp = (
+              <EnhancedComp
+                elementProps={props}
+                material={cur}
+                renderComp={(extraProps: Record<string, unknown>) => (
+                  <Comp {...props} {...extraProps} />
+                )}
+                renderDropPlaceholder={renderDropPlaceholder}
+              />
+            );
+            if (renderComponent) {
+              return renderComponent({
+                children: enhancedComp,
+                elementProps: props,
+                material: cur,
+              });
+            }
+            return enhancedComp;
+          };
         }
         return acc;
       },
