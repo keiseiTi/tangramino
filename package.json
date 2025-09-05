@@ -2,21 +2,31 @@
   "name": "tangramino",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "pnpm -F playground-demo dev",
     "dev:antd": "pnpm -F playground-antd-demo dev",
     "build": "pnpm -F @tangramino/* build",
-    "watch": "pnpm --parallel -F @tangramino/* watch"
+    "watch": "pnpm --parallel -F @tangramino/* watch",
+    "lint": "eslint packages/* --ext .js,.jsx,.ts,.tsx",
+    "prepare": "husky"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
+  "keywords": [
+    "low-code",
+    "editor",
+    "visual"
+  ],
+  "author": "yupeilin <yuchacha250@gmail.com>",
+  "license": "MIT",
+  "description": "A highly extensible low-code view and logical editor",
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.33.0",
     "eslint": "^9.33.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.3.0",
+    "husky": "^9.1.7",
     "jiti": "^2.5.1",
     "prettier": "3.6.2",
     "typescript-eslint": "^8.39.1"
