@@ -1,4 +1,4 @@
-export { FlowLayoutProvider, type TangraminoProviderProps } from './provider';
+export { EditorProvider, type EditorProviderProps } from './provider';
 export { CanvasEditor, type EnhancedComponentProps } from './components/canvas-editor';
 export { Placeholder, type DropPlaceholderProps } from './components/placeholder';
 export { Draggable } from './components/draggable';

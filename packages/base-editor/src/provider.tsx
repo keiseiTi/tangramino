@@ -12,13 +12,13 @@ import { uniqueId } from './utils';
 import type { Material } from './interface/material';
 import type { Plugin } from './interface/plugin';
 
-export interface TangraminoProviderProps {
+export interface EditorProviderProps {
   schema?: Schema;
   plugins?: Plugin[];
   materials: Material[];
   children?: React.ReactNode;
 }
-export const FlowLayoutProvider = (props: TangraminoProviderProps) => {
+export const EditorProvider = (props: EditorProviderProps) => {
   const { schema: outerSchema, materials, plugins, children } = props;
   const { schema, setSchema, setMaterials, setActiveElement, setInsertPosition, setDragElement } =
     useEditorStore();

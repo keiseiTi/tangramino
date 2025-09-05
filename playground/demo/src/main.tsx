@@ -4,7 +4,6 @@ import { createBrowserRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import Engine from './engine';
 import Editor from './editor';
-import BaseEditor from './base-editor';
 
 import Home from './home';
 import './main.css';
@@ -21,10 +20,6 @@ const router = createBrowserRouter([
   {
     path: '/editor',
     element: <Editor />,
-  },
-  {
-    path: '/base-editor',
-    element: <BaseEditor />,
   },
 ]);
 
