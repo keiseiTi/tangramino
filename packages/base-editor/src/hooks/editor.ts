@@ -2,12 +2,12 @@ import { create } from 'zustand';
 import { createEngine, type Engine, type Schema } from '@tangramino/engine';
 import type { Material } from '../interface/material';
 
-export type activeElement = {
+export type ActiveElement = {
   id: string;
   type: string;
   props: Record<string, unknown>;
   material: Material;
-  parents?: activeElement[];
+  parents?: ActiveElement[];
 };
 
 export type InsertPosition = {
@@ -21,8 +21,8 @@ export interface EditorStore {
   setSchema: (schema: Schema) => void;
   materials: Material[];
   setMaterials: (materials: Material[]) => void;
-  activeElement: activeElement | null;
-  setActiveElement: (activeElement: activeElement | null) => void;
+  activeElement: ActiveElement | null;
+  setActiveElement: (activeElement: ActiveElement | null) => void;
   insertPosition: InsertPosition | null;
   setInsertPosition: (insertPosition: InsertPosition | null) => void;
   dragElement: Material | null;

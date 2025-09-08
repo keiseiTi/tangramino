@@ -9,7 +9,8 @@
     "build": "pnpm -F @tangramino/* build",
     "watch": "pnpm --parallel -F @tangramino/* watch",
     "lint": "eslint packages/* --ext .js,.jsx,.ts,.tsx",
-    "prepare": "husky"
+    "prepare": "husky",
+    "gen:materials": "node scripts/generate-materials.mjs"
   },
   "keywords": [
     "low-code",
@@ -29,6 +30,8 @@
     "husky": "^9.1.7",
     "jiti": "^2.5.1",
     "prettier": "3.6.2",
-    "typescript-eslint": "^8.39.1"
+    "typescript-eslint": "^8.39.1",
+    "typescript": "^5.6.3",
+    "ts-morph": "^22.0.0"
   }
 }

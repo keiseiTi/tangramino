@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import type { Plugin } from '../interface/plugin';
 import type { Schema, InsertElement } from '@tangramino/engine';
 
-interface PluginStore {
+export interface PluginStore {
   plugins: Plugin[];
   addPlugin: (plugins: Plugin[]) => void;
   beforeInsertElement: (schema: Schema, targetId: string, insertElement: InsertElement) => void;

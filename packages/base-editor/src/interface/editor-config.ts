@@ -40,7 +40,7 @@ export type RadioAttributeConfig = BasicAttributeConfig & {
     labelPlacement?: 'left' | 'right';
     options?: {
       label: string;
-      value: string;
+      value: string | undefined | boolean;
     }[];
   };
 };
@@ -54,7 +54,7 @@ export type CheckboxAttributeConfig = BasicAttributeConfig & {
     labelPlacement?: 'left' | 'right';
     options?: {
       label: string;
-      value: string;
+      value: string | undefined | boolean;
     }[];
   };
 };
@@ -64,7 +64,7 @@ export type SelectAttributeConfig = BasicAttributeConfig & {
   props?: {
     options?: {
       label: string;
-      value: string;
+      value: string | undefined | boolean;
     }[];
     placeholder?: string;
   };
@@ -99,9 +99,4 @@ export interface EditorConfig {
    * 属性面板配置
    */
   panels?: PanelConfig[];
-  /**
-   * 属性配置
-   * 当 panels 和 attributeConfigs 并存时，panels 的优先级更高
-   */
-  attributeConfigs?: AttributeConfig[];
 }
