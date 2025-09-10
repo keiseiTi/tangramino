@@ -13,7 +13,7 @@ export const Checkbox = (props: IProps) => {
 
 const CheckboxMaterial: Material = {
   Component: Checkbox,
-  title: 'Checkbox',
+  title: '复选框',
   type: 'checkbox',
   editorConfig: {
     panels: [

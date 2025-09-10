@@ -10,7 +10,7 @@ export const Select = (props: IProps) => {
 
 const SelectMaterial: Material = {
   Component: Select,
-  title: 'Select',
+  title: '选择器',
   type: 'select',
   editorConfig: {
     panels: [

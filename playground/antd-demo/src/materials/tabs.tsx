@@ -10,7 +10,7 @@ export const Tabs = (props: IProps) => {
 
 const TabsMaterial: Material = {
   Component: Tabs,
-  title: 'Tabs',
+  title: '标签页容器',
   type: 'tabs',
   editorConfig: {
     panels: [

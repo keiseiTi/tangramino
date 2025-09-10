@@ -10,6 +10,7 @@ export interface PlaceholderProps {
 }
 export const Placeholder = (props: PlaceholderProps) => {
   const { material, elementProps, onSelected } = props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { 'data-element-id': elementId, children, ...rest } = elementProps;
 
   const { isOver, setNodeRef } = useDroppable({

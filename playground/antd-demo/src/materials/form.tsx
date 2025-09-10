@@ -12,7 +12,7 @@ export const Form = (props: IProps) => {
 
 const FormMaterial: Material = {
   Component: Form,
-  title: 'Form',
+  title: '表单容器',
   type: 'form',
   editorConfig: {
     panels: [

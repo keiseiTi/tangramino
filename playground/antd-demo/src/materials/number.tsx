@@ -1,17 +1,17 @@
 import React from 'react';
 import { type Material } from '@tangramino/base-editor';
-import { Input as AntdInput, type InputProps } from 'antd';
+import { InputNumber as AntdInputNumber, type InputNumberProps } from 'antd';
 
-export type IProps = InputProps;
+export type IProps = InputNumberProps;
 
-export const Input = (props: IProps) => {
-  return <AntdInput {...props} />;
+export const Number = (props: IProps) => {
+  return <AntdInputNumber {...props} />;
 };
 
 const InputMaterial: Material = {
-  Component: Input,
-  title: '输入框',
-  type: 'input',
+  Component: Number,
+  title: '数字框',
+  type: 'number',
   editorConfig: {
     panels: [
       {

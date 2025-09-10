@@ -12,8 +12,11 @@ export const Button = (props: IProps) => {
 
 const ButtonMaterial: Material = {
   Component: Button,
-  title: 'Button',
+  title: '按钮',
   type: 'button',
+  defaultProps: {
+    text: '按钮',
+  },
   editorConfig: {
     panels: [
       {

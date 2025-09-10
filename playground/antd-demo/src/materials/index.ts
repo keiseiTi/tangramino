@@ -15,7 +15,7 @@ import TimePicker from './time-picker';
 import Tree from './tree';
 import TreeSelect from './tree-select';
 import Cascader from './cascader';
-import Pagination from './pagination';
+import Number from './number';
 
 const materials = [
   Button,
@@ -35,7 +35,7 @@ const materials = [
   Tree,
   TreeSelect,
   Cascader,
-  Pagination,
+  Number,
 ];
 
 export default materials;

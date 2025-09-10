@@ -236,7 +236,7 @@ export const historyPlugin = (options?: HistoryOptions): HistoryPlugin => {
           //   redos.push(operation);
           //   if (limit > 0 && redos.length > limit) redos.shift();
           // }
-          // break;
+          break;
         }
         case 'remove': {
           // 撤销删除：将快照插回去
@@ -245,7 +245,7 @@ export const historyPlugin = (options?: HistoryOptions): HistoryPlugin => {
           // // redo 时应该再次删除，所以把原来的 removeOp push 到 redos
           // redos.push(operation);
           // if (limit > 0 && redos.length > limit) redos.shift();
-          // break;
+          break;
         }
         case 'move': {
           // 撤销移动：把元素移回原来的父容器/位置
@@ -259,7 +259,7 @@ export const historyPlugin = (options?: HistoryOptions): HistoryPlugin => {
           // // redo 应该再次把它移到 targetId（即原始移动），所以把原始操作 push 到 redos
           // redos.push(operation);
           // if (limit > 0 && redos.length > limit) redos.shift();
-          // break;
+          break;
         }
         case 'setProps': {
           // 撤销 setProps：交换 props（假设 operation.props 存的是被替换前的旧 props）
@@ -278,7 +278,7 @@ export const historyPlugin = (options?: HistoryOptions): HistoryPlugin => {
           // };
           // redos.push(inverse);
           // if (limit > 0 && redos.length > limit) redos.shift();
-          // break;
+          break;
         }
       }
 

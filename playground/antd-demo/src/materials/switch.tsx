@@ -10,7 +10,7 @@ export const Switch = (props: IProps) => {
 
 const SwitchMaterial: Material = {
   Component: Switch,
-  title: 'Switch',
+  title: '开关',
   type: 'switch',
   editorConfig: {
     panels: [

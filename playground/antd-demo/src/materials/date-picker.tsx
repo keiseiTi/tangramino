@@ -10,8 +10,8 @@ export const DatePicker = (props: IProps) => {
 
 const DatePickerMaterial: Material = {
   Component: DatePicker,
-  title: 'DatePicker',
-  type: 'date-picker',
+  title: '日期选择器',
+  type: 'datePicker',
   editorConfig: {
     panels: [
       {

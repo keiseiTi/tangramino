@@ -1,8 +1,7 @@
 import React from 'react';
+import { useEditorStore } from '@tangramino/base-editor';
+import { Button } from 'antd';
 import { cn } from '../utils';
-import { Button } from './ui/button';
-import { useEditorStore } from '../hooks/editor';
-
 interface OperationProps {
   className?: string;
 }
@@ -14,6 +13,11 @@ export const Operation = (props: OperationProps) => {
     sessionStorage.setItem('schema', JSON.stringify(schema));
   };
 
+  const onPreview = () => {
+    // window.open('/preview', '_blank');
+    // TODO
+  };
+
   return (
     <div
       className={cn(
@@ -22,9 +26,11 @@ export const Operation = (props: OperationProps) => {
       )}
     >
       <span className='text-lg font-medium text-blue-900'>Tangramino 低代码编辑器</span>
-
       <div>
-        <Button className='cursor-pointer' size={'sm'} onClick={onSave}>
+        <Button size='small' type='primary' onClick={onPreview} className='mr-2'>
+          预览
+        </Button>
+        <Button size='small' type='primary' ghost onClick={onSave}>
           保存
         </Button>
       </div>

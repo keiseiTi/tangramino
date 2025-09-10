@@ -10,7 +10,7 @@ export const Upload = (props: IProps) => {
 
 const UploadMaterial: Material = {
   Component: Upload,
-  title: 'Upload',
+  title: '上传',
   type: 'upload',
   editorConfig: {
     panels: [

@@ -10,7 +10,7 @@ export const Tree = (props: IProps) => {
 
 const TreeMaterial: Material = {
   Component: Tree,
-  title: 'Tree',
+  title: '树',
   type: 'tree',
   editorConfig: {
     panels: [

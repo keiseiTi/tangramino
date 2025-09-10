@@ -10,6 +10,8 @@ export { uniqueId } from './utils';
 
 export type {
   EditorConfig,
+  AttributeConfig,
+  PanelConfig,
   TextAttributeConfig,
   InputAttributeConfig,
   NumberAttributeConfig,

@@ -10,8 +10,8 @@ export const TreeSelect = (props: IProps) => {
 
 const TreeSelectMaterial: Material = {
   Component: TreeSelect,
-  title: 'TreeSelect',
-  type: 'tree-select',
+  title: '树选择器',
+  type: 'treeSelect',
   editorConfig: {
     panels: [
       {

@@ -10,7 +10,7 @@ export const Drawer = (props: IProps) => {
 
 const DrawerMaterial: Material = {
   Component: Drawer,
-  title: 'Drawer',
+  title: '抽屉容器',
   type: 'drawer',
   editorConfig: {
     panels: [

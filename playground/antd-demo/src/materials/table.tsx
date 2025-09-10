@@ -10,7 +10,7 @@ export const Table = (props: IProps) => {
 
 const TableMaterial: Material = {
   Component: Table,
-  title: 'Table',
+  title: '表格',
   type: 'table',
   editorConfig: {
     panels: [

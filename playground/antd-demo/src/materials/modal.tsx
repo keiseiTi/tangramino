@@ -10,7 +10,7 @@ export const Modal = (props: IProps) => {
 
 const ModalMaterial: Material = {
   Component: Modal,
-  title: 'Modal',
+  title: '弹窗容器',
   type: 'modal',
   editorConfig: {
     panels: [

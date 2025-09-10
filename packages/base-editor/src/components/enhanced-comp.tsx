@@ -1,7 +1,7 @@
 import React from 'react';
 import { SchemaUtils } from '@tangramino/engine';
 import { useDroppable } from '@dnd-kit/core';
-import { useEditorStore, type activeElement } from '../hooks/editor';
+import { useEditorStore, type ActiveElement } from '../hooks/editor';
 import { Placeholder, type DropPlaceholderProps } from './placeholder';
 import type { Material } from '../interface/material';
 interface EnhancedCompProps {
@@ -9,80 +9,97 @@ interface EnhancedCompProps {
   elementProps: Record<string, unknown>;
   renderComp: (extraProps: Record<string, unknown>) => React.ReactNode;
   renderDropPlaceholder?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
+  ref?: React.RefObject<HTMLDivElement>;
 }
 
-export const EnhancedComp = (props: EnhancedCompProps) => {
-  const { material, elementProps, renderComp, renderDropPlaceholder } = props;
-  const { activeElement, setActiveElement, engine, materials, insertPosition } = useEditorStore();
+export const EnhancedComp = React.forwardRef<HTMLDivElement, EnhancedCompProps>(
+  (props: EnhancedCompProps, ref) => {
+    const { material, elementProps, renderComp, renderDropPlaceholder } = props;
+    const { activeElement, setActiveElement, engine, materials, insertPosition } = useEditorStore();
 
-  const elementId = elementProps['data-element-id'] as string;
+    const elementId = elementProps['data-element-id'] as string;
 
-  const { setNodeRef } = useDroppable({
-    id: elementId,
-    data: {
+    const { setNodeRef } = useDroppable({
       id: elementId,
-      props: elementProps,
-      position: insertPosition?.position,
-    },
-  });
+      data: {
+        id: elementId,
+        props: elementProps,
+        position: insertPosition?.position,
+      },
+    });
 
-  const schema = engine?.getSchema();
+    const schema = engine?.getSchema();
 
-  const selectedElement = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (activeElement?.id !== elementId) {
-      const parents = SchemaUtils.getParents(schema!, elementId);
-      const parentElements: activeElement[] = [];
-      if (engine?.elements) {
-        Object.keys(engine.elements || {}).forEach((id) => {
-          if (parents.includes(id)) {
-            parentElements.push({
-              id,
-              type: engine.elements[id]!.type,
-              props: engine.elements[id]!.props,
-              material: materials.find((m) => m.type === engine.elements[id]!.type)!,
-            });
-          }
+    const selectedElement = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (activeElement?.id !== elementId) {
+        const parents = SchemaUtils.getParents(schema!, elementId);
+        const parentElements: ActiveElement[] = [];
+        if (engine?.elements) {
+          Object.keys(engine.elements || {}).forEach((id) => {
+            if (parents.includes(id)) {
+              parentElements.push({
+                id,
+                type: engine.elements[id]!.type,
+                props: engine.elements[id]!.props,
+                material: materials.find((m) => m.type === engine.elements[id]!.type)!,
+              });
+            }
+          });
+        }
+
+        setActiveElement({
+          id: elementId,
+          type: material.type,
+          props: elementProps,
+          material,
+          parents: parentElements,
         });
       }
+    };
 
-      setActiveElement({
-        id: elementId,
-        type: material.type,
-        props: elementProps,
-        material,
-        parents: parentElements,
-      });
-    }
-  };
+    const extraCompProps = material.isContainer
+      ? {
+          dropPlaceholder: (
+            <Placeholder
+              elementProps={elementProps}
+              material={material}
+              onSelected={selectedElement}
+              renderDropPlaceholder={renderDropPlaceholder}
+            />
+          ),
+        }
+      : {};
 
-  const extraCompProps = material.isContainer
-    ? {
-        dropPlaceholder: (
-          <Placeholder
-            elementProps={elementProps}
-            material={material}
-            onSelected={selectedElement}
-            renderDropPlaceholder={renderDropPlaceholder}
-          />
-        ),
+    const setRef = (el: HTMLDivElement) => {
+      setNodeRef(el);
+
+      if (ref) {
+        if (typeof ref === 'function') {
+          ref(el);
+        } else {
+          ref.current = el;
+        }
       }
-    : {};
+    };
 
-  return (
-    <div
-      ref={setNodeRef}
-      data-editor-id={elementId}
-      onClick={selectedElement}
-      style={
-        !material.isContainer
-          ? {
-              display: 'inline-block',
-            }
-          : undefined
-      }
-    >
-      {renderComp(extraCompProps)}
-    </div>
-  );
-};
+    return (
+      <div
+        ref={setRef}
+        data-editor-id={elementId}
+        onClick={selectedElement}
+        style={
+          !material.isContainer
+            ? {
+                display: 'inline-block',
+              }
+            : undefined
+        }
+      >
+        {renderComp(extraCompProps)}
+      </div>
+    );
+  },
+);
+
+EnhancedComp.displayName = 'EnhancedComp';

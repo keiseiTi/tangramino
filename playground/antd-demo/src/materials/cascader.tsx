@@ -10,7 +10,7 @@ export const Cascader = (props: IProps) => {
 
 const CascaderMaterial: Material = {
   Component: Cascader,
-  title: 'Cascader',
+  title: '级联选择',
   type: 'cascader',
   editorConfig: {
     panels: [

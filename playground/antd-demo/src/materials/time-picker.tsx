@@ -10,8 +10,8 @@ export const TimePicker = (props: IProps) => {
 
 const TimePickerMaterial: Material = {
   Component: TimePicker,
-  title: 'TimePicker',
-  type: 'time-picker',
+  title: '时间选择器',
+  type: 'timePicker',
   editorConfig: {
     panels: [
       {

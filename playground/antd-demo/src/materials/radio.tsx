@@ -13,7 +13,7 @@ export const Radio = (props: IProps) => {
 
 const RadioMaterial: Material = {
   Component: Radio,
-  title: 'Radio',
+  title: '单选框',
   type: 'radio',
   editorConfig: {
     panels: [
