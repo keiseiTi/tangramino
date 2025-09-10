@@ -6,10 +6,12 @@ import { useEditorStore } from '../hooks/editor';
 import type { Material } from '../interface/material';
 import type { DropPlaceholderProps } from './placeholder';
 
-export interface EnhancedComponentProps {
-  children: React.ReactNode;
+export interface EnhancedComponentProps<T = unknown> {
+  children: React.ReactElement<T>;
   elementProps: Record<string, unknown>;
   material: Material;
+  className?: string;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 interface CanvasEditorProps {

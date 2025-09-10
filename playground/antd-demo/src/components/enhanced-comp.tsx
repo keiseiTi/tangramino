@@ -10,7 +10,7 @@ import { Popover } from 'antd';
 import { DeleteOutlined, DragOutlined } from '@ant-design/icons';
 import { cn } from '../utils';
 
-export const EnhancedComponent = (props: EnhancedComponentProps) => {
+export const EnhancedComponent = (props: EnhancedComponentProps<HTMLDivElement>) => {
   const { material, elementProps, children } = props;
   const { activeElement, setActiveElement, engine, setSchema, insertPosition, materials } =
     useEditorStore();
@@ -30,35 +30,13 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     }
   }, [activeElement, elementId]);
 
-  const selectedElement = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (activeElement?.id !== elementId) {
-      const parents = SchemaUtils.getParents(schema!, elementId);
-      const parentElements: ActiveElement[] = [];
-      if (engine?.elements) {
-        Object.keys(engine.elements || {}).forEach((id) => {
-          if (parents.includes(id)) {
-            parentElements.push({
-              id,
-              type: engine.elements[id]!.type,
-              props: engine.elements[id]!.props,
-              material: materials.find((m) => m.type === engine.elements[id]!.type)!,
-            });
-          }
-        });
-      }
-
-      setActiveElement({
-        id: elementId,
-        type: material.type,
-        props: elementProps,
-        material,
-        parents: parentElements,
-      });
-    }
+  const selectedElement = () => {
+    console.log('keiseiTi :>> ', '2', 2);
+    setPopoverOpen(false);
   };
 
   const deleteElement = () => {
+    setPopoverOpen(false);
     beforeRemoveElement(schema!, elementId);
     const nextSchema = SchemaUtils.removeElement(schema!, elementId);
     afterRemoveElement(nextSchema);
@@ -71,18 +49,18 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
       title={null}
       open={popoverOpen}
       arrow={false}
-      placement='topLeft'
+      placement='topRight'
       styles={{
         body: {
           padding: '8px',
         },
       }}
       content={
-        <div className='flex gap-2 text-xs'>
-          <span>{material.title}</span>
+        <div className='flex justify-center select-none'>
+          <span className='pr-2'>{material.title}</span>
           <span
             // ref={setMoveNodeRef}
-            className={cn('py-1 px-2 cursor-move border-l border-gray-400', {
+            className={cn('px-2 cursor-move border-l border-gray-400', {
               hidden: activeElement?.id === rootId,
             })}
             // {...listeners}
@@ -91,7 +69,7 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
             <DragOutlined />
           </span>
           <span
-            className={cn('py-1 px-2 cursor-pointer border-l border-gray-400', {
+            className={cn('pl-2 cursor-pointer border-l border-gray-400', {
               hidden: activeElement?.id === rootId,
             })}
             onClick={deleteElement}
@@ -101,7 +79,12 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
         </div>
       }
     >
-      {children}
+      {React.cloneElement(children, {
+        onClick: selectedElement,
+        className: cn({
+          'border-2 border-blue-600': activeElement?.id === elementId,
+        }),
+      })}
     </Popover>
   );
 };

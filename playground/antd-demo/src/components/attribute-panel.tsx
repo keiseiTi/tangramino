@@ -21,15 +21,15 @@ import type {
 export const AttributePanel = () => {
   const { activeElement, setActiveElement, engine, schema, setSchema } = useEditorStore();
   const { beforeSetElementProps, afterSetElementProps } = usePluginStore();
-  const [attributeValue, setAttributeValue] = useState<Record<string, unknown>>({});
   const [activePanel, setActivePanel] = useState<string>('0');
+  const [form] = Form.useForm();
 
   const material = activeElement?.material;
 
   useEffect(() => {
     if (activeElement) {
       const state = engine!.getState(activeElement.id);
-      setAttributeValue({
+      form.setFieldsValue({
         elementId: activeElement.id,
         ...state,
       });
@@ -41,24 +41,9 @@ export const AttributePanel = () => {
     setActiveElement(element);
   };
 
-  const setCheckboxValue = (field: string, optionValue: string, checked: unknown) => {
-    let value = (attributeValue[field] || []) as string[];
-    if (checked) {
-      value = value.concat(optionValue);
-    } else {
-      value = value.filter((item) => item !== optionValue);
-    }
-    setElementProps(field, value);
-  };
-
-  const setElementProps = (field: string, value: unknown) => {
-    setAttributeValue((prev) => ({ ...prev, [field]: value }));
-    beforeSetElementProps(schema, activeElement!.id, {
-      [field]: value,
-    });
-    const newSchema = SchemaUtils.setElementProps(schema, activeElement!.id, {
-      [field]: value,
-    });
+  const onValuesChange = (changedFields: Record<string, unknown>) => {
+    beforeSetElementProps(schema, activeElement!.id, changedFields);
+    const newSchema = SchemaUtils.setElementProps(schema, activeElement!.id, changedFields);
     afterSetElementProps(newSchema);
     setSchema(newSchema);
   };
@@ -66,8 +51,8 @@ export const AttributePanel = () => {
   const renderTextConfig = (config: TextAttributeConfig) => {
     const { field } = config;
     return (
-      <Form.Item label={config.label} name={field}>
-        <span>{attributeValue[field] as string}</span>
+      <Form.Item label={config.label} name={field} key={field}>
+        <span>{form.getFieldValue(field) as string}</span>
       </Form.Item>
     );
   };
@@ -75,7 +60,7 @@ export const AttributePanel = () => {
   const renderInputConfig = (config: InputAttributeConfig) => {
     const { field } = config;
     return (
-      <Form.Item label={config.label} name={field}>
+      <Form.Item label={config.label} name={field} key={field}>
         <Input />
       </Form.Item>
     );
@@ -84,7 +69,7 @@ export const AttributePanel = () => {
   const renderNumberConfig = (config: NumberAttributeConfig) => {
     const { field } = config;
     return (
-      <Form.Item label={config.label} name={field}>
+      <Form.Item label={config.label} name={field} key={field}>
         <InputNumber />
       </Form.Item>
     );
@@ -93,7 +78,7 @@ export const AttributePanel = () => {
   const renderRadioConfig = (config: RadioAttributeConfig) => {
     const { field, props } = config;
     return (
-      <Form.Item label={config.label} name={field}>
+      <Form.Item label={config.label} name={field} key={field}>
         <Radio.Group options={props?.options}></Radio.Group>
       </Form.Item>
     );
@@ -103,13 +88,13 @@ export const AttributePanel = () => {
     const { field, props } = config;
     if (Array.isArray(props?.options) && props?.options.length) {
       return (
-        <Form.Item label={config.label} name={field}>
+        <Form.Item label={config.label} name={field} key={field}>
           <Checkbox.Group options={props?.options}></Checkbox.Group>
         </Form.Item>
       );
     }
     return (
-      <Form.Item label={config.label} name={field}>
+      <Form.Item label={config.label} name={field} key={field}>
         <Checkbox></Checkbox>
       </Form.Item>
     );
@@ -118,7 +103,7 @@ export const AttributePanel = () => {
   const renderSelectConfig = (config: SelectAttributeConfig) => {
     const { field, props } = config;
     return (
-      <Form.Item label={config.label} name={field}>
+      <Form.Item label={config.label} name={field} key={field}>
         <Select options={props?.options} placeholder={props?.placeholder}></Select>
       </Form.Item>
     );
@@ -127,7 +112,7 @@ export const AttributePanel = () => {
   const renderSwitchConfig = (config: SwitchAttributeConfig) => {
     const { field } = config;
     return (
-      <Form.Item label={config.label} name={field}>
+      <Form.Item label={config.label} name={field} key={field}>
         <Switch />
       </Form.Item>
     );
@@ -137,11 +122,9 @@ export const AttributePanel = () => {
     const { field, render } = config;
     const props = {
       ...config,
-      value: attributeValue[field],
-      onChange: (value: unknown) => setElementProps(field, value),
     };
     return (
-      <Form.Item label={config.label} name={field}>
+      <Form.Item label={config.label} name={field} key={field}>
         {render?.(props)}
       </Form.Item>
     );
@@ -177,14 +160,17 @@ export const AttributePanel = () => {
 
   const renderPanelConfig = (config: PanelConfig[]) => {
     return (
-      <Form>
-        <Tabs activeKey={activePanel} onChange={setActivePanel}>
-          {config.map((item, index) => (
-            <Tabs.TabPane key={String(index)} tab={item.title}>
-              {item.configs?.map(renderAttrConfig)}
-            </Tabs.TabPane>
-          ))}
-        </Tabs>
+      <Form form={form} onValuesChange={onValuesChange}>
+        <Tabs
+          size='small'
+          activeKey={activePanel}
+          onChange={setActivePanel}
+          items={config.map((item, index) => ({
+            key: String(index),
+            label: item.title,
+            children: item.configs?.map(renderAttrConfig),
+          }))}
+        />
       </Form>
     );
   };
@@ -206,7 +192,7 @@ export const AttributePanel = () => {
             ))}
             <span className='cursor-pointer'>{material?.title}</span>
           </div>
-          <div className='p-2'>
+          <div className='px-2'>
             {material?.editorConfig?.panels && renderPanelConfig(material?.editorConfig?.panels)}
           </div>
         </>

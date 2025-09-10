@@ -14,7 +14,9 @@ export interface EditorPageProps {
   schema?: Schema;
 }
 
-const localSchema = JSON.parse(sessionStorage.getItem('schema') || '{}');
+const localSchema = sessionStorage.getItem('schema')
+  ? JSON.parse(sessionStorage.getItem('schema')!)
+  : undefined;
 const EditorPage = (props: EditorPageProps) => {
   const { schema = localSchema } = props;
 
@@ -35,7 +37,7 @@ const EditorPage = (props: EditorPageProps) => {
             renderComponent={EnhancedComponent}
             renderDropPlaceholder={CustomDropPlaceholder}
           />
-          {/* <AttributePanel /> */}
+          <AttributePanel />
         </div>
       </div>
       <DragOverlay>

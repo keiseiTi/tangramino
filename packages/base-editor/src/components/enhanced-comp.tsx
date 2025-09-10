@@ -4,17 +4,20 @@ import { useDroppable } from '@dnd-kit/core';
 import { useEditorStore, type ActiveElement } from '../hooks/editor';
 import { Placeholder, type DropPlaceholderProps } from './placeholder';
 import type { Material } from '../interface/material';
+
 interface EnhancedCompProps {
   material: Material;
   elementProps: Record<string, unknown>;
   renderComp: (extraProps: Record<string, unknown>) => React.ReactNode;
   renderDropPlaceholder?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
+  className?: string;
+  onClick?: (e: React.MouseEvent) => void;
   ref?: React.RefObject<HTMLDivElement>;
 }
 
 export const EnhancedComp = React.forwardRef<HTMLDivElement, EnhancedCompProps>(
   (props: EnhancedCompProps, ref) => {
-    const { material, elementProps, renderComp, renderDropPlaceholder } = props;
+    const { material, elementProps, className, renderComp, renderDropPlaceholder, onClick } = props;
     const { activeElement, setActiveElement, engine, materials, insertPosition } = useEditorStore();
 
     const elementId = elementProps['data-element-id'] as string;
@@ -31,6 +34,7 @@ export const EnhancedComp = React.forwardRef<HTMLDivElement, EnhancedCompProps>(
     const schema = engine?.getSchema();
 
     const selectedElement = (e: React.MouseEvent) => {
+      onClick?.(e);
       e.stopPropagation();
       if (activeElement?.id !== elementId) {
         const parents = SchemaUtils.getParents(schema!, elementId);
@@ -88,6 +92,7 @@ export const EnhancedComp = React.forwardRef<HTMLDivElement, EnhancedCompProps>(
         ref={setRef}
         data-editor-id={elementId}
         onClick={selectedElement}
+        className={className}
         style={
           !material.isContainer
             ? {
