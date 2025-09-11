@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SchemaUtils } from '@tangramino/engine';
-import { useEditorStore, usePluginStore } from '@tangramino/base-editor';
+import { useEditorStore, usePluginStore } from '@tangramino/core';
 import { Input, Radio, Checkbox, Select, Switch, Tabs, Form, InputNumber } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import { cn } from '../utils';
@@ -16,7 +16,7 @@ import type {
   SwitchAttributeConfig,
   TextAttributeConfig,
   CustomAttributeConfig,
-} from '@tangramino/base-editor';
+} from '@tangramino/core';
 
 export const AttributePanel = () => {
   const { activeElement, setActiveElement, engine, schema, setSchema } = useEditorStore();

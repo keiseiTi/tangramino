@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '../utils';
-import { useEditorStore, Draggable } from '@tangramino/base-editor';
+import { useEditorStore, Draggable } from '@tangramino/core';
 
 export const MaterialPanel = () => {
   const { materials } = useEditorStore();

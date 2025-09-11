@@ -4,7 +4,7 @@ import {
   usePluginStore,
   useMove,
   type EnhancedComponentProps,
-} from '@tangramino/base-editor';
+} from '@tangramino/core';
 import { SchemaUtils } from '@tangramino/engine';
 import { Popover } from 'antd';
 import { DeleteOutlined, DragOutlined } from '@ant-design/icons';

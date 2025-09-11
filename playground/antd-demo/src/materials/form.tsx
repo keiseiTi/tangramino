@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Material } from '@tangramino/base-editor';
+import { type Material } from '@tangramino/core';
 import { Form as AntdForm, type FormProps } from 'antd';
 
 export interface IProps extends FormProps {

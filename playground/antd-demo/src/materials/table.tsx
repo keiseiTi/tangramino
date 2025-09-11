@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Material } from '@tangramino/base-editor';
+import { type Material } from '@tangramino/core';
 import { Table as AntdTable, type TableProps } from 'antd';
 
 export type IProps = TableProps<any>;

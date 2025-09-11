@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { EditorProvider, CanvasEditor, DragOverlay, useEditorStore } from '@tangramino/base-editor';
+import { EditorProvider, CanvasEditor, DragOverlay, useEditorStore } from '@tangramino/core';
 import materials from '../materials';
 import { Operation } from '../components/operation';
 import { MaterialPanel } from '../components/material-panel';

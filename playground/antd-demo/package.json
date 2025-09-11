@@ -12,7 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "~5.6.1",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
-    "@tangramino/base-editor": "workspace:^",
+    "@tangramino/core": "workspace:^",
     "@tangramino/engine": "workspace:^",
     "@tangramino/react": "workspace:^",
     "antd": "^5.27.3",

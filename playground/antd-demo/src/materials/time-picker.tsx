@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Material } from '@tangramino/base-editor';
+import { type Material } from '@tangramino/core';
 import { TimePicker as AntdTimePicker, type TimePickerProps } from 'antd';
 
 export type IProps = TimePickerProps;

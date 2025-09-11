@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Material } from '@tangramino/base-editor';
+import { type Material } from '@tangramino/core';
 import { Select as AntdSelect, type SelectProps } from 'antd';
 
 export type IProps = SelectProps;

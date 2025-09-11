@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Material } from '@tangramino/base-editor';
+import { type Material } from '@tangramino/core';
 import { Checkbox as AntdCheckbox, type CheckboxProps } from 'antd';
 
 interface IProps extends CheckboxProps {

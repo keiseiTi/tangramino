@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tangramino/base-editor": "workspace:^",
     "@tangramino/editor": "workspace:^",
     "@tangramino/engine": "workspace:^",
     "@tangramino/react": "workspace:^",
