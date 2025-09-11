@@ -6,8 +6,8 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core';
 import { SchemaUtils, type Schema } from '@tangramino/engine';
-import { useEditorStore } from './hooks/editor';
-import { usePluginStore } from './hooks/plugin';
+import { useEditorStore } from './hooks/use-editor';
+import { usePluginStore } from './hooks/use-plugin';
 import { uniqueId } from './utils';
 import type { Material } from './interface/material';
 import type { Plugin } from './interface/plugin';

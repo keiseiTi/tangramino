@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo } from 'react';
-import { createEngine } from '@tangramino/engine';
 import { ReactView } from '@tangramino/react';
 import { EnhancedComp } from './enhanced-comp';
-import { useEditorStore } from '../hooks/editor';
+import { useEditorStore } from '../hooks/use-editor';
 import type { Material } from '../interface/material';
 import type { DropPlaceholderProps } from './placeholder';
 
-export interface EnhancedComponentProps<T = unknown> {
-  children: React.ReactElement<T>;
+export interface EnhancedComponentProps {
+  children: React.ReactElement;
   elementProps: Record<string, unknown>;
   material: Material;
   className?: string;
@@ -22,8 +21,7 @@ interface CanvasEditorProps {
 
 export const CanvasEditor = (props: CanvasEditorProps) => {
   const { className, renderComponent, renderDropPlaceholder } = props;
-  const { schema, materials } = useEditorStore();
-  const engine = useMemo(() => createEngine(schema), [schema]);
+  const { schema, materials, engine } = useEditorStore();
 
   useEffect(() => {
     engine.changeSchema(schema);
@@ -35,6 +33,7 @@ export const CanvasEditor = (props: CanvasEditorProps) => {
         if (cur.Component) {
           const Comp = cur.Component as React.ComponentType<Record<string, unknown>>;
           acc[cur.type] = (props: Record<string, unknown>) => {
+            // TODO: 使用 HOC
             const enhancedComp = (
               <EnhancedComp
                 elementProps={props}

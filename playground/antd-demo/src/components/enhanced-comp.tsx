@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   useEditorStore,
   usePluginStore,
-  type ActiveElement,
+  useMove,
   type EnhancedComponentProps,
 } from '@tangramino/base-editor';
 import { SchemaUtils } from '@tangramino/engine';
@@ -10,16 +10,15 @@ import { Popover } from 'antd';
 import { DeleteOutlined, DragOutlined } from '@ant-design/icons';
 import { cn } from '../utils';
 
-export const EnhancedComponent = (props: EnhancedComponentProps<HTMLDivElement>) => {
+export const EnhancedComponent = (props: EnhancedComponentProps) => {
   const { material, elementProps, children } = props;
-  const { activeElement, setActiveElement, engine, setSchema, insertPosition, materials } =
-    useEditorStore();
+  const { activeElement, setActiveElement, schema, setSchema, insertPosition } = useEditorStore();
   const { beforeRemoveElement, afterRemoveElement } = usePluginStore();
-  const [popoverOpen, setPopoverOpen] = useState(false);
-
   const elementId = elementProps['data-element-id'] as string;
 
-  const schema = engine?.getSchema();
+  const MoveElement = useMove({ elementId, elementProps, material });
+  const [popoverOpen, setPopoverOpen] = useState(false);
+
   const rootId = schema?.layout?.root;
 
   useEffect(() => {
@@ -30,8 +29,7 @@ export const EnhancedComponent = (props: EnhancedComponentProps<HTMLDivElement>)
     }
   }, [activeElement, elementId]);
 
-  const selectedElement = () => {
-    console.log('keiseiTi :>> ', '2', 2);
+  const selectedElement = (_: React.MouseEvent) => {
     setPopoverOpen(false);
   };
 
@@ -58,16 +56,13 @@ export const EnhancedComponent = (props: EnhancedComponentProps<HTMLDivElement>)
       content={
         <div className='flex justify-center select-none'>
           <span className='pr-2'>{material.title}</span>
-          <span
-            // ref={setMoveNodeRef}
+          <MoveElement
             className={cn('px-2 cursor-move border-l border-gray-400', {
               hidden: activeElement?.id === rootId,
             })}
-            // {...listeners}
-            // {...attributes}
           >
             <DragOutlined />
-          </span>
+          </MoveElement>
           <span
             className={cn('pl-2 cursor-pointer border-l border-gray-400', {
               hidden: activeElement?.id === rootId,
@@ -80,9 +75,21 @@ export const EnhancedComponent = (props: EnhancedComponentProps<HTMLDivElement>)
       }
     >
       {React.cloneElement(children, {
-        onClick: selectedElement,
+        // @ts-ignore
+        onClick: (e: React.MouseEvent) => {
+          selectedElement(e);
+        },
         className: cn({
           'border-2 border-blue-600': activeElement?.id === elementId,
+          'inline-block': !material.isContainer,
+          'border-l-4 border-yellow-500':
+            !material.isContainer &&
+            insertPosition?.id === elementId &&
+            insertPosition.position === 'before',
+          'border-r-4 border-yellow-500':
+            !material.isContainer &&
+            insertPosition?.id === elementId &&
+            insertPosition.position === 'after',
         }),
       })}
     </Popover>

@@ -14,7 +14,8 @@ export interface ReactViewProps {
 
 export const ReactView = (props: ReactViewProps) => {
   const { engine, components, plugins } = props;
-  const compMapElement = useRef<
+  const [elements, setElements] = useState(engine.elements);
+  const [compMapElement, setCompMapElement] = useState<
     Record<
       string,
       React.ComponentType<{
@@ -24,7 +25,7 @@ export const ReactView = (props: ReactViewProps) => {
       }>
     >
   >({});
-  const [elements, setElements] = useState(engine.elements);
+
   const isMounted = useMounted();
 
   useLayoutEffect(() => {
@@ -98,9 +99,10 @@ export const ReactView = (props: ReactViewProps) => {
           enhanceComponent[id] = Component;
         }
       });
-      compMapElement.current = enhanceComponent;
+      // compMapElement.current = enhanceComponent;
+      setCompMapElement(enhanceComponent);
     }
-  }, [engine.elements]);
+  }, [engine.elements, components]);
 
   useEffect(() => {
     setElements(engine.elements);
@@ -112,7 +114,7 @@ export const ReactView = (props: ReactViewProps) => {
         ?.map((node: LayoutNode) => {
           const id = node.id;
           const element = elements[id];
-          const Component = compMapElement.current[id];
+          const Component = compMapElement[id];
           if (!element || !Component) return null;
           if (Array.isArray(node.children) && node.children.length) {
             return (

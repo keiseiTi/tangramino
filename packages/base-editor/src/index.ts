@@ -3,8 +3,9 @@ export { CanvasEditor, type EnhancedComponentProps } from './components/canvas-e
 export { Placeholder, type DropPlaceholderProps } from './components/placeholder';
 export { Draggable } from './components/draggable';
 export { DragOverlay } from './components/drag-overlay';
-export { useEditorStore, type EditorStore, type ActiveElement } from './hooks/editor';
-export { usePluginStore, usePluginContext, type PluginStore } from './hooks/plugin';
+export { useEditorStore, type EditorStore, type ActiveElement } from './hooks/use-editor';
+export { usePluginStore, usePluginContext, type PluginStore } from './hooks/use-plugin';
+export { useMove } from './hooks/use-drag-drop';
 
 export { uniqueId } from './utils';
 

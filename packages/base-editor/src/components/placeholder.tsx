@@ -17,6 +17,7 @@ export interface PlaceholderProps {
 export const Placeholder = (props: PlaceholderProps) => {
   const { material, elementProps, onSelected, renderDropPlaceholder } = props;
   const { 'data-element-id': elementId, children, ...rest } = elementProps;
+  void children;
 
   const { isOver, setNodeRef } = useDroppable({
     id: elementId + '-placeholder',

@@ -16,7 +16,7 @@ export type InsertPosition = {
 };
 
 export interface EditorStore {
-  engine: Engine | null;
+  engine: Engine;
   schema: Schema;
   setSchema: (schema: Schema) => void;
   materials: Material[];

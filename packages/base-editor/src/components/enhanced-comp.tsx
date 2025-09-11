@@ -1,7 +1,7 @@
 import React from 'react';
 import { SchemaUtils } from '@tangramino/engine';
 import { useDroppable } from '@dnd-kit/core';
-import { useEditorStore, type ActiveElement } from '../hooks/editor';
+import { useEditorStore, type ActiveElement } from '../hooks/use-editor';
 import { Placeholder, type DropPlaceholderProps } from './placeholder';
 import type { Material } from '../interface/material';
 

@@ -28,7 +28,7 @@ const EditorPage = (props: EditorPageProps) => {
 
   return (
     <EditorProvider materials={materialsWithBasicPage} schema={schema || defaultSchema}>
-      <div className='flex flex-col w-full h-screen'>
+      <div className='flex flex-col w-full h-screen min-w-[980px] overflow-auto'>
         <Operation />
         <div className='flex flex-1'>
           <MaterialPanel />
