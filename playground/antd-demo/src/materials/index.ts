@@ -16,26 +16,36 @@ import Tree from './tree';
 import TreeSelect from './tree-select';
 import Cascader from './cascader';
 import Number from './number';
+import BasicPage from './basic-page';
+import Container from './container';
+import Text from './text';
 
-const materials = [
-  Button,
-  Input,
-  Select,
-  Checkbox,
-  Radio,
-  Switch,
-  Form,
-  Table,
-  Tabs,
-  Modal,
-  Drawer,
-  Upload,
-  DatePicker,
-  TimePicker,
-  Tree,
-  TreeSelect,
-  Cascader,
-  Number,
+const materialGroups = [
+  {
+    title: '布局容器',
+    children: [BasicPage, Container, Form, Tabs, Modal, Drawer],
+  },
+  {
+    title: '输入组件',
+    children: [
+      Input,
+      Number,
+      Checkbox,
+      Radio,
+      Select,
+      Switch,
+      DatePicker,
+      TimePicker,
+      Tree,
+      TreeSelect,
+      Cascader,
+      Upload,
+    ],
+  },
+  {
+    title: '展示组件',
+    children: [Table, , Button, Text],
+  },
 ];
 
-export default materials;
+export default materialGroups;

@@ -176,10 +176,10 @@ export const AttributePanel = () => {
   };
 
   return (
-    <div className={cn('w-70 border-l-1 border-gray-200')}>
+    <div className={cn('w-70 border-l-1 border-gray-200 flex flex-col')}>
       {activeElement ? (
         <>
-          <div className='border-b border-gray-200 p-2 text-sm flex items-center text-stone-600'>
+          <div className='border-b border-gray-200 h-10 px-2 text-sm flex items-center text-stone-600'>
             {activeElement.parents?.map((element) => (
               <div
                 key={element.id}
@@ -187,12 +187,12 @@ export const AttributePanel = () => {
                 onClick={() => selectedParentElement(element)}
               >
                 <span>{element.material.title}</span>
-                <RightOutlined className='mx-1' size={16} color='#79716b' />
+                <RightOutlined className='mx-1 text-xs' color='#79716b' />
               </div>
             ))}
             <span className='cursor-pointer'>{material?.title}</span>
           </div>
-          <div className='px-2'>
+          <div className='px-4 flex-1 overflow-auto'>
             {material?.editorConfig?.panels && renderPanelConfig(material?.editorConfig?.panels)}
           </div>
         </>

@@ -1,21 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useEditorStore, Draggable, type Material } from '@tangramino/core';
 import { cn } from '../utils';
-import { useEditorStore, Draggable } from '@tangramino/core';
+import { Collapse } from 'antd';
 
-export const MaterialPanel = () => {
-  const { materials } = useEditorStore();
+type MaterialGroup = {
+  title: string;
+  children: Material[];
+};
+
+export const MaterialPanel = (props: { materialGroups: MaterialGroup[] }) => {
+  const { materialGroups } = props;
+  const [activeKeys, setActiveKeys] = useState(['0', '1', '2', '3', '4', '5', '6']);
 
   return (
-    <div className={cn('w-62 border-r-1 border-gray-200 h-full p-4')}>
-      <div className='flex flex-wrap gap-4'>
-        {materials.map((material) => (
-          <Draggable key={material.title as string} data={material}>
-            <div className='w-24 h-8 text-sm flex justify-center items-center rounded-sm border border-slate-600 cursor-pointer hover:bg-zinc-100'>
-              {material.title}
-            </div>
-          </Draggable>
-        ))}
-      </div>
+    <div className={cn('w-62 border-r-1 border-gray-200 h-full overflow-auto select-none')}>
+      <Collapse
+        className='w-full'
+        expandIconPosition='end'
+        ghost
+        defaultActiveKey={activeKeys}
+        onChange={setActiveKeys}
+        items={materialGroups?.map((group, index) => ({
+          key: String(index),
+          styles: {
+            header: {
+              padding: '8px 16px',
+            },
+            body: {
+              padding: 16
+            },
+          },
+          classNames: {
+            header: cn('border-b-1 border-gray-200', {
+              'rounded-none!': index === materialGroups.length - 1,
+            }),
+            body: cn('flex flex-wrap gap-5', {
+              'border-b-1 border-gray-200': index !== materialGroups.length - 1,
+            }),
+          },
+          label: <div className='text-sm'>{group.title}</div>,
+          children: group.children.map((material) => (
+            <Draggable key={material.title as string} data={material}>
+              <div className='w-24 h-8 text-sm flex justify-center items-center rounded-sm border border-slate-600 cursor-pointer hover:bg-zinc-100'>
+                {material.title}
+              </div>
+            </Draggable>
+          )),
+        }))}
+      />
     </div>
   );
 };

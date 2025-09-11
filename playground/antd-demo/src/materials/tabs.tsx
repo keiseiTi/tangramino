@@ -10,7 +10,7 @@ export const Tabs = (props: IProps) => {
 
 const TabsMaterial: Material = {
   Component: Tabs,
-  title: '标签页容器',
+  title: '标签选型卡',
   type: 'tabs',
   editorConfig: {
     panels: [
@@ -23,32 +23,38 @@ const TabsMaterial: Material = {
             label: '类型',
             field: 'type',
             uiType: 'radio',
-            props: { options: [
-              { label: 'line', value: 'line' },
-              { label: 'card', value: 'card' },
-              { label: 'editable-card', value: 'editable-card' },
-            ] },
+            props: {
+              options: [
+                { label: 'line', value: 'line' },
+                { label: 'card', value: 'card' },
+                { label: 'editable-card', value: 'editable-card' },
+              ],
+            },
           },
           {
             label: '大小',
             field: 'size',
             uiType: 'radio',
-            props: { options: [
-              { label: 'large', value: 'large' },
-              { label: 'middle', value: 'middle' },
-              { label: 'small', value: 'small' },
-            ] },
+            props: {
+              options: [
+                { label: 'large', value: 'large' },
+                { label: 'middle', value: 'middle' },
+                { label: 'small', value: 'small' },
+              ],
+            },
           },
           {
             label: '位置',
             field: 'tabPosition',
             uiType: 'select',
-            props: { options: [
-              { label: 'top', value: 'top' },
-              { label: 'right', value: 'right' },
-              { label: 'bottom', value: 'bottom' },
-              { label: 'left', value: 'left' },
-            ] },
+            props: {
+              options: [
+                { label: 'top', value: 'top' },
+                { label: 'right', value: 'right' },
+                { label: 'bottom', value: 'bottom' },
+                { label: 'left', value: 'left' },
+              ],
+            },
           },
           { label: '居中', field: 'centered', uiType: 'switch' },
           { label: '销毁隐藏面板', field: 'destroyInactiveTabPane', uiType: 'switch' },
