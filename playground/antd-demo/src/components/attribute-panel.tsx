@@ -70,7 +70,7 @@ export const AttributePanel = () => {
     const { field } = config;
     return (
       <Form.Item label={config.label} name={field} key={field}>
-        <InputNumber />
+        <InputNumber style={{ width: '100%' }} />
       </Form.Item>
     );
   };
@@ -164,10 +164,14 @@ export const AttributePanel = () => {
         <Tabs
           size='small'
           activeKey={activePanel}
+          tabBarGutter={4}
           onChange={setActivePanel}
           items={config.map((item, index) => ({
             key: String(index),
-            label: item.title,
+            label: <div className='px-2'>{item.title}</div>,
+            style: {
+              padding: '0 8px',
+            },
             children: item.configs?.map(renderAttrConfig),
           }))}
         />
@@ -183,7 +187,7 @@ export const AttributePanel = () => {
             {activeElement.parents?.map((element) => (
               <div
                 key={element.id}
-                className='flex items-center cursor-pointer'
+                className='flex items-center cursor-pointer hover:text-blue-500'
                 onClick={() => selectedParentElement(element)}
               >
                 <span>{element.material.title}</span>
@@ -192,7 +196,7 @@ export const AttributePanel = () => {
             ))}
             <span className='cursor-pointer'>{material?.title}</span>
           </div>
-          <div className='px-4 flex-1 overflow-auto'>
+          <div className='flex-1 overflow-auto'>
             {material?.editorConfig?.panels && renderPanelConfig(material?.editorConfig?.panels)}
           </div>
         </>

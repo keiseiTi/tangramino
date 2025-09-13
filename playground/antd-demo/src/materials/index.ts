@@ -1,24 +1,26 @@
-import Button from './button';
-import Input from './input';
-import Select from './select';
-import Checkbox from './checkbox';
-import Radio from './radio';
-import Switch from './switch';
-import Form from './form';
-import Table from './table';
-import Tabs from './tabs';
-import Modal from './modal';
-import Drawer from './drawer';
-import Upload from './upload';
-import DatePicker from './date-picker';
-import TimePicker from './time-picker';
-import Tree from './tree';
-import TreeSelect from './tree-select';
-import Cascader from './cascader';
-import Number from './number';
-import BasicPage from './basic-page';
-import Container from './container';
-import Text from './text';
+import Button from './button/material-config';
+import Input from './input/material-config';
+import Select from './select/material-config';
+import Checkbox from './checkbox/material-config';
+import Radio from './radio/material-config';
+import Switch from './switch/material-config';
+import Form from './form/material-config';
+import Table from './table/material-config';
+import Tabs from './tabs/material-config';
+import Modal from './modal/material-config';
+import Drawer from './drawer/material-config';
+import Upload from './upload/material-config';
+import DatePicker from './date-picker/material-config';
+import TimePicker from './time-picker/material-config';
+import Tree from './tree/material-config';
+import TreeSelect from './tree-select/material-config';
+import Cascader from './cascader/material-config';
+import Number from './number/material-config';
+import BasicPage from './basic-page/material-config';
+import Container from './container/material-config';
+import Text from './text/material-config';
+import FloatButton from './float-button/material-config';
+import Tour from './tour/material-config';
 
 const materialGroups = [
   {
@@ -44,7 +46,11 @@ const materialGroups = [
   },
   {
     title: '展示组件',
-    children: [Table, , Button, Text],
+    children: [Table, Button, Text],
+  },
+  {
+    title: '导航组件',
+    children: [FloatButton, Tour],
   },
 ];
 
