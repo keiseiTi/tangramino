@@ -1,7 +1,7 @@
-import type { Schema, Elements, Layout, LayoutTree } from '../';
+import type { Schema, Elements, Layout, LayoutTree, LogicFlow } from '../';
 
 export const parse = (schema: Schema) => {
-  const { elements, layout, extensions } = schema;
+  const { elements, layout, extensions, logicFlow } = schema;
 
   const _element = parseElement(elements);
   const _layout = parseLayout(layout);
@@ -9,6 +9,7 @@ export const parse = (schema: Schema) => {
     elements: _element,
     layout: _layout,
     extensions,
+    logicFlow,
   };
 };
 
@@ -40,10 +41,7 @@ const parseLayout = (layout: Layout) => {
   ];
 };
 
-const recursionLayout = (
-  structure: Layout['structure'],
-  node: string,
-): LayoutTree => {
+const recursionLayout = (structure: Layout['structure'], node: string): LayoutTree => {
   const nodes = structure[node];
 
   return (nodes || []).map((node: string) => {
@@ -57,4 +55,10 @@ const recursionLayout = (
       id: node,
     };
   });
+};
+
+export const parseFlow = (logicFlow: LogicFlow) => {
+  const { flows, bindElements } = logicFlow;
+  // const result = [];
+  return { flows, bindElements };
 };

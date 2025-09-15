@@ -1,4 +1,4 @@
-import type { Elements, LayoutTree, Schema, InsertElement } from '../';
+import type { Elements, LayoutTree, Schema, InsertElement, LogicFlow } from '../';
 
 /**
  * 往 schema 里插入元素
@@ -336,6 +336,7 @@ const combineSchema = (
   elements: Elements,
   layout: LayoutTree,
   extensions: Record<string, unknown>,
+  logicFlow?: LogicFlow,
 ): Schema => {
   const structure: Record<string, string[]> = {};
 
@@ -357,6 +358,7 @@ const combineSchema = (
       root,
       structure,
     },
+    logicFlow: logicFlow || { flows: {}, bindElements: [] },
     extensions,
   };
 };
