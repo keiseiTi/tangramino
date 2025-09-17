@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { SchemaUtils } from '@tangramino/engine';
 import { useEditorStore, usePluginStore } from '@tangramino/core';
-import { Input, Radio, Checkbox, Select, Switch, Tabs, Form, InputNumber } from 'antd';
+import { Input, Radio, Checkbox, Select, Switch, Tabs, Form, InputNumber, ColorPicker } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import { cn } from '../utils';
+import type { ActiveElement } from '@tangramino/core';
 import type {
-  ActiveElement,
   AttributeConfig,
-  CheckboxAttributeConfig,
-  PanelConfig,
+  TextAttributeConfig,
   InputAttributeConfig,
   NumberAttributeConfig,
   RadioAttributeConfig,
+  CheckboxAttributeConfig,
   SelectAttributeConfig,
   SwitchAttributeConfig,
-  TextAttributeConfig,
+  ColorAttributeConfig,
   CustomAttributeConfig,
-} from '@tangramino/core';
+  PanelConfig,
+} from '../interfaces/material';
 
 export const AttributePanel = () => {
   const { activeElement, setActiveElement, engine, schema, setSchema } = useEditorStore();
@@ -118,6 +119,15 @@ export const AttributePanel = () => {
     );
   };
 
+  const renderColorConfig = (config: ColorAttributeConfig) => {
+    const { field } = config;
+    return (
+      <Form.Item label={config.label} name={field} key={field}>
+        <ColorPicker />
+      </Form.Item>
+    );
+  };
+
   const renderCustomConfig = (config: CustomAttributeConfig) => {
     const { field, render } = config;
     const props = {
@@ -151,6 +161,9 @@ export const AttributePanel = () => {
     }
     if (config.uiType === 'switch') {
       return renderSwitchConfig(config);
+    }
+    if (config.uiType === 'color') {
+      return renderColorConfig(config);
     }
     if (config.uiType === 'custom') {
       return renderCustomConfig(config);
@@ -197,7 +210,8 @@ export const AttributePanel = () => {
             <span className='cursor-pointer'>{material?.title}</span>
           </div>
           <div className='flex-1 overflow-auto'>
-            {material?.editorConfig?.panels && renderPanelConfig(material?.editorConfig?.panels)}
+            {material?.editorConfig?.panels &&
+              renderPanelConfig(material?.editorConfig?.panels as PanelConfig[])}
           </div>
         </>
       ) : (

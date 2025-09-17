@@ -1,0 +1,48 @@
+{
+  "name": "@tangramino/flow editor",
+  "version": "0.1.0",
+  "description": "A visual drag and drop flow editor",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    },
+    "./style": "./dist/style.css"
+  },
+  "type": "module",
+  "files": [
+    "src",
+    "types"
+  ],
+  "scripts": {
+    "build": "rm -rf dist types && rollup -c && tsc -p tsconfig.json",
+    "watch": "rollup --watch -c & tsc -w -p tsconfig.json"
+  },
+  "keywords": [
+    "schema",
+    "engine",
+    "visual",
+    "flow editor"
+  ],
+  "author": "yupeilin <yuchacha250@gmail.com>",
+  "license": "MIT ",
+  "dependencies": {
+    "@flowgram.ai/free-layout-editor": "^0.4.16"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.4",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.8",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "rollup": "^4.46.0",
+    "rollup-plugin-postcss": "^4.0.2",
+    "typescript": "^5.9.0"
+  }
+}

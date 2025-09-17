@@ -29,13 +29,14 @@ export type BindElement = {
 };
 
 export type FlowEvenNode = {
+  id: string;
   type: string;
   props: Record<string, unknown>;
-  nodes: FlowEvenNode[];
+  children: FlowEvenNode[];
 };
 
 export type FlowEvent = {
   elementId: string;
   eventName: string;
-  nodes: FlowEvenNode[];
+  eventNodes: FlowEvenNode[];
 };

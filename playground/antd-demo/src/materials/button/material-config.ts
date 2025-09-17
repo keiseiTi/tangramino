@@ -1,4 +1,4 @@
-import type { Material } from '@tangramino/core';
+import type { Material } from '../../interfaces/material';
 import { Button } from './index';
 
 const ButtonMaterial: Material = {
@@ -104,7 +104,7 @@ const ButtonMaterial: Material = {
               min: 0,
               max: 100,
               step: 1,
-              unit: 'px',
+              suffix: 'px',
             },
           },
           {
@@ -115,7 +115,7 @@ const ButtonMaterial: Material = {
               min: 0,
               max: 50,
               step: 1,
-              unit: 'px',
+              suffix: 'px',
             },
           },
           {
@@ -126,7 +126,7 @@ const ButtonMaterial: Material = {
               min: 0,
               max: 500,
               step: 1,
-              unit: 'px',
+              suffix: 'px',
             },
           },
           {
@@ -137,17 +137,12 @@ const ButtonMaterial: Material = {
               min: 0,
               max: 100,
               step: 1,
-              unit: 'px',
+              suffix: 'px',
             },
           },
           {
             label: '背景色',
             field: 'backgroundColor',
-            uiType: 'color',
-          },
-          {
-            label: '文字颜色',
-            field: 'color',
             uiType: 'color',
           },
           {
@@ -163,7 +158,7 @@ const ButtonMaterial: Material = {
               min: 0,
               max: 20,
               step: 1,
-              unit: 'px',
+              suffix: 'px',
             },
           },
         ],

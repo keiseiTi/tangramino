@@ -8,7 +8,6 @@ interface IProps extends ButtonProps {
   width?: number | string;
   height?: number | string;
   backgroundColor?: string;
-  color?: string;
   borderColor?: string;
   borderRadius?: number | string;
 }
@@ -21,7 +20,6 @@ export const Button = (props: IProps) => {
     width,
     height,
     backgroundColor,
-    color,
     borderColor,
     borderRadius,
     style,
@@ -34,17 +32,13 @@ export const Button = (props: IProps) => {
     width,
     height,
     backgroundColor,
-    color,
     borderColor,
     borderRadius,
     ...style,
   };
 
   return (
-    <AntdButton
-      style={customStyle}
-      {...restProps}
-    >
+    <AntdButton style={customStyle} {...restProps}>
       {text}
     </AntdButton>
   );

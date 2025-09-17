@@ -1,5 +1,6 @@
 import React from 'react';
 import type { EditorConfig } from './editor-config';
+import type { EventFlowConfig } from './event-flow';
 
 export interface Material {
   /**
@@ -23,10 +24,6 @@ export interface Material {
    */
   dropType?: string | string[];
   /**
-   * 编辑器属性配置
-   */
-  editorConfig?: EditorConfig;
-  /**
    * 物料默认属性
    */
   defaultProps?: Record<string, unknown>;
@@ -34,4 +31,12 @@ export interface Material {
    * 是否为容器
    */
   isContainer?: boolean;
+  /**
+   * 事件流配置
+   */
+  eventFlowConfig?: EventFlowConfig[];
+  /**
+   * 编辑器配置
+   */
+  editorConfig?: EditorConfig;
 }

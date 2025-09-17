@@ -1,4 +1,4 @@
-import type { Material } from '@tangramino/core';
+import type { Material } from '../../interfaces/material';
 import { Switch } from './index';
 
 const SwitchMaterial: Material = {

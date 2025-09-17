@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type BasicAttributeConfig = {
+export type AttributeConfig = {
   /**
    * 属性名称
    */
@@ -17,80 +17,20 @@ export type BasicAttributeConfig = {
    * 默认值
    */
   defaultValue?: string | number | boolean;
+  /**
+   * 自定义渲染
+   */
+  render?: (props: AttributeConfig) => React.ReactNode;
 };
-
-export type TextAttributeConfig = BasicAttributeConfig & {
-  uiType: 'text';
-};
-
-export type InputAttributeConfig = BasicAttributeConfig & {
-  uiType: 'input';
-};
-
-export type NumberAttributeConfig = BasicAttributeConfig & {
-  uiType: 'number';
-};
-
-export type RadioAttributeConfig = BasicAttributeConfig & {
-  uiType: 'radio';
-  props?: {
-    /**
-     * 标签位置，默认 left
-     */
-    labelPlacement?: 'left' | 'right';
-    options?: {
-      label: string;
-      value: string | undefined | boolean;
-    }[];
-  };
-};
-
-export type CheckboxAttributeConfig = BasicAttributeConfig & {
-  uiType: 'checkbox';
-  props?: {
-    /**
-     * 标签位置，默认 left
-     */
-    labelPlacement?: 'left' | 'right';
-    options?: {
-      label: string;
-      value: string | undefined | boolean;
-    }[];
-  };
-};
-
-export type SelectAttributeConfig = BasicAttributeConfig & {
-  uiType: 'select';
-  props?: {
-    options?: {
-      label: string;
-      value: string | undefined | boolean;
-    }[];
-    placeholder?: string;
-  };
-};
-
-export type SwitchAttributeConfig = BasicAttributeConfig & {
-  uiType: 'switch';
-};
-
-export type CustomAttributeConfig = BasicAttributeConfig & {
-  uiType: 'custom';
-  render: (props: BasicAttributeConfig) => React.ReactNode;
-};
-
-export type AttributeConfig =
-  | TextAttributeConfig
-  | InputAttributeConfig
-  | NumberAttributeConfig
-  | RadioAttributeConfig
-  | CheckboxAttributeConfig
-  | SelectAttributeConfig
-  | SwitchAttributeConfig
-  | CustomAttributeConfig;
 
 export type PanelConfig = {
+  /**
+   * 面板标题
+   */
   title?: React.ReactNode;
+  /**
+   * 属性配置
+   */
   configs?: AttributeConfig[];
 };
 
