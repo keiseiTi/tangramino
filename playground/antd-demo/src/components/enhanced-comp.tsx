@@ -6,7 +6,7 @@ import {
   type EnhancedComponentProps,
 } from '@tangramino/core';
 import { SchemaUtils } from '@tangramino/engine';
-import { Popover } from 'antd';
+import { Dropdown, Popover } from 'antd';
 import { DeleteOutlined, DragOutlined } from '@ant-design/icons';
 import { cn } from '../utils';
 
@@ -42,6 +42,11 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     setActiveElement(null);
   };
 
+  const parentMenus = activeElement?.parents?.map((parent) => ({
+    key: parent.id,
+    label: parent.material.title,
+  }));
+
   return (
     <Popover
       title={null}
@@ -55,7 +60,14 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
       }}
       content={
         <div className='flex justify-center select-none'>
-          <span className='pr-2'>{material.title}</span>
+          <Dropdown
+            arrow={false}
+            menu={{
+              items: parentMenus,
+            }}
+          >
+            <span className='pr-2'>{material.title}</span>
+          </Dropdown>
           <MoveElement
             className={cn('px-2 cursor-move border-l border-gray-400', {
               hidden: activeElement?.id === rootId,

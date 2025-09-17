@@ -34,9 +34,37 @@ export type PanelConfig = {
   configs?: AttributeConfig[];
 };
 
+export type EventFlow = {
+  /**
+   * 事件名称
+   */
+  event: string;
+  /**
+   * 事件描述
+   */
+  description?: string;
+  /**
+   * 事件参数
+   */
+  params?: {
+    /**
+     * 参数描述
+     */
+    description: string;
+    /**
+     * 参数字段
+     */
+    fields?: Record<string, unknown>;
+  }[];
+};
+
 export interface EditorConfig {
   /**
    * 属性面板配置
    */
   panels?: PanelConfig[];
+  /**
+   * 事件流配置
+   */
+  eventFlows?: EventFlow[];
 }

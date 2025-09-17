@@ -10,6 +10,17 @@ const InputMaterial: Material = {
     size: 'middle',
   },
   editorConfig: {
+    eventFlows: [
+      {
+        event: 'onChange',
+        description: '输入事件',
+        params: [
+          {
+            description: '输入事件参数',
+          },
+        ],
+      },
+    ],
     panels: [
       {
         title: '基础属性',
@@ -184,32 +195,6 @@ const InputMaterial: Material = {
             props: {
               min: 0,
               max: 100,
-              step: 1,
-              unit: 'px',
-            },
-          },
-          {
-            label: '背景色',
-            field: 'backgroundColor',
-            uiType: 'color',
-          },
-          {
-            label: '文字颜色',
-            field: 'color',
-            uiType: 'color',
-          },
-          {
-            label: '边框颜色',
-            field: 'borderColor',
-            uiType: 'color',
-          },
-          {
-            label: '圆角',
-            field: 'borderRadius',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 20,
               step: 1,
               unit: 'px',
             },

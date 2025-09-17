@@ -1,6 +1,6 @@
 import React from 'react';
 import type { EditorConfig } from './editor-config';
-import type { EventFlowConfig } from './event-flow';
+import type { ContextValue } from './context-value';
 
 export interface Material {
   /**
@@ -32,11 +32,11 @@ export interface Material {
    */
   isContainer?: boolean;
   /**
-   * 事件流配置
-   */
-  eventFlowConfig?: EventFlowConfig[];
-  /**
    * 编辑器配置
    */
   editorConfig?: EditorConfig;
+  /**
+   * 上下文值
+   */
+  contextValue?: ContextValue;
 }

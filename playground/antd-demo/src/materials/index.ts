@@ -20,7 +20,6 @@ import BasicPage from './basic-page/material-config';
 import Container from './container/material-config';
 import Text from './text/material-config';
 import FloatButton from './float-button/material-config';
-import Tour from './tour/material-config';
 
 const materialGroups = [
   {
@@ -50,7 +49,7 @@ const materialGroups = [
   },
   {
     title: '导航组件',
-    children: [FloatButton, Tour],
+    children: [FloatButton],
   },
 ];
 

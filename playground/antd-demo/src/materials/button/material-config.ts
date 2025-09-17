@@ -11,6 +11,17 @@ const ButtonMaterial: Material = {
     size: 'middle',
   },
   editorConfig: {
+    eventFlows: [
+      {
+        event: 'onClick',
+        description: '点击事件',
+        params: [
+          {
+            description: '点击事件参数',
+          },
+        ],
+      },
+    ],
     panels: [
       {
         title: '基础属性',
@@ -136,27 +147,6 @@ const ButtonMaterial: Material = {
             props: {
               min: 0,
               max: 100,
-              step: 1,
-              suffix: 'px',
-            },
-          },
-          {
-            label: '背景色',
-            field: 'backgroundColor',
-            uiType: 'color',
-          },
-          {
-            label: '边框颜色',
-            field: 'borderColor',
-            uiType: 'color',
-          },
-          {
-            label: '圆角',
-            field: 'borderRadius',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 20,
               step: 1,
               suffix: 'px',
             },

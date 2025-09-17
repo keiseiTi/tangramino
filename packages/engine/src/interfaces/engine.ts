@@ -1,5 +1,5 @@
 import type { Elements, Schema } from './schema';
-import type { LayoutTree, State } from './custom-types';
+import type { ContextValue, ContextValues, LayoutTree, State } from './custom-types';
 import type { Listener, ListenerMap } from './event';
 
 export interface Engine {
@@ -7,6 +7,9 @@ export interface Engine {
   layouts: LayoutTree;
   extensions: Record<string, unknown>;
   injectionCallback: Record<string, ListenerMap>;
+  contextValues: ContextValues;
+  setContextValue: (field: string, value: ContextValues) => void;
+  getContextValue: (field: string) => ContextValue | undefined;
   setState: (state: State) => void;
   getState: (id?: string) => State | Record<string, unknown> | null;
   setExtensions: (field: string, value: unknown) => void;

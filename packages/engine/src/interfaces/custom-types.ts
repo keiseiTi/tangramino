@@ -15,3 +15,11 @@ export interface InsertElement {
   props?: Record<string, unknown>;
   hidden?: boolean;
 }
+
+export type ContextValue = {
+  [key: string]: unknown;
+};
+
+export interface ContextValues {
+  [key: string]: ContextValue;
+}

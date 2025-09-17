@@ -6,10 +6,6 @@ export type IProps = InputProps & {
   padding?: number | string;
   width?: number | string;
   height?: number | string;
-  backgroundColor?: string;
-  color?: string;
-  borderColor?: string;
-  borderRadius?: number | string;
 };
 
 export const Input = (props: IProps) => {
@@ -18,10 +14,6 @@ export const Input = (props: IProps) => {
     padding,
     width,
     height,
-    backgroundColor,
-    color,
-    borderColor,
-    borderRadius,
     style,
     ...restProps
   } = props;
@@ -31,10 +23,6 @@ export const Input = (props: IProps) => {
     padding,
     width,
     height,
-    backgroundColor,
-    color,
-    borderColor,
-    borderRadius,
     ...style,
   };
 

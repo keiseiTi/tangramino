@@ -15,6 +15,7 @@ export const createEngine = (schema?: Schema): Engine => {
     layouts: producer(layout),
     extensions: producer(extensions),
     injectionCallback: {},
+    contextValues: {},
     setState: (state) => {
       engine.elements = createDraft(engine.elements);
       Object.keys(state || {}).forEach((id: string) => {
@@ -109,6 +110,15 @@ export const createEngine = (schema?: Schema): Engine => {
         engine.extensions,
         logicFlow,
       );
+    },
+    setContextValue: (field, value) => {
+      engine.contextValues[field] = {
+        ...engine.contextValues[field],
+        ...value,
+      };
+    },
+    getContextValue: (field) => {
+      return engine.contextValues[field];
     },
   };
 
