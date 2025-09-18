@@ -13,7 +13,16 @@ const InputMaterial: Material = {
     eventFlows: [
       {
         event: 'onChange',
-        description: '输入事件',
+        description: '内容变化时的回调',
+        params: [
+          {
+            description: '输入事件参数',
+          },
+        ],
+      },
+      {
+        event: 'onPressEnter',
+        description: '回车的回调',
         params: [
           {
             description: '输入事件参数',

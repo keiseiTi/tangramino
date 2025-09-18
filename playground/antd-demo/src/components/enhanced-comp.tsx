@@ -6,16 +6,17 @@ import {
   type EnhancedComponentProps,
 } from '@tangramino/core';
 import { SchemaUtils } from '@tangramino/engine';
-import { Dropdown, Popover } from 'antd';
-import { DeleteOutlined, DragOutlined } from '@ant-design/icons';
+import { Dropdown, Popover, Tooltip } from 'antd';
+import { DeleteOutlined, DragOutlined, PartitionOutlined } from '@ant-design/icons';
 import { cn } from '../utils';
 
 export const EnhancedComponent = (props: EnhancedComponentProps) => {
   const { material, elementProps, children } = props;
+  const elementId = elementProps['data-element-id'] as string;
+  const eventFlows = material.editorConfig?.eventFlows || [];
+
   const { activeElement, setActiveElement, schema, setSchema, insertPosition } = useEditorStore();
   const { beforeRemoveElement, afterRemoveElement } = usePluginStore();
-  const elementId = elementProps['data-element-id'] as string;
-
   const MoveElement = useMove({ elementId, elementProps, material });
   const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -47,6 +48,8 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     label: parent.material.title,
   }));
 
+  console.log('keiseiTi :>> ', 'eventFlows', eventFlows);
+
   return (
     <Popover
       title={null}
@@ -66,17 +69,38 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
               items: parentMenus,
             }}
           >
-            <span className='pr-2'>{material.title}</span>
+            <span>{material.title}</span>
           </Dropdown>
+          <Tooltip
+            styles={{
+              body: {
+                padding: '8px 8px 4px 8px',
+              },
+            }}
+            title={eventFlows.map((flow) => (
+              <div
+                key={flow.event}
+                className={cn('text-xs text-gray-100 cursor-pointer hover:text-blue-400 mb-1')}
+              >
+                <span>{flow.description}</span>
+              </div>
+            ))}
+          >
+            <PartitionOutlined
+              className={cn('ml-2 pl-2 border-l border-gray-400', {
+                'hidden!': !eventFlows.length,
+              })}
+            />
+          </Tooltip>
           <MoveElement
-            className={cn('px-2 cursor-move border-l border-gray-400', {
+            className={cn('ml-2 pl-2 cursor-move border-l border-gray-400', {
               hidden: activeElement?.id === rootId,
             })}
           >
             <DragOutlined />
           </MoveElement>
           <span
-            className={cn('pl-2 cursor-pointer border-l border-gray-400', {
+            className={cn('ml-2 pl-2 cursor-pointer border-l border-gray-400', {
               hidden: activeElement?.id === rootId,
             })}
             onClick={deleteElement}

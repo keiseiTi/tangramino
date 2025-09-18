@@ -28,9 +28,13 @@
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.4",
-    "@types/react": "^19.1.10",
-    "react": "^19.1.1",
+    "@types/react": "^18",
+    "react": "^18",
     "rollup": "^4.46.0",
     "typescript": "^5.9.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   }
 }

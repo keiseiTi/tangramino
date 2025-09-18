@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { ELEMENT_UPDATE, VIEW_UPDATE, type LayoutNode, type Engine } from '@tangramino/engine';
 import { HocComponent } from './components/hoc';
 import { useMounted } from './hooks/use-mounted';

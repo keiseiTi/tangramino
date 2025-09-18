@@ -1,3 +1,1 @@
-export default function FlowEditor() {
-  console.log('FlowEditor');
-}
+export { FlowEditor } from './editor';

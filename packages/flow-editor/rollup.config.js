@@ -20,7 +20,7 @@ export default defineConfig({
   ],
   plugins: [
     postcss({
-      extract: 'style.css'
+      extract: 'index.css'
     }),
     typescript({
       tsconfig: './tsconfig.json',
@@ -39,25 +39,8 @@ export default defineConfig({
   ],
   external: [
     'react',
-    '@dnd-kit/core',
-    '@radix-ui',
-    '@radix-ui/react-checkbox',
-    '@radix-ui/react-label',
-    '@radix-ui/react-popover',
-    '@radix-ui/react-radio-group',
-    '@radix-ui/react-select',
-    '@radix-ui/react-slot',
-    '@radix-ui/react-switch',
-    '@radix-ui/react-tabs',
-    '@radix-ui/react-tooltip',
+    'react-dom',
     '@tangramino/engine',
-    '@tangramino/react',
-    'class-variance-authority',
-    'clsx',
-    'lucide-react',
-    'nanoid',
-    'tailwind-merge',
-    'tw-animate-css',
-    'zustand',
+    '@flowgram.ai/free-layout-editor',
   ],
 });
