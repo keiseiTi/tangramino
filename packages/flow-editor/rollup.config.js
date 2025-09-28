@@ -40,6 +40,7 @@ export default defineConfig({
   external: [
     'react',
     'react-dom',
+    'react/jsx-runtime',
     '@tangramino/engine',
     '@flowgram.ai/free-layout-editor',
   ],

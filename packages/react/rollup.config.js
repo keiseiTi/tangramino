@@ -1,34 +1,34 @@
-import { defineConfig } from "rollup";
-import typescript from "@rollup/plugin-typescript";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
+import { defineConfig } from 'rollup';
+import typescript from '@rollup/plugin-typescript';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default defineConfig({
-  input: "src/index.ts",
+  input: 'src/index.ts',
   output: [
     {
-      file: "dist/index.cjs",
-      format: "cjs",
+      file: 'dist/index.cjs',
+      format: 'cjs',
       sourcemap: true,
     },
     {
-      file: "dist/index.js",
-      format: "es",
+      file: 'dist/index.js',
+      format: 'es',
       sourcemap: true,
     },
   ],
   plugins: [
     typescript({
-      tsconfig: "./tsconfig.json",
+      tsconfig: './tsconfig.json',
       declaration: false,
       declarationMap: false,
       emitDeclarationOnly: false,
-      outDir: "dist",
+      outDir: 'dist',
     }),
     nodeResolve({
-      extensions: [".js", ".ts"],
+      extensions: ['.js', '.ts'],
     }),
     commonjs(),
   ],
-  external: ["react", "@tangramino/engine"],
+  external: ['react', 'react/jsx-runtime', '@tangramino/engine'],
 });

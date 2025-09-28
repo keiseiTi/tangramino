@@ -39,6 +39,7 @@ export default defineConfig({
   ],
   external: [
     'react',
+    'react/jsx-runtime',
     '@dnd-kit/core',
     '@radix-ui',
     '@radix-ui/react-checkbox',
