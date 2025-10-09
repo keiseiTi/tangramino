@@ -1,40 +1,24 @@
 import React from 'react';
-import { EditorRenderer, FreeLayoutEditorProvider } from '@flowgram.ai/free-layout-editor';
-
+import { FreeLayoutEditorProvider } from '@flowgram.ai/free-layout-editor';
 import { useEditorProps } from './hooks/use-editor-props';
-import { Tools } from './components/tools';
-import { NodeAddPanel } from './components/node-add-panel';
+import type { Engine } from '@tangramino/engine';
+import type { FlowSchema, Node } from './interface/node';
 import '@flowgram.ai/free-layout-editor/index.css';
+import { initialData } from './initial-data';
 
-export const FlowEditor = () => {
-  const editorProps = useEditorProps();
-  return (
-    <div className='w-full h-full'>
-      <FreeLayoutEditorProvider {...editorProps}>
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            height: '100%',
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1 }}>
-            <NodeAddPanel />
-            <EditorRenderer
-              style={{
-                flexGrow: 1,
-                position: 'relative',
-                height: '100%',
-              }}
-            />
-          </div>
-          <Tools />
-        </div>
-      </FreeLayoutEditorProvider>
-    </div>
-  );
+export interface FlowEditorProps {
+  engine?: Engine;
+  children?: React.ReactNode;
+  nodes?: Node[];
+  flowSchema?: FlowSchema;
+}
+
+export const FlowEditor = (props: FlowEditorProps) => {
+  const { children, nodes } = props;
+  const editorProps = useEditorProps({
+    nodes,
+    flowSchema: initialData,
+  });
+  console.log('keiseiTi :>> ', '2',  2);
+  return <FreeLayoutEditorProvider {...editorProps}>{children}</FreeLayoutEditorProvider>;
 };

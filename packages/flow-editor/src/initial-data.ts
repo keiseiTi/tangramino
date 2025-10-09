@@ -15,7 +15,7 @@ export const initialData: WorkflowJSON = {
     },
     {
       id: 'node_0',
-      type: 'custom',
+      type: 'custom-js',
       meta: {
         position: { x: 400, y: 0 },
       },
@@ -24,26 +24,11 @@ export const initialData: WorkflowJSON = {
         content: 'Custom node content',
       },
     },
-    {
-      id: 'end_0',
-      type: 'end',
-      meta: {
-        position: { x: 800, y: 0 },
-      },
-      data: {
-        title: 'End',
-        content: 'End content',
-      },
-    },
   ],
   edges: [
     {
       sourceNodeID: 'start_0',
       targetNodeID: 'node_0',
-    },
-    {
-      sourceNodeID: 'node_0',
-      targetNodeID: 'end_0',
     },
   ],
 };

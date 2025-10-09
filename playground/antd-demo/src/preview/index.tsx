@@ -1,13 +1,8 @@
 import React from 'react';
-import { FlowEditor } from '@tangramino/flow-editor';
-// import '@tangramino/flow-editor/index.css';
+import { FlowEditor } from '../flow-editor';
 
 const Preview = () => {
-  return (
-    <div>
-      <FlowEditor />
-    </div>
-  );
+  return <FlowEditor className='w-full h-screen' />;
 };
 
 export default Preview;
