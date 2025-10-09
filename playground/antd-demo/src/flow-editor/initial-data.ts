@@ -1,6 +1,6 @@
-import type { WorkflowJSON } from '@flowgram.ai/free-layout-editor';
+import type { FlowSchema } from '@tangramino/flow-editor';
 
-export const initialData: WorkflowJSON = {
+export const initialData: FlowSchema = {
   nodes: [
     {
       id: 'start_0',
@@ -8,10 +8,7 @@ export const initialData: WorkflowJSON = {
       meta: {
         position: { x: 0, y: 0 },
       },
-      data: {
-        title: 'Start',
-        content: 'Start content',
-      },
+      data: {},
     },
     {
       id: 'node_0',
@@ -19,10 +16,7 @@ export const initialData: WorkflowJSON = {
       meta: {
         position: { x: 400, y: 0 },
       },
-      data: {
-        title: 'Custom',
-        content: 'Custom node content',
-      },
+      data: {},
     },
   ],
   edges: [

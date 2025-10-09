@@ -48,8 +48,6 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     label: parent.material.title,
   }));
 
-  console.log('keiseiTi :>> ', 'eventFlows', eventFlows);
-
   return (
     <Popover
       title={null}

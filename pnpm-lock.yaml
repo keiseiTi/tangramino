@@ -215,6 +215,9 @@ importers:
       '@tangramino/engine':
         specifier: workspace:^
         version: link:../engine
+      nanoid:
+        specifier: ^5.1.5
+        version: 5.1.5
     devDependencies:
       '@rollup/plugin-commonjs':
         specifier: ^28.0.6

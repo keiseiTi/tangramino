@@ -41,6 +41,7 @@ export default defineConfig({
     'react',
     'react-dom',
     'react/jsx-runtime',
+    'nanoid',
     '@tangramino/engine',
     '@flowgram.ai/free-layout-editor',
   ],

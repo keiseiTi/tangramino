@@ -1,11 +1,7 @@
 import React, { useMemo } from 'react';
-import {
-  FreeLayoutProps,
-  WorkflowNodeRenderer,
-  useNodeRender,
-  type WorkflowNodeProps,
-} from '@flowgram.ai/free-layout-editor';
 import { generateNodeRegistries } from '../utils';
+import { BaseNode } from '../components/base-node';
+import type { FreeLayoutProps } from '@flowgram.ai/free-layout-editor';
 import type { FlowSchema, Node } from '../interface/node';
 
 interface UseEditorPropsProps {
@@ -39,12 +35,13 @@ export const useEditorProps = (props: UseEditorPropsProps) => {
         };
       },
       materials: {
-        renderDefaultNode: (props: WorkflowNodeProps) => {
-          const { form } = useNodeRender();
-          return <WorkflowNodeRenderer node={props.node}>{form?.render()}</WorkflowNodeRenderer>;
-        },
+        renderDefaultNode: BaseNode,
       },
-      onContentChange() {
+      onContentChange(ctx, event) {
+        // ctx.setData(data);
+        console.log('Auto Save: ', event, {
+          ...ctx.document.toJSON(),
+        });
       },
       nodeEngine: {
         enable: true,

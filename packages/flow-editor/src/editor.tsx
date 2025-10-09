@@ -4,7 +4,6 @@ import { useEditorProps } from './hooks/use-editor-props';
 import type { Engine } from '@tangramino/engine';
 import type { FlowSchema, Node } from './interface/node';
 import '@flowgram.ai/free-layout-editor/index.css';
-import { initialData } from './initial-data';
 
 export interface FlowEditorProps {
   engine?: Engine;
@@ -14,11 +13,10 @@ export interface FlowEditorProps {
 }
 
 export const FlowEditor = (props: FlowEditorProps) => {
-  const { children, nodes } = props;
+  const { children, nodes, flowSchema } = props;
   const editorProps = useEditorProps({
     nodes,
-    flowSchema: initialData,
+    flowSchema,
   });
-  console.log('keiseiTi :>> ', '2',  2);
   return <FreeLayoutEditorProvider {...editorProps}>{children}</FreeLayoutEditorProvider>;
 };
