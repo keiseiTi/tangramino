@@ -4,7 +4,7 @@ import type {
   WorkflowEdgeJSON,
   WorkflowNodeJSON,
 } from '@flowgram.ai/free-layout-editor';
-import type { ActiveNode } from './context';
+import type { RenderFormProps } from './context';
 
 export interface FlowNode {
   /**
@@ -26,7 +26,7 @@ export interface FlowNode {
   /**
    * 节点表单渲染
    */
-  renderForm?: (props: Pick<ActiveNode, 'id' | 'type' | 'data'>) => React.ReactElement;
+  renderForm?: (props: RenderFormProps) => React.ReactElement;
   /**
    * 流程逻辑
    */

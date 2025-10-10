@@ -1,5 +1,7 @@
 import React from 'react';
+import { NodeRender } from './node-render';
 import type { FlowNode } from '@tangramino/flow-editor';
+import { FormConfig } from './form-config';
 
 export const start: FlowNode = {
   type: 'start',
@@ -11,11 +13,6 @@ export const start: FlowNode = {
     nodePanelVisible: false,
     defaultPorts: [{ type: 'output' }],
   },
-  renderNode: () => {
-    return (
-      <div className='w-20 p-2 bg-blue-500 text-white flex justify-center items-center rounded-4'>
-        开始
-      </div>
-    );
-  },
+  renderNode: NodeRender,
+  renderForm: FormConfig,
 };

@@ -6,8 +6,10 @@ export type ActiveNode = {
   type: string;
   data: Record<string, unknown>;
   title: string | null;
-  renderForm: (props: Pick<ActiveNode, 'id' | 'type' | 'data'>) => React.ReactNode;
+  renderForm: (props: RenderFormProps) => React.ReactNode;
 };
+
+export type RenderFormProps = Omit<ActiveNode, 'renderForm'>;
 
 export interface EditorContextValue {
   activeNode: ActiveNode | null;
