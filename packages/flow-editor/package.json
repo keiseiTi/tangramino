@@ -12,8 +12,8 @@
       "import": "./dist/index.js"
     },
     "./index.css": {
-      "import": "./index.css",
-      "require": "./index.css"
+      "import": "./dist/index.css",
+      "require": "./dist/index.css"
     }
   },
   "type": "module",

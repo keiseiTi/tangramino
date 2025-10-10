@@ -1,8 +1,8 @@
 import React from 'react';
-import type { Node } from '@tangramino/flow-editor';
+import type { FlowNode } from '@tangramino/flow-editor';
 
-export const customJS: Node = {
-  type: 'custom-js',
+export const customJS: FlowNode = {
+  type: 'customJs',
   title: '自定义JS',
   renderNode: () => {
     return (
@@ -10,5 +10,8 @@ export const customJS: Node = {
         自定义JS
       </div>
     );
+  },
+  renderForm: () => {
+    return <div>123</div>;
   },
 };

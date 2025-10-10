@@ -5,7 +5,7 @@ import type {
   WorkflowNodeJSON,
 } from '@flowgram.ai/free-layout-editor';
 
-export interface Node {
+export interface FlowNode {
   /**
    * 节点类型
    */
@@ -23,6 +23,10 @@ export interface Node {
    */
   renderNode?: () => React.ReactElement;
   /**
+   * 节点表单渲染
+   */
+  renderForm?: () => React.ReactElement;
+  /**
    * 流程逻辑
    */
   flowLogic?: (ctx: unknown) => unknown;
@@ -31,7 +35,6 @@ export interface Node {
    */
   defaultProps?: Record<string, unknown>;
 }
-
 export interface FlowSchema {
   nodes: WorkflowNodeJSON[];
   edges: WorkflowEdgeJSON[];

@@ -13,7 +13,7 @@ export const MaterialPanel = (props: { materialGroups: MaterialGroup[] }) => {
   const [activeKeys, setActiveKeys] = useState(['0', '1', '2', '3', '4', '5', '6']);
 
   return (
-    <div className={cn('w-62 border-r-1 border-gray-200 h-full overflow-auto select-none')}>
+    <div className={cn('w-58 border-r-1 border-gray-200 h-full overflow-auto select-none')}>
       <Collapse
         className='w-full'
         expandIconPosition='end'
@@ -24,10 +24,10 @@ export const MaterialPanel = (props: { materialGroups: MaterialGroup[] }) => {
           key: String(index),
           styles: {
             header: {
-              padding: '8px 16px',
+              padding: '6px 8px',
             },
             body: {
-              padding: 16,
+              padding: 8,
             },
           },
           classNames: {
@@ -41,7 +41,7 @@ export const MaterialPanel = (props: { materialGroups: MaterialGroup[] }) => {
           label: <div className='text-sm'>{group.title}</div>,
           children: group.children.map((material) => (
             <Draggable key={material.title as string} data={material}>
-              <div className='w-25 h-8 text-sm flex justify-center items-center rounded-sm border border-slate-600 cursor-pointer hover:bg-zinc-100'>
+              <div className='w-25 h-8 text-xs flex justify-center items-center rounded-sm border border-slate-600 cursor-pointer hover:bg-zinc-100'>
                 {material.title}
               </div>
             </Draggable>

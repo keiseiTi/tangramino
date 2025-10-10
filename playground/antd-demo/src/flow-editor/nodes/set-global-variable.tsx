@@ -1,20 +1,14 @@
 import React from 'react';
 import type { FlowNode } from '@tangramino/flow-editor';
 
-export const start: FlowNode = {
-  type: 'start',
-  title: '开始',
-  nodeMeta: {
-    isStart: true,
-    deleteDisable: true,
-    copyDisable: true,
-    nodePanelVisible: false,
-    defaultPorts: [{ type: 'output' }],
-  },
+export const setGlobalVariable: FlowNode = {
+  type: 'setGlobalVariable',
+  title: '设置全局变量',
+  nodeMeta: {},
   renderNode: () => {
     return (
       <div className='w-20 p-2 bg-blue-500 text-white flex justify-center items-center rounded-4'>
-        开始
+        设置全局变量
       </div>
     );
   },

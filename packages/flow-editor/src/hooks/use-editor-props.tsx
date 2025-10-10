@@ -2,11 +2,11 @@ import React, { useMemo } from 'react';
 import { generateNodeRegistries } from '../utils';
 import { BaseNode } from '../components/base-node';
 import type { FreeLayoutProps } from '@flowgram.ai/free-layout-editor';
-import type { FlowSchema, Node } from '../interface/node';
+import type { FlowSchema, FlowNode } from '../interface/node';
 
 interface UseEditorPropsProps {
   flowSchema?: FlowSchema | undefined;
-  nodes?: Node[] | undefined;
+  nodes?: FlowNode[] | undefined;
 }
 
 export const useEditorProps = (props: UseEditorPropsProps) => {

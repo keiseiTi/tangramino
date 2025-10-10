@@ -21,11 +21,11 @@ export const Operation = (props: OperationProps) => {
   return (
     <div
       className={cn(
-        'h-10 border-b border-gray-300 flex items-center px-4 justify-between',
+        'h-10 border-b border-gray-300 flex items-center px-2 justify-between',
         className,
       )}
     >
-      <span className='text-lg font-medium text-blue-900'>Tangramino 低代码编辑器</span>
+      <span className='text-lg font-medium'>Tangramino 低代码编辑器</span>
       <div>
         <Button size='small' type='primary' onClick={onPreview} className='mr-2'>
           预览

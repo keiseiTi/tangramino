@@ -4,15 +4,27 @@ import {
   WorkflowNodeRenderer,
   type WorkflowNodeProps,
 } from '@flowgram.ai/free-layout-editor';
+import { useEditorContext } from '../context/editor-context';
 
 export const BaseNode = (props: WorkflowNodeProps) => {
-  const { form } = useNodeRender();
+  const { node } = props;
+  const { id, type, data, form } = useNodeRender();
+  const { setActiveNode } = useEditorContext();
+
+  const nodeRegistry = node.getNodeRegistry();
 
   const onSelectedNode = () => {
+    setActiveNode({
+      id,
+      title: nodeRegistry.title,
+      type: type as string,
+      props: data,
+      renderForm: nodeRegistry.renderForm,
+    });
   };
 
   return (
-    <WorkflowNodeRenderer className='demo-free-node' node={props.node}>
+    <WorkflowNodeRenderer node={node}>
       <div onClick={onSelectedNode}>{form?.render()}</div>
     </WorkflowNodeRenderer>
   );

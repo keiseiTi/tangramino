@@ -12,7 +12,7 @@ export const initialData: FlowSchema = {
     },
     {
       id: 'node_0',
-      type: 'custom-js',
+      type: 'customJs',
       meta: {
         position: { x: 400, y: 0 },
       },

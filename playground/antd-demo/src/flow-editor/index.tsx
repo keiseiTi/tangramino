@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlowEditor as BaseFlowEditor, EditorRenderer } from '@tangramino/flow-editor';
-import { NodePanel } from './node-panel';
+import { NodePanel } from './components/node-panel';
+import { NodeFormPanel } from './components/node-form-panel';
 import { nodes } from './nodes';
 import { initialData } from './initial-data';
 import type { Engine } from '@tangramino/engine';
@@ -19,6 +20,7 @@ export const FlowEditor = (props: FlowEditorProps) => {
         <div className='flex h-full'>
           <NodePanel nodes={nodes} />
           <EditorRenderer className='flex-1 relative' />
+          <NodeFormPanel />
         </div>
       </BaseFlowEditor>
     </div>

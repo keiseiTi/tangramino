@@ -1,17 +1,20 @@
 import React from 'react';
 import { nanoid } from 'nanoid';
-import type { Node } from '../interface/node';
+import type { FlowNode } from '../interface/node';
 
 export const uniqueId = (prefix?: string) => (prefix ? prefix + '_' + nanoid(8) : nanoid(16));
 
-export const generateNodeRegistries = (nodes: Node[]) => {
-  return nodes.map((node) => {
+export const generateNodeRegistries = (nodes: FlowNode[]) =>
+  nodes.map((node) => {
+    const { type, nodeMeta, renderNode, ...rest } = node;
     return {
-      type: node.type,
-      meta: {},
-      formMeta: {
-        render: node.renderNode ? () => node.renderNode!() : () => <>{node.type}</>,
+      type,
+      meta: {
+        ...nodeMeta,
       },
+      formMeta: {
+        render: renderNode ? () => renderNode!() : () => <>{type}</>,
+      },
+      ...rest,
     };
   });
-};
