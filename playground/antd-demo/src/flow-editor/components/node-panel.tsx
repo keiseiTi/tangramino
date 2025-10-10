@@ -11,7 +11,7 @@ export const NodePanel = (props: NodePanelProps) => {
 
   return (
     <div className='w-48 bg-gray-50 flex p-2 flex-col'>
-      <div className='h-8 text-blue-700'>节点选择</div>
+      <div className='h-8 text-slate-800'>节点选择</div>
       <div className='flex-1 overflow-auto h-full text-xs'>
         {nodes
           .filter((node) => node.type !== 'start')

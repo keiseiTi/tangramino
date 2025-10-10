@@ -16,9 +16,9 @@ export const BaseNode = (props: WorkflowNodeProps) => {
   const onSelectedNode = () => {
     setActiveNode({
       id,
-      title: nodeRegistry.title,
+      data,
       type: type as string,
-      props: data,
+      title: nodeRegistry.title,
       renderForm: nodeRegistry.renderForm,
     });
   };

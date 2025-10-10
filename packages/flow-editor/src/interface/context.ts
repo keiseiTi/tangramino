@@ -4,9 +4,9 @@ import type { FlowNode } from './node';
 export type ActiveNode = {
   id: string;
   type: string;
-  props: Record<string, unknown>;
+  data: Record<string, unknown>;
   title: string | null;
-  renderForm: () => React.ReactNode;
+  renderForm: (props: Pick<ActiveNode, 'id' | 'type' | 'data'>) => React.ReactNode;
 };
 
 export interface EditorContextValue {
