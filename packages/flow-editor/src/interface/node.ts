@@ -4,9 +4,8 @@ import type {
   WorkflowEdgeJSON,
   WorkflowNodeJSON,
 } from '@flowgram.ai/free-layout-editor';
-import type { RenderFormProps } from './context';
 
-export interface FlowNode {
+export interface FlowNode<T extends object = Record<string, unknown>> {
   /**
    * 节点类型
    */
@@ -26,7 +25,7 @@ export interface FlowNode {
   /**
    * 节点表单渲染
    */
-  renderForm?: (props: RenderFormProps) => React.ReactElement;
+  renderForm?: (props: T) => React.ReactElement;
   /**
    * 流程逻辑
    */
@@ -34,7 +33,7 @@ export interface FlowNode {
   /**
    * 节点默认属性
    */
-  defaultProps?: Record<string, unknown>;
+  defaultProps?: T;
 }
 export interface FlowSchema {
   nodes: WorkflowNodeJSON[];

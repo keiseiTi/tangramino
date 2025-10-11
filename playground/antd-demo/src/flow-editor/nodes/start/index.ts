@@ -1,9 +1,13 @@
 import React from 'react';
 import { NodeRender } from './node-render';
-import type { FlowNode } from '@tangramino/flow-editor';
 import { FormConfig } from './form-config';
+import type { FlowNode } from '@tangramino/flow-editor';
 
-export const start: FlowNode = {
+export interface StartNodeProps {
+  title?: string;
+}
+
+export const start: FlowNode<StartNodeProps> = {
   type: 'start',
   title: '开始',
   nodeMeta: {

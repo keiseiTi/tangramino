@@ -8,7 +8,7 @@ import { useEditorContext } from '../context/editor-context';
 
 export const BaseNode = (props: WorkflowNodeProps) => {
   const { node } = props;
-  const { id, type, data, form } = useNodeRender();
+  const { id, type, data, form, updateData } = useNodeRender();
   const { setActiveNode } = useEditorContext();
 
   const nodeRegistry = node.getNodeRegistry();
@@ -20,6 +20,7 @@ export const BaseNode = (props: WorkflowNodeProps) => {
       type: type as string,
       title: nodeRegistry.title,
       renderForm: nodeRegistry.renderForm,
+      updateData,
     });
   };
 

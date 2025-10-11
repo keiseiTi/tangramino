@@ -19,9 +19,12 @@ export const FlowEditor = (props: FlowEditorProps) => {
     nodes,
     flowSchema,
   });
+
   return (
     <FreeLayoutEditorProvider {...editorProps}>
-      <EditorContextProvider nodes={nodes || []}>{children}</EditorContextProvider>
+      <EditorContextProvider nodes={nodes || []}>
+        {children}
+      </EditorContextProvider>
     </FreeLayoutEditorProvider>
   );
 };
