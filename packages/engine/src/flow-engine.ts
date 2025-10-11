@@ -1,10 +1,19 @@
 import { parseFlow } from './';
-import type { Engine, Schema } from './';
+import type { Engine, Schema, LoginFlowNodes } from './';
 
-export const withFlowEngine = (engine: Engine, schema: Schema) => {
-  const { logicFlow } = schema;
-  if (logicFlow) {
-    const flowEvents = parseFlow(logicFlow);
+interface FlowEngineProps {
+  engine: Engine;
+  schema: Schema;
+  loginFlowNodes: LoginFlowNodes;
+}
+
+export const withFlowEngine = ({ engine, schema }: FlowEngineProps) => {
+  const { flows, bindElements } = schema;
+  if (flows && bindElements) {
+    const flowEvents = parseFlow({
+      flows,
+      bindElements,
+    });
 
     flowEvents.forEach((flowEvent) => {
       const { elementId, eventName } = flowEvent;

@@ -3,14 +3,15 @@ import type {
   Elements,
   Layout,
   LayoutTree,
-  LogicFlow,
   FlowEvent,
-  FlowEvenNode,
   FlowNode,
+  Flows,
+  BindElement,
+  FlowEventNode,
 } from '../';
 
 export const parse = (schema: Schema) => {
-  const { elements, layout, extensions, logicFlow } = schema;
+  const { elements, layout, extensions, flows, bindElements } = schema;
 
   const _element = parseElement(elements);
   const _layout = parseLayout(layout);
@@ -18,7 +19,8 @@ export const parse = (schema: Schema) => {
     elements: _element,
     layout: _layout,
     extensions,
-    logicFlow,
+    flows,
+    bindElements,
   };
 };
 
@@ -71,11 +73,11 @@ const recursionFlowNodes = (
   nodes: {
     [nodeId: string]: FlowNode;
   },
-  eventNode?: FlowEvenNode,
+  eventNode?: FlowEventNode,
 ) => {
   const node = nodes[nodeId]!;
   const { id, type, props, next } = node;
-  const newEventNode: FlowEvenNode = {
+  const newEventNode: FlowEventNode = {
     id,
     type,
     props,
@@ -90,8 +92,13 @@ const recursionFlowNodes = (
   return newEventNode;
 };
 
-export const parseFlow = (logicFlow: LogicFlow): FlowEvent[] => {
-  const { flows, bindElements } = logicFlow;
+export const parseFlow = ({
+  flows,
+  bindElements,
+}: {
+  flows: Flows;
+  bindElements: BindElement[];
+}): FlowEvent[] => {
   const result: FlowEvent[] = [];
   bindElements?.forEach((bindElement) => {
     const { id, event, flowIds } = bindElement;
@@ -100,7 +107,7 @@ export const parseFlow = (logicFlow: LogicFlow): FlowEvent[] => {
       eventName: event,
       eventNodes: [],
     };
-    const eventNodes: FlowEvenNode[] = [];
+    const eventNodes: FlowEventNode[] = [];
     flowIds?.forEach((flowId) => {
       const flow = flows[flowId];
       if (flow) {

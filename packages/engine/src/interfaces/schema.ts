@@ -1,4 +1,4 @@
-import type { LogicFlowSchema } from './logic-flow';
+import type { FlowSchema } from './flow';
 
 export type ElementState = {
   type: string;
@@ -15,7 +15,7 @@ export type Layout = {
   structure: { [key: string]: string[] };
 };
 
-export interface Schema extends LogicFlowSchema {
+export interface Schema extends FlowSchema {
   elements: Elements;
   layout: Layout;
   extensions: Record<string, unknown>;

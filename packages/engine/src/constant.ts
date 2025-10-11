@@ -4,10 +4,8 @@ export const defaultSchema = {
     root: '',
     structure: {},
   },
-  logicFlow: {
-    flows: {},
-    bindElements: [],
-  },
+  flows: {},
+  bindElements: [],
   extensions: {},
 };
 
