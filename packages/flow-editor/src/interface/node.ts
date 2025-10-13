@@ -5,7 +5,7 @@ import type {
   WorkflowNodeJSON,
 } from '@flowgram.ai/free-layout-editor';
 
-export interface FlowNode<T extends object = Record<string, unknown>> {
+export interface FlowNode {
   /**
    * 节点类型
    */
@@ -25,15 +25,15 @@ export interface FlowNode<T extends object = Record<string, unknown>> {
   /**
    * 节点表单渲染
    */
-  renderForm?: (props: T) => React.ReactElement;
+  renderForm?: <T>(props: T) => React.ReactElement;
   /**
    * 流程逻辑
    */
-  flowLogic?: (ctx: unknown) => unknown;
+  flowLogic?: <T>(ctx: T) => Promise<unknown> | unknown;
   /**
    * 节点默认属性
    */
-  defaultProps?: T;
+  defaultProps?: Record<string, unknown>;
 }
 export interface FlowSchema {
   nodes: WorkflowNodeJSON[];

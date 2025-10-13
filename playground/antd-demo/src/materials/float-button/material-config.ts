@@ -1,5 +1,5 @@
-import type { Material } from '../../interfaces/material';
 import { FloatButtonComponent } from './index';
+import type { Material } from '@/interfaces/material';
 
 const FloatButtonMaterial: Material = {
   Component: FloatButtonComponent,

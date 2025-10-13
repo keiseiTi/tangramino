@@ -7,7 +7,7 @@ import type { Schema, Engine, ListenerMap, State } from './';
 enableMapSet();
 
 export const createEngine = (schema?: Schema): Engine => {
-  const { elements, layout, extensions, logicFlow } = parse(schema || defaultSchema);
+  const { elements, layout, extensions , flows, bindElements} = parse(schema || defaultSchema);
   const listenerMap: ListenerMap = {};
 
   const engine: Engine = {
@@ -108,7 +108,8 @@ export const createEngine = (schema?: Schema): Engine => {
         engine.elements,
         engine.layouts,
         engine.extensions,
-        logicFlow,
+        flows,
+        bindElements,
       );
     },
     setContextValue: (field, value) => {

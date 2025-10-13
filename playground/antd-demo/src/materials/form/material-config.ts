@@ -1,5 +1,5 @@
-import type { Material } from '../../interfaces/material';
 import { Form } from './index';
+import type { Material } from '@/interfaces/material';
 
 const FormMaterial: Material = {
   Component: Form,

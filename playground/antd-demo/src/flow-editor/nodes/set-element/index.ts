@@ -1,9 +1,14 @@
 import React from 'react';
 import { NodeRender } from './node-render';
-import type { FlowNode } from '@tangramino/flow-editor';
 import { FormConfig } from './form-config';
+import type { FlowNode } from '@tangramino/flow-editor';
 
-export const setElement: FlowNode = {
+interface SetElementNodeProps {
+  elementId: string;
+  props: Record<string, unknown>;
+}
+
+export const setElement: FlowNode<SetElementNodeProps> = {
   type: 'setElement',
   title: '设置元素属性',
   nodeMeta: {},

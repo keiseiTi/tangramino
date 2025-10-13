@@ -1,5 +1,5 @@
-import type { Material } from '../../interfaces/material';
 import { Container } from './index';
+import type { Material } from '@/interfaces/material';
 
 const ContainerMaterial: Material = {
   Component: Container,

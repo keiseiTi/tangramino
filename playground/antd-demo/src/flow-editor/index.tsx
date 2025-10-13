@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlowEditor as BaseFlowEditor, EditorRenderer } from '@tangramino/flow-editor';
-import { NodePanel } from './components/node-panel';
-import { FormPanel } from './components/form-panel';
+import { NodePanel } from './mods/node-panel';
+import { FormPanel } from './mods/form-panel';
 import { nodes } from './nodes';
 import { initialData } from './initial-data';
 import type { Engine } from '@tangramino/engine';

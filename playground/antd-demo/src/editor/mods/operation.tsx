@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEditorStore } from '@tangramino/core';
 import { Button } from 'antd';
-import { cn } from '../utils';
+import { cn } from '@/utils';
 interface OperationProps {
   className?: string;
 }

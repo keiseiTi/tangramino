@@ -1,4 +1,4 @@
-import type { Elements, LayoutTree, Schema, InsertElement, LogicFlow } from '../';
+import type { Elements, LayoutTree, Schema, InsertElement, Flows, BindElement } from '../';
 
 /**
  * 往 schema 里插入元素
@@ -209,7 +209,7 @@ const moveElement = (
     position?: 'before' | 'after';
   },
 ): Schema => {
-  const { layout } = schema;
+  const { elements, layout, extensions, flows, bindElements } = schema;
   const { structure, root } = layout;
 
   // 基本保护
@@ -277,9 +277,11 @@ const moveElement = (
         const next = [...filtered.slice(0, insertIndex), elementId, ...filtered.slice(insertIndex)];
         newStructure[targetParentId] = next;
         return {
-          elements: schema.elements,
+          elements,
           layout: { ...layout, structure: newStructure },
-          extensions: schema.extensions,
+          flows,
+          bindElements,
+          extensions,
         };
       }
     }
@@ -293,9 +295,11 @@ const moveElement = (
   }
 
   return {
-    elements: schema.elements,
+    elements,
     layout: { ...layout, structure: newStructure },
-    extensions: schema.extensions,
+    flows,
+    bindElements,
+    extensions,
   };
 };
 
@@ -336,7 +340,8 @@ const combineSchema = (
   elements: Elements,
   layout: LayoutTree,
   extensions: Record<string, unknown>,
-  logicFlow?: LogicFlow,
+  flows: Flows,
+  bindElements: BindElement[],
 ): Schema => {
   const structure: Record<string, string[]> = {};
 
@@ -358,7 +363,8 @@ const combineSchema = (
       root,
       structure,
     },
-    logicFlow: logicFlow || { flows: {}, bindElements: [] },
+    flows,
+    bindElements,
     extensions,
   };
 };

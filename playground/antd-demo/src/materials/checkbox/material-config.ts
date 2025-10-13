@@ -1,5 +1,5 @@
-import type { Material } from '../../interfaces/material';
 import { Checkbox } from './index';
+import type { Material } from '@/interfaces/material';
 
 const CheckboxMaterial: Material = {
   Component: Checkbox,

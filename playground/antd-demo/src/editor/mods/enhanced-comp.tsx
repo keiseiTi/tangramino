@@ -8,7 +8,7 @@ import {
 import { SchemaUtils } from '@tangramino/engine';
 import { Dropdown, Popover, Tooltip } from 'antd';
 import { DeleteOutlined, DragOutlined, PartitionOutlined } from '@ant-design/icons';
-import { cn } from '../utils';
+import { cn } from '@/utils';
 
 export const EnhancedComponent = (props: EnhancedComponentProps) => {
   const { material, elementProps, children } = props;

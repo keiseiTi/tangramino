@@ -3,7 +3,7 @@ import { SchemaUtils } from '@tangramino/engine';
 import { useEditorStore, usePluginStore } from '@tangramino/core';
 import { Input, Radio, Checkbox, Select, Switch, Tabs, Form, InputNumber, ColorPicker } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
-import { cn } from '../utils';
+import { cn } from '@/utils';
 import type { ActiveElement } from '@tangramino/core';
 import type {
   AttributeConfig,
@@ -17,7 +17,7 @@ import type {
   ColorAttributeConfig,
   CustomAttributeConfig,
   PanelConfig,
-} from '../interfaces/material';
+} from '@/interfaces/material';
 
 export const AttributePanel = () => {
   const { activeElement, setActiveElement, engine, schema, setSchema } = useEditorStore();

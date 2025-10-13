@@ -1,9 +1,15 @@
 import React from 'react';
 import { NodeRender } from './node-render';
-import type { FlowNode } from '@tangramino/flow-editor';
 import { FormConfig } from './form-config';
+import type { FlowNode } from '@tangramino/flow-editor';
 
-export const request: FlowNode = {
+interface RequestNodeProps {
+  url: string;
+  method: string;
+  headers: Record<string, string>;
+}
+
+export const request: FlowNode<RequestNodeProps> = {
   type: 'request',
   title: '接口请求',
   nodeMeta: {},

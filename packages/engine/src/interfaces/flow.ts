@@ -1,6 +1,6 @@
 export interface FlowSchema {
-  flows: Flows;
-  bindElements: BindElement[];
+  flows?: Flows;
+  bindElements?: BindElement[];
 }
 
 export type Flows = {
@@ -39,12 +39,12 @@ export type FlowEvent = {
   eventNodes: FlowEventNode[];
 };
 
-type FlowExecuteContext = {
-  data: unknown;
+export type FlowExecuteContext<T> = {
+  data: T;
 };
 
-export type LogicExecuteFn = (ctx: FlowExecuteContext) => Promise<unknown> | unknown;
+export type LogicExecuteFn<T> = (ctx: FlowExecuteContext<T>) => Promise<unknown> | unknown;
 
-export type LoginFlowNodes = {
-  [flowType: string]: LogicExecuteFn;
+export type LoginFlowNodes<T extends Record<string, unknown> = Record<string, unknown>> = {
+  [flowType: string]: LogicExecuteFn<T>;
 };

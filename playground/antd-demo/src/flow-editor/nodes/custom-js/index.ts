@@ -1,9 +1,13 @@
 import React from 'react';
 import { NodeRender } from './node-render';
-import type { FlowNode } from '@tangramino/flow-editor';
 import { FormConfig } from './form-config';
+import type { FlowNode } from '@tangramino/flow-editor';
 
-export const customJS: FlowNode = {
+interface CustomJSNodeProps {
+  code: string;
+}
+
+export const customJS: FlowNode<CustomJSNodeProps> = {
   type: 'customJs',
   title: '自定义JS',
   renderNode: NodeRender,

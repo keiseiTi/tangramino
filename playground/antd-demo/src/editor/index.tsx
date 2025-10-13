@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import { EditorProvider, CanvasEditor, DragOverlay, useEditorStore } from '@tangramino/core';
 import materialGroups from '../materials';
-import { Operation } from '../components/operation';
-import { MaterialPanel } from '../components/material-panel';
+import { Operation } from './mods/operation';
+import { MaterialPanel } from './mods/material-panel';
 import { defaultSchema } from '../constant';
-import { AttributePanel } from '../components/attribute-panel';
-import { CustomDropPlaceholder } from '../components/drop-placeholder';
-import { EnhancedComponent } from '../components/enhanced-comp';
+import { AttributePanel } from './mods/attribute-panel';
+import { CustomDropPlaceholder } from './mods/drop-placeholder';
+import { EnhancedComponent } from './mods/enhanced-comp';
 import type { Schema } from '@tangramino/engine';
 
 const materials = materialGroups.flatMap((group) => group.children);

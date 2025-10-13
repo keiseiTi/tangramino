@@ -1,5 +1,5 @@
-import type { Material } from '../../interfaces/material';
 import { Upload } from './index';
+import type { Material } from '@/interfaces/material';
 
 const UploadMaterial: Material = {
   Component: Upload,

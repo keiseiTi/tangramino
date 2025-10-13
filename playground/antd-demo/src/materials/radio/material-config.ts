@@ -1,5 +1,5 @@
-import type { Material } from '../../interfaces/material';
 import { Radio } from './index';
+import type { Material } from '@/interfaces/material';
 
 const RadioMaterial: Material = {
   Component: Radio,

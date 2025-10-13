@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '../utils';
+import { cn } from '@/utils';
 import { type DropPlaceholderProps } from '@tangramino/core';
 
 export const CustomDropPlaceholder = (props: DropPlaceholderProps) => {

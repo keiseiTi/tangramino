@@ -1,7 +1,7 @@
 import React from 'react';
 import { NodeRender } from './node-render';
-import type { FlowNode } from '@tangramino/flow-editor';
 import { FormConfig } from './form-config';
+import type { FlowNode } from '@tangramino/flow-editor';
 
 export const setGlobalVariable: FlowNode = {
   type: 'setGlobalVariable',

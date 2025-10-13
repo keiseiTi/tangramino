@@ -1,5 +1,5 @@
-import type { Material } from '../../interfaces/material';
 import { Cascader } from './index';
+import type { Material } from '@/interfaces/material';
 
 const CascaderMaterial: Material = {
   Component: Cascader,

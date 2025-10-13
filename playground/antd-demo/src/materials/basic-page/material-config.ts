@@ -1,5 +1,5 @@
-import type { Material } from '../../interfaces/material';
 import { BasicPage } from './index';
+import type { Material } from '@/interfaces/material';
 
 const BasicPageMaterial: Material = {
   title: '页面',

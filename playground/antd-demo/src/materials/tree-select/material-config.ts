@@ -1,5 +1,5 @@
-import type { Material } from '../../interfaces/material';
 import { TreeSelect } from './index';
+import type { Material } from '@/interfaces/material';
 
 const TreeSelectMaterial: Material = {
   Component: TreeSelect,

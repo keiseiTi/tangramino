@@ -1,5 +1,5 @@
-import type { Material } from '../../interfaces/material';
 import { Switch } from './index';
+import type { Material } from '@/interfaces/material';
 
 const SwitchMaterial: Material = {
   Component: Switch,

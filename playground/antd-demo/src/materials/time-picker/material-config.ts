@@ -1,5 +1,5 @@
-import type { Material } from '../../interfaces/material';
 import { TimePicker } from './index';
+import type { Material } from '@/interfaces/material';
 
 const TimePickerMaterial: Material = {
   Component: TimePicker,

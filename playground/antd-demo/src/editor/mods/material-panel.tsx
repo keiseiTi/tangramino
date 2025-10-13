@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEditorStore, Draggable, type Material } from '@tangramino/core';
-import { cn } from '../utils';
+import { cn } from '@/utils';
 import { Collapse } from 'antd';
 
 type MaterialGroup = {
