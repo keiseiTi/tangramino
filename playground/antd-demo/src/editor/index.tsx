@@ -1,7 +1,7 @@
 import React from 'react';
 import { EditorProvider, CanvasEditor, DragOverlay, useEditorCore } from '@tangramino/core';
 import { cn } from '@/utils';
-import { materialGroups } from '@/materials';
+import { materialGroups } from '@/materials/group';
 import { FlowEditor } from '@/flow-editor';
 import { useEditorContext } from '@/hooks/use-editor-context';
 import { Operation } from './mods/operation';
@@ -43,7 +43,10 @@ const EditorPage = (props: EditorPageProps) => {
           <AttributePanel />
         </div>
         <div
-          className={cn('flex-1 overflow-auto', { flex: mode === 'logic', hidden: mode !== 'logic' })}
+          className={cn('flex-1 overflow-auto', {
+            flex: mode === 'logic',
+            hidden: mode !== 'logic',
+          })}
         >
           <FlowEditor className='w-full h-screen' />;
         </div>

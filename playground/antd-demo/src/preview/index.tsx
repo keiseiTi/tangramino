@@ -1,8 +1,10 @@
 import React from 'react';
-import { FlowEditor } from '../flow-editor';
+import { Renderer } from '@/renderer';
+import materialComponents from '@/materials';
 
 const Preview = () => {
-  return <FlowEditor className='w-full h-screen' />;
+  const schema = JSON.parse(sessionStorage.getItem('schema') || '{}');
+  return <Renderer schema={schema} components={materialComponents} className='w-full h-screen' />;
 };
 
 export default Preview;
