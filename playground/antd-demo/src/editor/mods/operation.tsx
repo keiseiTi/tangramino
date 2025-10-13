@@ -1,21 +1,26 @@
-import React from 'react';
-import { useEditorStore } from '@tangramino/core';
-import { Button } from 'antd';
+import React, { useState } from 'react';
+import { useEditorCore } from '@tangramino/core';
+import { Button, Radio, type RadioChangeEvent } from 'antd';
 import { cn } from '@/utils';
+import { useEditorContext } from '@/hooks/use-editor-context';
 interface OperationProps {
   className?: string;
 }
 export const Operation = (props: OperationProps) => {
   const { className } = props;
-  const { schema } = useEditorStore();
+  const { schema } = useEditorCore();
+  const { setMode } = useEditorContext();
 
   const onSave = () => {
     sessionStorage.setItem('schema', JSON.stringify(schema));
   };
 
   const onPreview = () => {
-    // window.open('/preview', '_blank');
-    // TODO
+    window.open('/preview', '_blank');
+  };
+
+  const onModeChange = (e: RadioChangeEvent) => {
+    setMode(e.target.value);
   };
 
   return (
@@ -26,6 +31,17 @@ export const Operation = (props: OperationProps) => {
       )}
     >
       <span className='text-lg font-medium'>Tangramino 低代码编辑器</span>
+      <div>
+        <Radio.Group
+          optionType='button'
+          buttonStyle='solid'
+          defaultValue={'view'}
+          onChange={onModeChange}
+        >
+          <Radio value={'view'}>视图</Radio>
+          <Radio value={'logic'}>逻辑</Radio>
+        </Radio.Group>
+      </div>
       <div>
         <Button size='small' type='primary' onClick={onPreview} className='mr-2'>
           预览

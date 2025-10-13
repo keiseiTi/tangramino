@@ -15,7 +15,7 @@ export type InsertPosition = {
   position: 'before' | 'after';
 };
 
-export interface EditorStore {
+export interface EditorCore {
   engine: Engine;
   schema: Schema;
   setSchema: (schema: Schema) => void;
@@ -45,7 +45,7 @@ const defaultSchema = {
   extensions: {},
 };
 
-export const useEditorStore = create<EditorStore>((set) => ({
+export const useEditorCore = create<EditorCore>((set) => ({
   engine: createEngine(defaultSchema),
   schema: defaultSchema,
   setSchema: (schema) => set(() => ({ schema })),

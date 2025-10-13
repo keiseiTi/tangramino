@@ -1,7 +1,7 @@
 import React from 'react';
 import { SchemaUtils } from '@tangramino/engine';
 import { useDroppable } from '@dnd-kit/core';
-import { useEditorStore, type ActiveElement } from '../hooks/use-editor';
+import { useEditorCore, type ActiveElement } from '../hooks/use-editor-core';
 import { Placeholder, type DropPlaceholderProps } from './placeholder';
 import type { Material } from '../interface/material';
 
@@ -18,7 +18,7 @@ interface EnhancedCompProps {
 export const EnhancedComp = React.forwardRef<HTMLDivElement, EnhancedCompProps>(
   (props: EnhancedCompProps, ref) => {
     const { material, elementProps, className, renderComp, renderDropPlaceholder, onClick } = props;
-    const { activeElement, setActiveElement, engine, materials, insertPosition } = useEditorStore();
+    const { activeElement, setActiveElement, engine, materials, insertPosition } = useEditorCore();
 
     const elementId = elementProps['data-element-id'] as string;
 

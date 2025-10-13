@@ -1,6 +1,9 @@
-import React, { useMemo } from 'react';
-import { EditorProvider, CanvasEditor, DragOverlay, useEditorStore } from '@tangramino/core';
-import materialGroups from '../materials';
+import React from 'react';
+import { EditorProvider, CanvasEditor, DragOverlay, useEditorCore } from '@tangramino/core';
+import { cn } from '@/utils';
+import { materialGroups } from '@/materials';
+import { FlowEditor } from '@/flow-editor';
+import { useEditorContext } from '@/hooks/use-editor-context';
 import { Operation } from './mods/operation';
 import { MaterialPanel } from './mods/material-panel';
 import { defaultSchema } from '../constant';
@@ -21,14 +24,16 @@ const localSchema = sessionStorage.getItem('schema')
 
 const EditorPage = (props: EditorPageProps) => {
   const { schema = localSchema } = props;
-
-  const { dragElement } = useEditorStore();
+  const { dragElement } = useEditorCore();
+  const { mode } = useEditorContext();
 
   return (
     <EditorProvider materials={materials} schema={schema || defaultSchema}>
       <div className='flex flex-col w-full h-screen min-w-[980px] overflow-auto'>
         <Operation />
-        <div className='flex flex-1 overflow-auto'>
+        <div
+          className={cn('flex-1 overflow-auto', { flex: mode === 'view', hidden: mode !== 'view' })}
+        >
           <MaterialPanel materialGroups={materialGroups} />
           <CanvasEditor
             className='flex-1 p-4 bg-gray-50'
@@ -36,6 +41,11 @@ const EditorPage = (props: EditorPageProps) => {
             renderDropPlaceholder={CustomDropPlaceholder}
           />
           <AttributePanel />
+        </div>
+        <div
+          className={cn('flex-1 overflow-auto', { flex: mode === 'logic', hidden: mode !== 'logic' })}
+        >
+          <FlowEditor className='w-full h-screen' />;
         </div>
       </div>
       <DragOverlay>

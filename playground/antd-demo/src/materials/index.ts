@@ -21,7 +21,7 @@ import Container from './container/material-config';
 import Text from './text/material-config';
 import FloatButton from './float-button/material-config';
 
-const materialGroups = [
+export const materialGroups = [
   {
     title: '布局容器',
     children: [BasicPage, Container, Form, Tabs, Modal, Drawer],
@@ -52,5 +52,3 @@ const materialGroups = [
     children: [FloatButton],
   },
 ];
-
-export default materialGroups;

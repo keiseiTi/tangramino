@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { ReactView } from '@tangramino/react';
 import { EnhancedComp } from './enhanced-comp';
-import { useEditorStore } from '../hooks/use-editor';
+import { useEditorCore } from '../hooks/use-editor-core';
 import type { Material } from '../interface/material';
 import type { DropPlaceholderProps } from './placeholder';
 
@@ -21,7 +21,7 @@ interface CanvasEditorProps {
 
 export const CanvasEditor = (props: CanvasEditorProps) => {
   const { className, renderComponent, renderDropPlaceholder } = props;
-  const { schema, materials, engine } = useEditorStore();
+  const { schema, materials, engine } = useEditorCore();
 
   useEffect(() => {
     engine.changeSchema(schema);

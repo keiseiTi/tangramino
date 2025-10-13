@@ -6,7 +6,7 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core';
 import { SchemaUtils, type Schema } from '@tangramino/engine';
-import { useEditorStore } from './hooks/use-editor';
+import { useEditorCore } from './hooks/use-editor-core';
 import { usePluginStore } from './hooks/use-plugin';
 import { uniqueId } from './utils';
 import type { Material } from './interface/material';
@@ -21,7 +21,7 @@ export interface EditorProviderProps {
 export const EditorProvider = (props: EditorProviderProps) => {
   const { schema: outerSchema, materials, plugins, children } = props;
   const { schema, setSchema, setMaterials, setActiveElement, setInsertPosition, setDragElement } =
-    useEditorStore();
+    useEditorCore();
 
   const {
     addPlugin,
