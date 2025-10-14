@@ -9,7 +9,7 @@ interface OperationProps {
 export const Operation = (props: OperationProps) => {
   const { className } = props;
   const { schema } = useEditorCore();
-  const { setMode } = useEditorContext();
+  const { mode, setMode } = useEditorContext();
 
   const onSave = () => {
     sessionStorage.setItem('schema', JSON.stringify(schema));
@@ -35,7 +35,7 @@ export const Operation = (props: OperationProps) => {
         <Radio.Group
           optionType='button'
           buttonStyle='solid'
-          defaultValue={'view'}
+          value={mode}
           onChange={onModeChange}
         >
           <Radio value={'view'}>视图</Radio>

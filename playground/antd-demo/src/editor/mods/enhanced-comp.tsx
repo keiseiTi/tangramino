@@ -8,13 +8,16 @@ import {
 import { SchemaUtils } from '@tangramino/engine';
 import { Dropdown, Popover, Tooltip } from 'antd';
 import { DeleteOutlined, DragOutlined, PartitionOutlined } from '@ant-design/icons';
+import { useEditorContext } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
+import type { EventFlow } from 'node_modules/@tangramino/core/types/interface/editor-config';
 
 export const EnhancedComponent = (props: EnhancedComponentProps) => {
   const { material, elementProps, children } = props;
   const elementId = elementProps['data-element-id'] as string;
   const eventFlows = material.editorConfig?.eventFlows || [];
 
+  const { mode, setMode } = useEditorContext();
   const { activeElement, setActiveElement, schema, setSchema, insertPosition } = useEditorCore();
   const { beforeRemoveElement, afterRemoveElement } = usePluginStore();
   const MoveElement = useMove({ elementId, elementProps, material });
@@ -29,6 +32,12 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
       setPopoverOpen(false);
     }
   }, [activeElement, elementId]);
+
+  useEffect(() => {
+    if (mode === 'logic') {
+      setPopoverOpen(false);
+    }
+  }, [mode]);
 
   const selectedElement = (_: React.MouseEvent) => {
     setPopoverOpen(false);
@@ -47,6 +56,11 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     key: parent.id,
     label: parent.material.title,
   }));
+
+  const openFlowEditor = (eventFlow: EventFlow) => {
+    console.log('keiseiTi :>> ', 'eventFlow', eventFlow);
+    setMode('logic');
+  };
 
   return (
     <Popover
@@ -79,6 +93,7 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
               <div
                 key={flow.event}
                 className={cn('text-xs text-gray-100 cursor-pointer hover:text-blue-400 mb-1')}
+                onClick={openFlowEditor.bind(this, flow)}
               >
                 <span>{flow.description}</span>
               </div>
@@ -109,7 +124,6 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
       }
     >
       {React.cloneElement(children, {
-        // @ts-ignore
         onClick: (e: React.MouseEvent) => {
           selectedElement(e);
         },

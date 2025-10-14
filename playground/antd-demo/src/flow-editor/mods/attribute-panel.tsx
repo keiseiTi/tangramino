@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useEditorContext } from '@tangramino/flow-editor';
 import { Form } from 'antd';
 
-export const FormPanel = () => {
+export const AttributePanel = () => {
   const { activeNode } = useEditorContext();
   const [form] = Form.useForm();
 
@@ -21,7 +21,7 @@ export const FormPanel = () => {
 
   return (
     <div className='w-60 bg-gray-50 flex flex-col'>
-      <div className='p-2 text-slate-800 border-b border-slate-300'>
+      <div className='p-2 text-slate-800 border-b border-slate-300 text-sm'>
         {activeNode?.title || activeNode?.type || '节点配置'}
       </div>
       {activeNode ? (

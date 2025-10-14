@@ -10,15 +10,15 @@ export const NodePanel = (props: NodePanelProps) => {
   const dragNode = useDragNode();
 
   return (
-    <div className='w-48 bg-gray-50 flex p-2 flex-col'>
-      <div className='h-8 text-slate-800'>节点选择</div>
-      <div className='flex-1 overflow-auto h-full text-xs'>
+    <div className='w-48 bg-gray-50 flex flex-col'>
+      <div className='p-2 h-8 text-sm text-slate-800 border-b border-slate-300'>节点选择</div>
+      <div className='p-2 flex-1 overflow-auto h-full text-xs'>
         {nodes
           .filter((node) => node.type !== 'start')
           .map((node) => (
             <div
               key={node.type}
-              className='w-44 p-2 mb-2 bg-slate-100 cursor-pointer'
+              className='w-44 p-2 mb-2 bg-stone-100 cursor-pointer'
               onMouseDown={(e) => {
                 dragNode(e, node);
               }}

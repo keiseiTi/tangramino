@@ -115,7 +115,7 @@ export const AttributePanel = () => {
           onChange={setActivePanel}
           items={config.map((item, index) => ({
             key: String(index),
-            label: <div className='px-2'>{item.title}</div>,
+            label: <div className='px-2 w-34 text-center'>{item.title}</div>,
             style: {
               padding: '0 8px',
             },

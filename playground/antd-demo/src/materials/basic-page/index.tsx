@@ -10,7 +10,7 @@ interface BasicPageProps {
 export const BasicPage = (props: BasicPageProps) => {
   const { children, dropPlaceholder, margin, padding } = props;
   return (
-    <div className='bg-white overflow-auto shadow-xs' style={{ margin, padding }}>
+    <div className='overflow-auto' style={{ margin, padding }}>
       {children}
       {dropPlaceholder}
     </div>

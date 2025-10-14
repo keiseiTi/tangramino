@@ -35,11 +35,13 @@ const EditorPage = (props: EditorPageProps) => {
           className={cn('flex-1 overflow-auto', { flex: mode === 'view', hidden: mode !== 'view' })}
         >
           <MaterialPanel materialGroups={materialGroups} />
-          <CanvasEditor
-            className='flex-1 p-4 bg-gray-50'
-            renderComponent={EnhancedComponent}
-            renderDropPlaceholder={CustomDropPlaceholder}
-          />
+          <div className='flex-1 p-4 bg-gray-50'>
+            <CanvasEditor
+              className='bg-white'
+              renderComponent={EnhancedComponent}
+              renderDropPlaceholder={CustomDropPlaceholder}
+            />
+          </div>
           <AttributePanel />
         </div>
         <div

@@ -24,7 +24,7 @@ const ButtonMaterial: Material = {
     ],
     panels: [
       {
-        title: '基础属性',
+        title: '属性',
         configs: [
           {
             label: '按钮文本',
@@ -72,11 +72,6 @@ const ButtonMaterial: Material = {
               ],
             },
           },
-        ],
-      },
-      {
-        title: '状态属性',
-        configs: [
           {
             label: '禁用',
             field: 'disabled',
@@ -105,7 +100,7 @@ const ButtonMaterial: Material = {
         ],
       },
       {
-        title: '样式配置',
+        title: '样式',
         configs: [
           {
             label: '外边距',
