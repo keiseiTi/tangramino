@@ -1,22 +1,24 @@
 import React from 'react';
+import { useEditorCore } from '@tangramino/core';
 import { FlowEditor as BaseFlowEditor, EditorRenderer } from '@tangramino/flow-editor';
+import { useEditorContext } from '@/hooks/use-editor-context';
 import { NodePanel } from './mods/node-panel';
 import { AttributePanel } from './mods/attribute-panel';
 import { nodes } from './nodes';
-import { initialData } from './initial-data';
-import type { Engine } from '@tangramino/engine';
 
 export interface FlowEditorProps {
   className?: string;
-  engine?: Engine;
 }
 
 export const FlowEditor = (props: FlowEditorProps) => {
-  const { className, engine } = props;
+  const { className } = props;
+
+  const { engine } = useEditorCore();
+  const { flowGraphData } = useEditorContext();
 
   return (
     <div className={className}>
-      <BaseFlowEditor nodes={nodes} flowSchema={initialData} engine={engine}>
+      <BaseFlowEditor nodes={nodes} flowGraphData={flowGraphData} engine={engine}>
         <div className='flex h-full'>
           <NodePanel nodes={nodes} />
           <EditorRenderer className='flex-1 relative' />

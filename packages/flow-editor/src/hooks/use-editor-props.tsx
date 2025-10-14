@@ -2,20 +2,20 @@ import React, { useMemo } from 'react';
 import { generateNodeRegistries } from '../utils';
 import { BaseNode } from '../components/base-node';
 import type { FreeLayoutProps } from '@flowgram.ai/free-layout-editor';
-import type { FlowSchema, FlowNode } from '../interface/node';
+import type { FlowGraphData, FlowNode } from '../interface/node';
 
 interface UseEditorPropsProps {
-  flowSchema?: FlowSchema | undefined;
+  flowGraphData?: FlowGraphData | undefined;
   nodes?: FlowNode[] | undefined;
 }
 
 export const useEditorProps = (props: UseEditorPropsProps) => {
-  const { flowSchema, nodes } = props;
+  const { flowGraphData, nodes } = props;
   return useMemo<FreeLayoutProps>(
     () => ({
       background: true,
       readonly: false,
-      initialData: flowSchema || { nodes: [], edges: [] },
+      initialData: flowGraphData || { nodes: [], edges: [] },
       nodeRegistries: generateNodeRegistries(nodes || []),
       fromNodeJSON(node, json) {
         return json;

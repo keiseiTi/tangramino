@@ -29,7 +29,7 @@ const EditorPage = (props: EditorPageProps) => {
 
   return (
     <EditorProvider materials={materials} schema={schema || defaultSchema}>
-      <div className='flex flex-col w-full h-screen min-w-[980px] overflow-auto'>
+      <div className='flex flex-col w-full h-screen min-w-[980px] overflow-auto bg-white'>
         <Operation />
         <div
           className={cn('flex-1 overflow-auto', { flex: mode === 'view', hidden: mode !== 'view' })}
@@ -44,14 +44,11 @@ const EditorPage = (props: EditorPageProps) => {
           </div>
           <AttributePanel />
         </div>
-        <div
-          className={cn('flex-1 overflow-auto', {
-            flex: mode === 'logic',
-            hidden: mode !== 'logic',
-          })}
-        >
-          <FlowEditor className='w-full h-screen' />;
-        </div>
+        {mode === 'logic' && (
+          <div className={cn('flex-1 overflow-auto')}>
+            <FlowEditor className='w-full h-screen' />
+          </div>
+        )}
       </div>
       <DragOverlay>
         <div className='w-24 p-1 text-xs flex justify-center items-center rounded-sm border border-slate-600 bg-[#fafafabf] cursor-copy'>

@@ -35,7 +35,7 @@ export interface FlowNode {
    */
   defaultProps?: Record<string, unknown>;
 }
-export interface FlowSchema {
+export interface FlowGraphData {
   nodes: WorkflowNodeJSON[];
   edges: WorkflowEdgeJSON[];
 }

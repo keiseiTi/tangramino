@@ -1,4 +1,4 @@
-import type { Elements, LayoutTree, Schema, InsertElement, Flows, BindElement } from '../';
+import type { Elements, LayoutTree, Schema, InsertElement, Flows, BindElements } from '../';
 
 /**
  * 往 schema 里插入元素
@@ -26,9 +26,9 @@ const insertElement = (schema: Schema, originElementId: string, insertElement: I
     [originElementId]: children,
   };
   return {
+    ...schema,
     elements: newElements,
     layout: { ...layout, structure: newStructure },
-    extensions: schema.extensions,
   };
 };
 
@@ -76,9 +76,9 @@ const removeElement = (schema: Schema, elementId: string) => {
   }
 
   return {
+    ...schema,
     elements: newElements,
     layout: { ...layout, structure: newStructure },
-    extensions: schema.extensions,
   };
 };
 
@@ -155,9 +155,9 @@ const insertAdjacentElement = (
   if (!parentId) {
     // 没有父级（可能是 root），不支持相邻插入
     return {
+      ...schema,
       elements: newElements,
       layout,
-      extensions: schema.extensions,
     };
   }
 
@@ -165,17 +165,17 @@ const insertAdjacentElement = (
   const idx = siblings.indexOf(targetElementId);
   if (idx === -1) {
     return {
+      ...schema,
       elements: newElements,
       layout,
-      extensions: schema.extensions,
     };
   }
   // 已经在同一个父级的 children 中存在相同 id 时不再重复插入
   if (siblings.includes(insertElement.id)) {
     return {
+      ...schema,
       elements: newElements,
       layout,
-      extensions: schema.extensions,
     };
   }
   const insertIndex = position === 'before' ? idx : idx + 1;
@@ -187,9 +187,9 @@ const insertAdjacentElement = (
   const newStructure = { ...structure, [parentId]: nextSiblings };
 
   return {
+    ...schema,
     elements: newElements,
     layout: { ...layout, structure: newStructure },
-    extensions: schema.extensions,
   };
 };
 
@@ -209,7 +209,7 @@ const moveElement = (
     position?: 'before' | 'after';
   },
 ): Schema => {
-  const { elements, layout, extensions, flows, bindElements } = schema;
+  const { layout } = schema;
   const { structure, root } = layout;
 
   // 基本保护
@@ -277,11 +277,8 @@ const moveElement = (
         const next = [...filtered.slice(0, insertIndex), elementId, ...filtered.slice(insertIndex)];
         newStructure[targetParentId] = next;
         return {
-          elements,
+          ...schema,
           layout: { ...layout, structure: newStructure },
-          flows,
-          bindElements,
-          extensions,
         };
       }
     }
@@ -295,11 +292,8 @@ const moveElement = (
   }
 
   return {
-    elements,
+    ...schema,
     layout: { ...layout, structure: newStructure },
-    flows,
-    bindElements,
-    extensions,
   };
 };
 
@@ -321,9 +315,8 @@ const setElementProps = (schema: Schema, elementId: string, props: Record<string
       },
     };
     return {
+      ...schema,
       elements: newElements,
-      layout: schema.layout,
-      extensions: schema.extensions,
     };
   }
   return schema;
@@ -341,7 +334,7 @@ const combineSchema = (
   layout: LayoutTree,
   extensions: Record<string, unknown>,
   flows: Flows,
-  bindElements: BindElement[],
+  bindElements: BindElements,
 ): Schema => {
   const structure: Record<string, string[]> = {};
 
@@ -369,6 +362,12 @@ const combineSchema = (
   };
 };
 
+const getFlowGraph = <T= unknown>(schema: Schema, elementId: string, event: string) => {
+  const extensions = schema.extensions;
+  const key = `${elementId}::${event}`;
+  return (extensions?.['flowGraph'] as Record<string, unknown>)?.[key] as T;
+};
+
 export const SchemaUtils = {
   insertElement,
   removeElement,
@@ -377,4 +376,5 @@ export const SchemaUtils = {
   getParents,
   setElementProps,
   combineSchema,
+  getFlowGraph,
 };

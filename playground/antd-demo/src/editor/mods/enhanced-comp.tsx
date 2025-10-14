@@ -3,21 +3,23 @@ import {
   useEditorCore,
   usePluginStore,
   useMove,
+  uniqueId,
   type EnhancedComponentProps,
+  type EventFlow,
 } from '@tangramino/core';
 import { SchemaUtils } from '@tangramino/engine';
 import { Dropdown, Popover, Tooltip } from 'antd';
 import { DeleteOutlined, DragOutlined, PartitionOutlined } from '@ant-design/icons';
 import { useEditorContext } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
-import type { EventFlow } from 'node_modules/@tangramino/core/types/interface/editor-config';
+import type { FlowGraphData } from '@tangramino/flow-editor';
 
 export const EnhancedComponent = (props: EnhancedComponentProps) => {
   const { material, elementProps, children } = props;
   const elementId = elementProps['data-element-id'] as string;
   const eventFlows = material.editorConfig?.eventFlows || [];
 
-  const { mode, setMode } = useEditorContext();
+  const { mode, setMode, setFlowGraphData } = useEditorContext();
   const { activeElement, setActiveElement, schema, setSchema, insertPosition } = useEditorCore();
   const { beforeRemoveElement, afterRemoveElement } = usePluginStore();
   const MoveElement = useMove({ elementId, elementProps, material });
@@ -58,8 +60,27 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
   }));
 
   const openFlowEditor = (eventFlow: EventFlow) => {
-    console.log('keiseiTi :>> ', 'eventFlow', eventFlow);
+    const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
+      schema!,
+      elementId,
+      eventFlow.event,
+    );
     setMode('logic');
+    setFlowGraphData(
+      flowGraphData || {
+        nodes: [
+          {
+            id: uniqueId('start'),
+            type: 'start',
+            meta: {
+              position: { x: 0, y: 0 },
+            },
+            data: {},
+          },
+        ],
+        edges: []
+      },
+    );
   };
 
   return (

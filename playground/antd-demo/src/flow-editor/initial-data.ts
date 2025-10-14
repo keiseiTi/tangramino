@@ -1,6 +1,6 @@
-import type { FlowSchema } from '@tangramino/flow-editor';
+import type { FlowGraphData } from '@tangramino/flow-editor';
 
-export const initialData: FlowSchema = {
+export const initialData: FlowGraphData = {
   nodes: [
     {
       id: 'start_0',
