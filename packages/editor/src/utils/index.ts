@@ -2,5 +2,5 @@ import { nanoid } from 'nanoid';
 
 export * from './cn';
 
-export const uniqueId = (prefix?: string) =>
-  prefix ? prefix + '-' + nanoid(8) : nanoid(16);
+export const uniqueId = (prefix?: string, len?: number) =>
+  prefix ? prefix + '-' + nanoid(len || 8) : nanoid(len || 16);

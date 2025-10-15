@@ -19,7 +19,7 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
   const elementId = elementProps['data-element-id'] as string;
   const eventFlows = material.editorConfig?.eventFlows || [];
 
-  const { mode, setMode, setFlowGraphData } = useEditorContext();
+  const { mode, setMode, setFlowGraphData, setActiveElementEvent } = useEditorContext();
   const { activeElement, setActiveElement, schema, setSchema, insertPosition } = useEditorCore();
   const { beforeRemoveElement, afterRemoveElement } = usePluginStore();
   const MoveElement = useMove({ elementId, elementProps, material });
@@ -59,18 +59,20 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     label: parent.material.title,
   }));
 
-  const openFlowEditor = (eventFlow: EventFlow) => {
+  const openFlowEditor = (eventFlow: EventFlow, e: React.MouseEvent) => {
+    e.stopPropagation();
     const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
       schema!,
       elementId,
       eventFlow.event,
     );
+    setActiveElementEvent({ elementId, event: eventFlow.event });
     setMode('logic');
     setFlowGraphData(
       flowGraphData || {
         nodes: [
           {
-            id: uniqueId('start'),
+            id: 'start_' + uniqueId(undefined, 8),
             type: 'start',
             meta: {
               position: { x: 0, y: 0 },
@@ -78,7 +80,7 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
             data: {},
           },
         ],
-        edges: []
+        edges: [],
       },
     );
   };

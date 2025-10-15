@@ -1,11 +1,18 @@
 import { create } from 'zustand';
 import type { FlowGraphData } from '@tangramino/flow-editor';
 
+type ActiveElementEvent = {
+  elementId: string;
+  event: string;
+};
+
 export const useEditorContext = create<{
   mode: 'view' | 'logic';
   setMode: (mode: 'view' | 'logic') => void;
   flowGraphData: FlowGraphData;
   setFlowGraphData: (flowGraphData: FlowGraphData) => void;
+  activeElementEvent: ActiveElementEvent | null;
+  setActiveElementEvent: (activeElementEvent: ActiveElementEvent) => void;
 }>((set) => ({
   mode: 'view',
   setMode: (mode) => set(() => ({ mode })),
@@ -14,4 +21,7 @@ export const useEditorContext = create<{
     edges: [],
   },
   setFlowGraphData: (flowGraphData) => set(() => ({ flowGraphData })),
+  activeElementEvent: null,
+  setActiveElementEvent: (activeElementEvent: ActiveElementEvent) =>
+    set(() => ({ activeElementEvent })),
 }));

@@ -1,4 +1,4 @@
-import type { Elements, LayoutTree, Schema, InsertElement, Flows, BindElements } from '../';
+import type { Elements, LayoutTree, Schema, InsertElement, Flows, BindElements, Flow } from '../';
 
 /**
  * 往 schema 里插入元素
@@ -362,10 +362,69 @@ const combineSchema = (
   };
 };
 
-const getFlowGraph = <T= unknown>(schema: Schema, elementId: string, event: string) => {
+/**
+ * 获取 extensions 的 flow graph
+ * @param schema
+ * @param elementId
+ * @param event
+ * @returns
+ */
+const getFlowGraph = <T = unknown>(schema: Schema, elementId: string, event: string) => {
   const extensions = schema.extensions;
   const key = `${elementId}::${event}`;
   return (extensions?.['flowGraph'] as Record<string, unknown>)?.[key] as T;
+};
+
+/**
+ * 设置 extensions 的 flow graph
+ * @param schema
+ * @param elementId
+ * @param event
+ * @param flowGraph
+ * @returns
+ */
+const setFlowGraph = <T = unknown>(
+  schema: Schema,
+  elementId: string,
+  event: string,
+  flowGraph: T,
+): Schema => {
+  const extensions = schema.extensions;
+  const key = `${elementId}::${event}`;
+  return {
+    ...schema,
+    extensions: {
+      ...extensions,
+      flowGraph: {
+        ...(extensions?.['flowGraph'] as Record<string, unknown>),
+        [key]: flowGraph,
+      },
+    },
+  };
+};
+
+const setEventFlow = (
+  schema: Schema,
+  elementId: string,
+  event: string,
+  flowId: string,
+  flow: Flow,
+): Schema => {
+  const { bindElements, flows } = schema;
+
+  const key = `${elementId}::${event}`;
+  const _bindElements = {
+    ...bindElements,
+    [key]: flowId,
+  };
+  return {
+    ...schema,
+    bindElements: _bindElements,
+    flows: {
+      ...(flows || {}),
+      [flowId]: flow,
+    },
+  };
 };
 
 export const SchemaUtils = {
@@ -377,4 +436,6 @@ export const SchemaUtils = {
   setElementProps,
   combineSchema,
   getFlowGraph,
+  setFlowGraph,
+  setEventFlow,
 };

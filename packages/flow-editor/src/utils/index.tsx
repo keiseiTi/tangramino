@@ -1,6 +1,6 @@
 import React from 'react';
 import { nanoid } from 'nanoid';
-import type { FlowNode } from '../interface/node';
+import type {  FlowNode } from '../interface/node';
 
 export const uniqueId = (prefix?: string) => (prefix ? prefix + '_' + nanoid(8) : nanoid(16));
 

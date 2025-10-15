@@ -6,6 +6,7 @@ import { RouterProvider } from 'react-router/dom';
 import Editor from './editor';
 import Preview from './preview';
 import '@tangramino/flow-editor/index.css';
+import '@/components/code-editor/use-worker';
 import './main.css';
 
 const router = createBrowserRouter([

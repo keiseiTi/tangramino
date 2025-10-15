@@ -4,21 +4,19 @@ import type { FlowGraphData } from 'src/interface/node';
 
 export const Wrapper = ({
   children,
-  // flowGraphData,
 }: {
   children: React.ReactNode;
-  flowGraphData?: FlowGraphData | undefined;
+  value?: FlowGraphData | undefined;
 }) => {
   // const client = useClientContext();
 
   // useEffect(() => {
-  //   if (flowGraphData) {
-  //     client.document.fromJSON(flowGraphData);
+  //   if (value) {
+  //     client.document.fromJSON(value);
   //     setTimeout(() => {
   //       client.tools.fitView(true);
   //     })
   //   }
-  // }, [client, flowGraphData]);
 
   return children;
 };

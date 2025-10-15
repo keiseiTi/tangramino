@@ -5,17 +5,18 @@ import type { FreeLayoutProps } from '@flowgram.ai/free-layout-editor';
 import type { FlowGraphData, FlowNode } from '../interface/node';
 
 interface UseEditorPropsProps {
-  flowGraphData?: FlowGraphData | undefined;
+  value?: FlowGraphData | undefined;
   nodes?: FlowNode[] | undefined;
+  onChange?: ((value: FlowGraphData) => void) | undefined;
 }
 
 export const useEditorProps = (props: UseEditorPropsProps) => {
-  const { flowGraphData, nodes } = props;
+  const {  value, nodes, onChange } = props;
   return useMemo<FreeLayoutProps>(
     () => ({
       background: true,
       readonly: false,
-      initialData: flowGraphData || { nodes: [], edges: [] },
+      initialData: value || { nodes: [], edges: [] },
       nodeRegistries: generateNodeRegistries(nodes || []),
       fromNodeJSON(node, json) {
         return json;
@@ -37,11 +38,9 @@ export const useEditorProps = (props: UseEditorPropsProps) => {
       materials: {
         renderDefaultNode: BaseNode,
       },
-      onContentChange(ctx, event) {
-        // ctx.setData(data);
-        console.log('Auto Save: ', event, {
-          ...ctx.document.toJSON(),
-        });
+      onContentChange(ctx) {
+        const data = ctx.document.toJSON();
+        onChange?.(data);
       },
       nodeEngine: {
         enable: true,

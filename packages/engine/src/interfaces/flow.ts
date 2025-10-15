@@ -20,10 +20,8 @@ export type FlowNode = {
   next: string[];
 };
 
-type BindElementKey = `${string}::${string}`;
-
 export type BindElements = {
-  [key: BindElementKey]: string
+  [key: string]: string;
 };
 
 export type FlowEventNode = {
