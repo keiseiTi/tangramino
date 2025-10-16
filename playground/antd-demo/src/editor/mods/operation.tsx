@@ -9,7 +9,7 @@ interface OperationProps {
 export const Operation = (props: OperationProps) => {
   const { className } = props;
   const { schema } = useEditorCore();
-  const { mode, setMode } = useEditorContext();
+  const { mode, setMode, setFlowGraphData, setActiveElementEvent } = useEditorContext();
 
   const onSave = () => {
     sessionStorage.setItem('schema', JSON.stringify(schema));
@@ -21,6 +21,11 @@ export const Operation = (props: OperationProps) => {
 
   const onModeChange = (e: RadioChangeEvent) => {
     setMode(e.target.value);
+    setFlowGraphData({
+      nodes: [],
+      edges: [],
+    });
+    setActiveElementEvent(null);
   };
 
   return (
@@ -32,12 +37,7 @@ export const Operation = (props: OperationProps) => {
     >
       <span className='text-lg font-medium'>Tangramino 低代码编辑器</span>
       <div>
-        <Radio.Group
-          optionType='button'
-          buttonStyle='solid'
-          value={mode}
-          onChange={onModeChange}
-        >
+        <Radio.Group optionType='button' buttonStyle='solid' value={mode} onChange={onModeChange}>
           <Radio value={'view'}>视图</Radio>
           <Radio value={'logic'}>逻辑</Radio>
         </Radio.Group>

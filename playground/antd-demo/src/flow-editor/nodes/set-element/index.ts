@@ -8,7 +8,7 @@ interface SetElementNodeProps {
   props: Record<string, unknown>;
 }
 
-export const setElement: FlowNode<SetElementNodeProps> = {
+export const setElement: FlowNode = {
   type: 'setElement',
   title: '设置元素属性',
   nodeMeta: {},

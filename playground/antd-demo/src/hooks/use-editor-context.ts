@@ -12,7 +12,7 @@ export const useEditorContext = create<{
   flowGraphData: FlowGraphData;
   setFlowGraphData: (flowGraphData: FlowGraphData) => void;
   activeElementEvent: ActiveElementEvent | null;
-  setActiveElementEvent: (activeElementEvent: ActiveElementEvent) => void;
+  setActiveElementEvent: (activeElementEvent: ActiveElementEvent | null) => void;
 }>((set) => ({
   mode: 'view',
   setMode: (mode) => set(() => ({ mode })),
@@ -22,6 +22,6 @@ export const useEditorContext = create<{
   },
   setFlowGraphData: (flowGraphData) => set(() => ({ flowGraphData })),
   activeElementEvent: null,
-  setActiveElementEvent: (activeElementEvent: ActiveElementEvent) =>
+  setActiveElementEvent: (activeElementEvent: ActiveElementEvent | null) =>
     set(() => ({ activeElementEvent })),
 }));

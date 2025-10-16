@@ -7,7 +7,7 @@ interface ConditionNodeProps {
   condition: string;
 }
 
-export const condition: FlowNode<ConditionNodeProps> = {
+export const condition: FlowNode = {
   type: 'condition',
   title: '条件判断',
   nodeMeta: {},

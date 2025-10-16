@@ -7,7 +7,7 @@ interface ShowElementNodeProps {
   elementId: string;
 }
 
-export const showElement: FlowNode<ShowElementNodeProps> = {
+export const showElement: FlowNode = {
   type: 'showElement',
   title: '显示元素',
   nodeMeta: {},

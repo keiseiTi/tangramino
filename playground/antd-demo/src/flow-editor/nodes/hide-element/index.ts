@@ -7,7 +7,7 @@ interface HideElementNodeProps {
   elementId: string;
 }
 
-export const hideElement: FlowNode<HideElementNodeProps> = {
+export const hideElement: FlowNode = {
   type: 'hideElement',
   title: '隐藏元素',
   nodeMeta: {},

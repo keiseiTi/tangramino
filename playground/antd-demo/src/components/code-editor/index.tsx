@@ -2,14 +2,15 @@ import React, { useRef, useState, useEffect } from 'react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { cn } from '@/utils/cn';
 
-interface IProps {
+export interface CodeEditorProps {
   value?: string;
   onChange?: (value: string) => void;
   classNames?: string;
+  placeholder?: string;
 }
 
-export const CodeEditor = (props: IProps) => {
-  const { value, onChange, classNames } = props;
+export const CodeEditor = (props: CodeEditorProps) => {
+  const { value, onChange, classNames, placeholder } = props;
   const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor | null>(null);
   const monacoEl = useRef(null);
 
@@ -19,8 +20,9 @@ export const CodeEditor = (props: IProps) => {
         if (editor) return editor;
 
         return monaco.editor.create(monacoEl.current!, {
-          value: value || ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+          value: value,
           language: 'typescript',
+          placeholder: placeholder
         });
       });
     }
@@ -37,5 +39,5 @@ export const CodeEditor = (props: IProps) => {
     }
   }, [editor]);
 
-  return <div className={cn('w-full h-[300px]', classNames)} ref={monacoEl}></div>;
+  return <div className={cn('w-full h-100', classNames)} ref={monacoEl}></div>;
 };

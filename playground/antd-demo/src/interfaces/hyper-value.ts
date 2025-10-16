@@ -1,31 +1,31 @@
 export type StringValue = {
   type: 'string';
-  value: string;
+  value?: string;
 };
 
 export type NumberValue = {
   type: 'number';
-  value: number;
+  value?: number | null;
 };
 
 export type BooleanValue = {
   type: 'boolean';
-  value: boolean;
+  value?: boolean;
 };
 
 export type NullValue = {
   type: 'null';
-  value: null;
+  value?: null;
 };
 
 export type ExpressionValue = {
   type: 'expression';
-  value: string;
+  value?: string;
 };
 
 export type CodeValue = {
   type: 'code';
-  value: string;
+  value?: string;
 };
 
 export type HyperValue =

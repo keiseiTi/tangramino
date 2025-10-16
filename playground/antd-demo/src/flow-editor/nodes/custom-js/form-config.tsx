@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input } from 'antd';
-import { HyperValueEditor } from '@/components/hyper-value-editor';
+import { HyperInput } from '@/components/hyper-input';
 
 export const FormConfig = () => {
   return (
@@ -9,7 +9,7 @@ export const FormConfig = () => {
         <Input />
       </Form.Item>
       <Form.Item name='code' label={<span className='text-xs'>自定义代码</span>}>
-        <HyperValueEditor />
+        <HyperInput showTypes={['code']} />
       </Form.Item>
     </>
   );

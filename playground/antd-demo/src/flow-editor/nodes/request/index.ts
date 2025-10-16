@@ -9,7 +9,7 @@ interface RequestNodeProps {
   headers: Record<string, string>;
 }
 
-export const request: FlowNode<RequestNodeProps> = {
+export const request: FlowNode = {
   type: 'request',
   title: '接口请求',
   nodeMeta: {},

@@ -7,7 +7,7 @@ export interface StartNodeProps {
   title?: string;
 }
 
-export const start: FlowNode<StartNodeProps> = {
+export const start: FlowNode = {
   type: 'start',
   title: '开始',
   nodeMeta: {
