@@ -108,8 +108,8 @@ export const createEngine = (schema?: Schema): Engine => {
         engine.elements,
         engine.layouts,
         engine.extensions,
-        flows,
-        bindElements,
+        flows || {},
+        bindElements || [],
       );
     },
     setContextValue: (field, value) => {

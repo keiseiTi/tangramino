@@ -101,20 +101,18 @@ export const parseFlow = ({
 }): FlowEvent[] => {
   const result: FlowEvent[] = [];
   bindElements?.forEach((bindElement) => {
-    const { id, event, flowIds } = bindElement;
+    const { id, event, flowId } = bindElement;
     const flowEvent: FlowEvent = {
       elementId: id,
       eventName: event,
       eventNodes: [],
     };
     const eventNodes: FlowEventNode[] = [];
-    flowIds?.forEach((flowId) => {
-      const flow = flows[flowId];
-      if (flow) {
-        const node = recursionFlowNodes(flow.startId, flow.nodes);
-        eventNodes.push(node);
-      }
-    });
+    const flow = flows[flowId];
+    if (flow) {
+      const node = recursionFlowNodes(flow.startId, flow.nodes);
+      eventNodes.push(node);
+    }
     flowEvent.eventNodes = eventNodes;
     result.push(flowEvent);
   });

@@ -1,4 +1,4 @@
-import type { Elements, LayoutTree, Schema, InsertElement, Flows, BindElements, Flow } from '../';
+import type { Elements, LayoutTree, Schema, InsertElement, Flows, BindElement, Flow } from '../';
 
 /**
  * 往 schema 里插入元素
@@ -334,7 +334,7 @@ const combineSchema = (
   layout: LayoutTree,
   extensions: Record<string, unknown>,
   flows: Flows,
-  bindElements: BindElements,
+  bindElements: BindElement[],
 ): Schema => {
   const structure: Record<string, string[]> = {};
 
@@ -369,10 +369,9 @@ const combineSchema = (
  * @param event
  * @returns
  */
-const getFlowGraph = <T = unknown>(schema: Schema, elementId: string, event: string) => {
+const getFlowGraph = <T = unknown>(schema: Schema, flowGraphKey: string) => {
   const extensions = schema.extensions;
-  const key = `${elementId}::${event}`;
-  return (extensions?.['flowGraph'] as Record<string, unknown>)?.[key] as T;
+  return (extensions?.['flowGraph'] as Record<string, unknown>)?.[flowGraphKey] as T;
 };
 
 /**
@@ -383,21 +382,15 @@ const getFlowGraph = <T = unknown>(schema: Schema, elementId: string, event: str
  * @param flowGraph
  * @returns
  */
-const setFlowGraph = <T = unknown>(
-  schema: Schema,
-  elementId: string,
-  event: string,
-  flowGraph: T,
-): Schema => {
+const setFlowGraph = <T = unknown>(schema: Schema, flowGraphKey: string, flowGraph: T): Schema => {
   const extensions = schema.extensions;
-  const key = `${elementId}::${event}`;
   return {
     ...schema,
     extensions: {
       ...extensions,
       flowGraph: {
         ...(extensions?.['flowGraph'] as Record<string, unknown>),
-        [key]: flowGraph,
+        [flowGraphKey]: flowGraph,
       },
     },
   };
@@ -412,11 +405,14 @@ const setEventFlow = (
 ): Schema => {
   const { bindElements, flows } = schema;
 
-  const key = `${elementId}::${event}`;
-  const _bindElements = {
-    ...bindElements,
-    [key]: flowId,
-  };
+  const _bindElements = [...(bindElements || [])];
+  if (!_bindElements.some((_) => _.id === elementId)) {
+    _bindElements.push({
+      id: elementId,
+      event,
+      flowId,
+    });
+  }
   return {
     ...schema,
     bindElements: _bindElements,

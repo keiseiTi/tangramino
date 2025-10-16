@@ -1,6 +1,6 @@
 export interface FlowSchema {
   flows?: Flows;
-  bindElements?: BindElements;
+  bindElements?: BindElement[];
 }
 
 export type Flows = {
@@ -20,9 +20,11 @@ export type FlowNode = {
   next: string[];
 };
 
-export type BindElements = {
-  [key: string]: string;
-};
+export type BindElement = {
+  id: string;
+  event: string;
+  flowId: string;
+}
 
 export type FlowEventNode = {
   id: string;

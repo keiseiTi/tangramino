@@ -63,10 +63,9 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     e.stopPropagation();
     const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
       schema!,
-      elementId,
-      eventFlow.event,
+      `${elementId}::${eventFlow.event}`,
     );
-    setActiveElementEvent({ elementId, event: eventFlow.event });
+    setActiveElementEvent({ elementId, eventName: eventFlow.event });
     setMode('logic');
     setFlowGraphData(
       flowGraphData || {

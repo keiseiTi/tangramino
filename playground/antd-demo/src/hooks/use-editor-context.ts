@@ -3,7 +3,7 @@ import type { FlowGraphData } from '@tangramino/flow-editor';
 
 type ActiveElementEvent = {
   elementId: string;
-  event: string;
+  eventName: string;
 };
 
 export const useEditorContext = create<{

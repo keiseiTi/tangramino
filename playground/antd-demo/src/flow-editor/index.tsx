@@ -13,7 +13,6 @@ import { NodePanel } from './mods/node-panel';
 import { AttributePanel } from './mods/attribute-panel';
 import { nodes } from './nodes';
 
-
 export interface FlowEditorProps {
   className?: string;
 }
@@ -26,14 +25,15 @@ export const FlowEditor = (props: FlowEditorProps) => {
 
   const changeFlowGraphData = (data: FlowGraphData) => {
     if (activeElementEvent) {
-      const { elementId, event } = activeElementEvent;
-      const bindElementKey = elementId + '::' + event;
-      const flowId = schema.bindElements?.[bindElementKey] || uniqueId('flow');
-      let nextSchema = SchemaUtils.setFlowGraph(schema, elementId, event, data);
+      const { elementId, eventName } = activeElementEvent;
+      const bindElementKey = elementId + '::' + eventName;
+      const flowId =
+        schema.bindElements?.find((item) => item.id === elementId)?.flowId || uniqueId('flow');
+      let nextSchema = SchemaUtils.setFlowGraph(schema, bindElementKey, data);
       nextSchema = SchemaUtils.setEventFlow(
         nextSchema,
         elementId,
-        event,
+        eventName,
         flowId,
         transformFlowGraph2Flow(data),
       );
