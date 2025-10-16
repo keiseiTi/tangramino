@@ -11,7 +11,6 @@ interface IProps extends ButtonProps {
 
 export const Button = (props: IProps) => {
   const { text, margin, padding, width, height, style, ...restProps } = props;
-
   const customStyle = {
     margin,
     padding,

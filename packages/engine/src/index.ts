@@ -1,6 +1,7 @@
-export * from './create-engine';
-export * from './constant';
-export * from './utils';
+export { createEngine } from './create-engine';
+export { defaultSchema, VIEW_UPDATE, ELEMENT_UPDATE } from './constant';
+export { SchemaUtils, parseFlow } from './utils';
+export { withFlowEngine } from './flow-engine';
 
 export * from './interfaces/custom-types';
 export * from './interfaces/engine';

@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { createEngine, type Schema } from '@tangramino/engine';
+import React, { useEffect, useMemo } from 'react';
+import { createEngine, withFlowEngine, type LogicNodes, type Schema } from '@tangramino/engine';
 import { ReactView, type Plugin } from '@tangramino/react';
 
 export interface RendererProps {
@@ -9,6 +9,7 @@ export interface RendererProps {
   components?: {
     [key: string]: React.ComponentType<any>;
   };
+  logicNodes?: LogicNodes<any>;
 }
 
 /**
@@ -17,11 +18,15 @@ export interface RendererProps {
  * @returns React 组件
  */
 export const Renderer: React.FC<RendererProps> = (props) => {
-  const { schema, className, plugins, components } = props;
+  const { schema, className, plugins, components, logicNodes } = props;
   // 创建引擎实例
   const engine = useMemo(() => {
     return createEngine(schema);
   }, [schema]);
+
+  useEffect(() => {
+    withFlowEngine({ engine, schema, logicNodes });
+  }, [engine, schema, logicNodes]);
 
   return (
     <div className={className}>

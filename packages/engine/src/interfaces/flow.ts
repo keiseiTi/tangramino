@@ -45,6 +45,6 @@ export type FlowExecuteContext<T> = {
 
 export type LogicExecuteFn<T> = (ctx: FlowExecuteContext<T>) => Promise<unknown> | unknown;
 
-export type LoginFlowNodes<T extends Record<string, unknown> = Record<string, unknown>> = {
+export type LogicNodes<T extends Record<string, unknown> = Record<string, unknown>> = {
   [flowType: string]: LogicExecuteFn<T>;
 };
