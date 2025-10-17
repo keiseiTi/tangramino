@@ -21,12 +21,10 @@ export const Renderer: React.FC<RendererProps> = (props) => {
   const { schema, className, plugins, components, logicNodes } = props;
   // 创建引擎实例
   const engine = useMemo(() => {
-    return createEngine(schema);
-  }, [schema]);
-
-  useEffect(() => {
-    withFlowEngine({ engine, schema, logicNodes });
-  }, [engine, schema, logicNodes]);
+    const _ = createEngine(schema);
+    withFlowEngine({ engine: _, schema, logicNodes });
+    return _;
+  }, []);
 
   return (
     <div className={className}>

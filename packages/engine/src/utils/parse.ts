@@ -68,13 +68,13 @@ const recursionLayout = (structure: Layout['structure'], node: string): LayoutTr
   });
 };
 
+// 修复的递归：将子节点挂到当前 newEventNode.children
 const recursionFlowNodes = (
   nodeId: string,
   nodes: {
     [nodeId: string]: FlowNode;
   },
-  eventNode?: FlowEventNode,
-) => {
+): FlowEventNode => {
   const node = nodes[nodeId]!;
   const { id, type, props, next } = node;
   const newEventNode: FlowEventNode = {
@@ -83,11 +83,9 @@ const recursionFlowNodes = (
     props,
     children: [],
   };
-  next.forEach((nextId) => {
-    const node = recursionFlowNodes(nextId, nodes, newEventNode);
-    if (eventNode) {
-      eventNode.children.push(node);
-    }
+  (next || []).forEach((nextId) => {
+    const childNode = recursionFlowNodes(nextId, nodes);
+    newEventNode.children.push(childNode);
   });
   return newEventNode;
 };

@@ -1,11 +1,11 @@
+import type { CodeValue } from '@/interfaces/hyper-value';
 import type { FlowExecuteContext } from '@tangramino/engine';
 interface CustomJSNodeProps {
-  code: string;
+  code: CodeValue;
 }
 
 export const customJSLogic = (props: FlowExecuteContext<CustomJSNodeProps>) => {
   const { data } = props;
   const { code } = data;
-  console.log('keiseiTi :>> ', 'code', code);
-  // return new Function(code)();
+  return new Function(code.value || '')();
 };
