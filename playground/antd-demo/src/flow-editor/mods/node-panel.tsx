@@ -1,5 +1,6 @@
 import React from 'react';
-import { useDragNode, type FlowNode } from '@tangramino/flow-editor';
+import { useClientContext, useDragNode, type FlowNode } from '@tangramino/flow-editor';
+import { message } from 'antd';
 
 interface NodePanelProps {
   nodes: FlowNode[];
@@ -8,6 +9,16 @@ interface NodePanelProps {
 export const NodePanel = (props: NodePanelProps) => {
   const { nodes } = props;
   const dragNode = useDragNode();
+
+  const client = useClientContext();
+
+  const insertNode = (e: React.MouseEvent, node: FlowNode) => {
+    if (!client.document.toJSON().nodes.find((n) => n.type === 'start')) {
+      message.info('画布无开始节点，无法添加其他节点，请先选择元素');
+      return;
+    }
+    dragNode(e, node);
+  };
 
   return (
     <div className='w-48 bg-gray-50 flex flex-col'>
@@ -20,7 +31,7 @@ export const NodePanel = (props: NodePanelProps) => {
               key={node.type}
               className='w-44 p-2 mb-2 bg-stone-100 cursor-pointer'
               onMouseDown={(e) => {
-                dragNode(e, node);
+                insertNode(e, node);
               }}
             >
               {node.title}

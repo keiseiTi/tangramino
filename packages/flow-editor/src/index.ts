@@ -6,6 +6,8 @@ export { useEditorContext } from './context/editor-context';
 
 export { useDragNode } from './hooks/use-darg-node';
 export { useNodeContext } from './hooks/use-node-context';
+export { useClientContext } from './hooks/use-client-context';
+
 
 export type { FlowNode, FlowGraphData } from './interface/node';
 export type { ActiveNode, RenderFormProps } from './interface/context';
