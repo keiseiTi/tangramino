@@ -2,12 +2,27 @@ import React from 'react';
 import { Select } from 'antd';
 import { useEditorCore } from '@tangramino/core';
 
-export const ElementSelect = () => {
-  const editorCore = useEditorCore();
+interface IProps {
+  value?: string[];
+  onChange?: (value?: string[]) => void;
+}
+
+export const ElementSelect = (props: IProps) => {
+  const { engine } = useEditorCore();
+
+  const elements = engine.getElements();
 
   return (
     <>
-      <Select />
+      <Select
+        mode='multiple'
+        value={props.value}
+        onChange={props.onChange}
+        options={elements.map((element) => ({
+          label: element.props.alias || element.id,
+          value: element.id,
+        }))}
+      />
     </>
   );
 };

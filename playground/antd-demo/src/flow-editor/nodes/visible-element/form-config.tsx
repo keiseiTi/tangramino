@@ -9,11 +9,15 @@ export const FormConfig = () => {
       <Form.Item name='alias' label={<span className='text-xs'>节点别名</span>}>
         <Input />
       </Form.Item>
-      <Form.Item name='elementId' label={<span className='text-xs'>选择元素</span>}>
+      <Form.Item name='elementIds' label={<span className='text-xs'>选择元素</span>}>
         <ElementSelect />
       </Form.Item>
-      <Form.Item name='value' label={<span className='text-xs'>值设置</span>}>
-        <HyperInput />
+      <Form.Item
+        name='value'
+        label={<span className='text-xs'>显隐设置</span>}
+        help={<span className='text-xs'>设置元素的可见性，true 为可见，false 为隐藏</span>}
+      >
+        <HyperInput showTypes={['boolean', 'code']} />
       </Form.Item>
     </>
   );

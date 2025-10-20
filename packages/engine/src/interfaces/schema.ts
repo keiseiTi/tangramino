@@ -6,6 +6,12 @@ export type ElementState = {
   hidden?: boolean;
 };
 
+export type Element = {
+  id: string;
+  type: string;
+  props: { [key: string]: unknown };
+}
+
 export type Elements = {
   [key: string]: ElementState;
 };

@@ -24,7 +24,7 @@ export type BindElement = {
   id: string;
   event: string;
   flowId: string;
-}
+};
 
 export type FlowEventNode = {
   id: string;
@@ -41,6 +41,7 @@ export type FlowEvent = {
 
 export type FlowExecuteContext<T> = {
   data: T;
+  engine: Engine;
 };
 
 export type LogicExecuteFn<T> = (ctx: FlowExecuteContext<T>) => Promise<unknown> | unknown;

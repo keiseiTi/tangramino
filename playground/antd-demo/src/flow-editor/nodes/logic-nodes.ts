@@ -1,5 +1,7 @@
-import { customJSLogic } from './custom-js/flow-logic';
+import { customJS } from './custom-js/flow-logic';
+import { visibleElement } from './visible-element/flow-logic';
 
 export const logicNodes = {
-  customJs: customJSLogic,
+  customJs: customJS,
+  visibleElement: visibleElement,
 };

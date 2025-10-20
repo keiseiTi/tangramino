@@ -4,7 +4,7 @@ interface CustomJSNodeProps {
   code: CodeValue;
 }
 
-export const customJSLogic = (props: FlowExecuteContext<CustomJSNodeProps>) => {
+export const customJS = (props: FlowExecuteContext<CustomJSNodeProps>) => {
   const { data } = props;
   const { code } = data;
   return new Function(code.value || '')();

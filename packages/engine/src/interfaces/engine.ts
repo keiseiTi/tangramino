@@ -1,4 +1,4 @@
-import type { Elements, Schema } from './schema';
+import type { Elements, Element, Schema } from './schema';
 import type { ContextValue, ContextValues, LayoutTree, State } from './custom-types';
 import type { Listener, ListenerMap } from './event';
 
@@ -15,7 +15,7 @@ export interface Engine {
   setExtensions: (field: string, value: unknown) => void;
   getExtensions: (field: string) => unknown;
   showElements: (ids: string[]) => void;
-  hideElements: (ids: string[]) => void;
+  hiddenElements: (ids: string[]) => void;
   injectCallback: (id: string, name: string, callback: Listener) => void;
   on: (namespace: string, eventName: string, callback: Listener) => void;
   off: (namespace: string, eventName: string, callback: Listener) => void;
@@ -25,4 +25,5 @@ export interface Engine {
   subscribe: (name: string, callback: Listener) => () => void;
   changeSchema: (schema: Schema) => void;
   getSchema: () => Schema;
+  getElements: () => Element[];
 }

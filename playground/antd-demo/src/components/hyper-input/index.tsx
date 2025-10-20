@@ -41,7 +41,7 @@ export const HyperInput = (props: HyperValueEditorProps) => {
   const [inputType, setInputType] = useState<HyperValue['type']>(value?.type || 'string');
 
   useEffect(() => {
-    setInputType(showTypes?.length === 1 ? showTypes[0] : value?.type || 'string');
+    setInputType(showTypes?.length ? showTypes[0] : value?.type || 'string');
   }, [value?.type, showTypes]);
 
   const onTypeChange = (type: HyperValue['type']) => {
@@ -101,7 +101,13 @@ export const HyperInput = (props: HyperValueEditorProps) => {
       {showTypes?.length !== 1 && (
         <Select
           className='mb-2!'
-          options={hyperValueOptions}
+          options={
+            showTypes?.length
+              ? hyperValueOptions.filter((item) =>
+                  showTypes.includes(item.value as HyperValue['type']),
+                )
+              : hyperValueOptions
+          }
           value={inputType}
           onChange={onTypeChange}
         />

@@ -16,7 +16,10 @@ export const AttributePanel = () => {
   }, [activeNode]);
 
   const onValuesChange = (changedValues: Record<string, unknown>) => {
-    activeNode?.updateData(changedValues);
+    activeNode?.updateData({
+      ...form.getFieldsValue(),
+      ...changedValues,
+    });
   };
 
   return (

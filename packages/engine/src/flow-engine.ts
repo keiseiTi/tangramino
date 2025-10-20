@@ -19,6 +19,7 @@ export const withFlowEngine = ({ engine, schema, logicNodes = {} }: FlowEnginePr
       const { elementId, eventName, eventNodes } = flowEvent;
       engine!.injectCallback(elementId, eventName, (...args: unknown[]) => {
         const executeFlow = generateExecuteFlow({
+          engine,
           eventNodes,
           logicNodes,
           args,
@@ -33,15 +34,17 @@ interface ExecuteFlowProps {
   eventNodes: FlowEventNode[];
   args: unknown[];
   logicNodes?: LogicNodes;
+  engine: Engine;
 }
 
 function* generateExecuteFlow(props: ExecuteFlowProps) {
-  const { eventNodes, logicNodes, args } = props;
+  const { eventNodes, logicNodes, args, engine } = props;
   for (let i = 0; i < eventNodes.length; i++) {
     const eventNode = eventNodes[i]!;
     if (eventNode.children.length > 0) {
       run(
         generateExecuteFlow({
+          engine,
           eventNodes: eventNode.children as FlowEventNode[],
           args: args,
           logicNodes: logicNodes || {},
@@ -49,6 +52,7 @@ function* generateExecuteFlow(props: ExecuteFlowProps) {
       );
     } else {
       yield executeFlowNode({
+        engine,
         eventNode,
         logicFlow:
           logicNodes?.[eventNode.type] || ((() => {}) as LogicExecuteFn<Record<string, unknown>>),
@@ -60,11 +64,13 @@ function* generateExecuteFlow(props: ExecuteFlowProps) {
 interface ExecuteFlowNodeProps {
   eventNode: FlowEventNode;
   logicFlow: LogicExecuteFn<Record<string, unknown>>;
+  engine: Engine;
 }
 
 function executeFlowNode(props: ExecuteFlowNodeProps) {
-  const { eventNode, logicFlow } = props;
+  const { eventNode, logicFlow, engine } = props;
   logicFlow({
+    engine,
     data: eventNode.props,
   });
 }

@@ -7,7 +7,7 @@ import type { Schema, Engine, ListenerMap, State } from './';
 enableMapSet();
 
 export const createEngine = (schema?: Schema): Engine => {
-  const { elements, layout, extensions , flows, bindElements} = parse(schema || defaultSchema);
+  const { elements, layout, extensions, flows, bindElements } = parse(schema || defaultSchema);
   const listenerMap: ListenerMap = {};
 
   const engine: Engine = {
@@ -55,19 +55,25 @@ export const createEngine = (schema?: Schema): Engine => {
       engine.elements = createDraft(engine.elements);
       ids.forEach((id) => {
         if (engine.elements[id]) {
-          engine.elements[id].hidden = true;
-        }
-      });
-      engine.elements = finishDraft(engine.elements);
-    },
-    hideElements: (ids) => {
-      engine.elements = createDraft(engine.elements);
-      ids.forEach((id) => {
-        if (engine.elements[id]) {
           engine.elements[id].hidden = false;
         }
       });
       engine.elements = finishDraft(engine.elements);
+      listenerMap[ELEMENT_UPDATE]?.forEach?.((listener) => {
+        listener();
+      });
+    },
+    hiddenElements: (ids) => {
+      engine.elements = createDraft(engine.elements);
+      ids.forEach((id) => {
+        if (engine.elements[id]) {
+          engine.elements[id].hidden = true;
+        }
+      });
+      engine.elements = finishDraft(engine.elements);
+      listenerMap[ELEMENT_UPDATE]?.forEach?.((listener) => {
+        listener();
+      });
     },
     injectCallback: (id, name, callback) => {
       engine.injectionCallback = createDraft(engine.injectionCallback);
@@ -111,6 +117,13 @@ export const createEngine = (schema?: Schema): Engine => {
         flows || {},
         bindElements || [],
       );
+    },
+    getElements: () => {
+      return Object.entries(engine.elements).map(([id, element]) => ({
+        id,
+        type: element.type,
+        props: element.props,
+      }));
     },
     setContextValue: (field, value) => {
       engine.contextValues[field] = {
