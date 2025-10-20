@@ -9,7 +9,7 @@ interface OperationProps {
 export const Operation = (props: OperationProps) => {
   const { className } = props;
   const { schema } = useEditorCore();
-  const { mode, setMode, setFlowGraphData, setActiveElementEvent } = useEditorContext();
+  const { mode, setMode } = useEditorContext();
 
   const onSave = () => {
     sessionStorage.setItem('schema', JSON.stringify(schema));
@@ -21,11 +21,6 @@ export const Operation = (props: OperationProps) => {
 
   const onModeChange = (e: RadioChangeEvent) => {
     setMode(e.target.value);
-    setFlowGraphData({
-      nodes: [],
-      edges: [],
-    });
-    setActiveElementEvent(null);
   };
 
   return (

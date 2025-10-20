@@ -12,6 +12,7 @@ import { useEditorContext } from '@/hooks/use-editor-context';
 import { NodePanel } from './mods/node-panel';
 import { AttributePanel } from './mods/attribute-panel';
 import { nodes } from './nodes';
+import { Operation } from './mods/operation';
 
 export interface FlowEditorProps {
   className?: string;
@@ -25,15 +26,15 @@ export const FlowEditor = (props: FlowEditorProps) => {
 
   const changeFlowGraphData = (data: FlowGraphData) => {
     if (activeElementEvent) {
-      const { elementId, eventName } = activeElementEvent;
-      const bindElementKey = elementId + '::' + eventName;
+      const { elementId, eventFlow } = activeElementEvent;
+      const bindElementKey = elementId + '::' + eventFlow.event;
       const flowId =
         schema.bindElements?.find((item) => item.id === elementId)?.flowId || uniqueId('flow');
       let nextSchema = SchemaUtils.setFlowGraph(schema, bindElementKey, data);
       nextSchema = SchemaUtils.setEventFlow(
         nextSchema,
         elementId,
-        eventName,
+        eventFlow.event,
         flowId,
         transformFlowGraph2Flow(data),
       );
@@ -48,7 +49,10 @@ export const FlowEditor = (props: FlowEditorProps) => {
       <BaseFlowEditor nodes={nodes} value={flowGraphData} onChange={changeFlowGraphData}>
         <div className='flex h-full'>
           <NodePanel nodes={nodes} />
-          <EditorRenderer className='flex-1 relative' />
+          <div className='flex-1 flex flex-col'>
+            <Operation />
+            <EditorRenderer className='flex-1 relative' />
+          </div>
           <AttributePanel />
         </div>
       </BaseFlowEditor>

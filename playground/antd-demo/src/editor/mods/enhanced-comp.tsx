@@ -65,7 +65,7 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
       schema!,
       `${elementId}::${eventFlow.event}`,
     );
-    setActiveElementEvent({ elementId, eventName: eventFlow.event });
+    setActiveElementEvent({ elementId, eventFlow, material });
     setMode('logic');
     setFlowGraphData(
       flowGraphData || {
