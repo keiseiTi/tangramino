@@ -6,11 +6,9 @@ export type ActiveNode = {
   type: string;
   data: Record<string, unknown>;
   title: string | null;
-  renderForm: (props: RenderFormProps) => React.ReactNode;
+  renderForm: () => React.ReactNode;
   updateData: (data: Record<string, unknown>) => void;
 };
-
-export type RenderFormProps = Omit<ActiveNode, 'renderForm'>;
 
 export interface EditorContextValue {
   nodes: FlowNode[];

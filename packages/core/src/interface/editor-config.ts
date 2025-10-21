@@ -58,6 +58,19 @@ export type EventFlow = {
   }[];
 };
 
+export type ContextValue = {
+  /**
+   * 名称
+   */
+  name: string;
+  /**
+   * 描述
+   */
+  description?: string;
+};
+
+export type Variable = ContextValue;
+
 export interface EditorConfig {
   /**
    * 属性面板配置
@@ -65,6 +78,15 @@ export interface EditorConfig {
   panels?: PanelConfig[];
   /**
    * 事件流配置
+   *
    */
   eventFlows?: EventFlow[];
+  /**
+   * 变量
+   */
+  variables?: Variable[];
+  /**
+   * 变量提供者
+   */
+  variableProviders?: ContextValue[];
 }

@@ -10,7 +10,7 @@ export const FormConfig = () => {
         <Input />
       </Form.Item>
       <Form.Item name='elementIds' label={<span className='text-xs'>选择元素</span>}>
-        <ElementSelect />
+        <ElementSelect mode='multiple' />
       </Form.Item>
       <Form.Item
         name='value'

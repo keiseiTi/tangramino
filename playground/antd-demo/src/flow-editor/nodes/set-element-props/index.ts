@@ -3,13 +3,8 @@ import { NodeRender } from './node-render';
 import { FormConfig } from './form-config';
 import type { FlowNode } from '@tangramino/flow-editor';
 
-interface SetElementNodeProps {
-  elementId: string;
-  props: Record<string, unknown>;
-}
-
-export const setElement: FlowNode = {
-  type: 'setElement',
+export const setElementProps: FlowNode = {
+  type: 'setElementProps',
   title: '设置元素属性',
   nodeMeta: {},
   renderNode: NodeRender,

@@ -10,4 +10,4 @@ export { useClientContext } from './hooks/use-client-context';
 
 
 export type { FlowNode, FlowGraphData } from './interface/node';
-export type { ActiveNode, RenderFormProps } from './interface/context';
+export type { ActiveNode } from './interface/context';

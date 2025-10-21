@@ -11,6 +11,12 @@ const ButtonMaterial: Material = {
     size: 'middle',
   },
   editorConfig: {
+    variables: [
+      {
+        name: 'text',
+        description: '按钮文本',
+      },
+    ],
     eventFlows: [
       {
         event: 'onClick',

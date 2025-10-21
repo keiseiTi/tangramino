@@ -3,23 +3,24 @@ import { Select } from 'antd';
 import { useEditorCore } from '@tangramino/core';
 
 interface IProps {
-  value?: string[];
-  onChange?: (value?: string[]) => void;
+  value?: string[] | string;
+  onChange?: (value?: string[] | string) => void;
+  mode?: 'multiple';
 }
 
 export const ElementSelect = (props: IProps) => {
-  const { engine } = useEditorCore();
+  const { engine, materials } = useEditorCore();
 
   const elements = engine.getElements();
 
   return (
     <>
       <Select
-        mode='multiple'
+        mode={props.mode}
         value={props.value}
         onChange={props.onChange}
         options={elements.map((element) => ({
-          label: element.props.alias || element.id,
+          label: `${materials.find((material) => material.type === element.type)?.title} (${element.id})`,
           value: element.id,
         }))}
       />

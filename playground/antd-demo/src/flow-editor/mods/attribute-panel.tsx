@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useEditorContext } from '@tangramino/flow-editor';
-import { Form } from 'antd';
+import { Form, type FormInstance } from 'antd';
 
 export const AttributePanel = () => {
   const { activeNode } = useEditorContext();
@@ -22,6 +22,9 @@ export const AttributePanel = () => {
     });
   };
 
+  const FormItems =
+    activeNode?.renderForm || ((() => null) as (props: { form: FormInstance }) => React.ReactNode);
+
   return (
     <div className='w-60 bg-gray-50 flex flex-col'>
       <div className='p-2 text-slate-800 border-b border-slate-300 text-sm'>
@@ -30,7 +33,7 @@ export const AttributePanel = () => {
       {activeNode ? (
         <div className='flex-1 p-2'>
           <Form form={form} onValuesChange={onValuesChange}>
-            {activeNode?.renderForm?.(activeNode)}
+            <FormItems form={form} />
           </Form>
         </div>
       ) : (
