@@ -1,3 +1,4 @@
+import { executeHyperValue } from '@/utils/execute';
 import type { BooleanValue, CodeValue } from '@/interfaces/hyper-value';
 import type { FlowExecuteContext } from '@tangramino/engine';
 
@@ -10,7 +11,7 @@ interface VisibleElementNodeProps {
 export const visibleElement = (props: FlowExecuteContext<VisibleElementNodeProps>) => {
   const { engine, data } = props;
   const { value, elementIds } = data;
-  const visible = value.type === 'boolean' ? value.value : new Function(value.value || '')();
+  const visible = executeHyperValue(value);
   if (Array.isArray(elementIds)) {
     if (visible === false) {
       engine.hiddenElements(elementIds);

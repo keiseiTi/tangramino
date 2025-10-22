@@ -25,7 +25,7 @@ export const FormConfig = () => {
       <Form.Item name='alias' label={<span className='text-xs'>节点别名</span>}>
         <Input />
       </Form.Item>
-      <Form.List name='setter' initialValue={[{}]}>
+      <Form.List name='setters' initialValue={[{}]}>
         {(fields, { add, remove }) => (
           <>
             {fields.map((filed, index) => (

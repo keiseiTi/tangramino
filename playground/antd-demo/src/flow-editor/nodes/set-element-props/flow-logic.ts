@@ -1,16 +1,26 @@
+import { executeHyperValue } from '@/utils/execute';
 import type { HyperValue } from '@/interfaces/hyper-value';
 import type { FlowExecuteContext } from '@tangramino/engine';
 
 interface SetElementPropsNodeProps {
-  setter?: {
+  setters?: {
     elementId: string;
     propName?: string;
     value?: HyperValue;
-  };
+  }[];
 }
 
 // 设置元素的可见性，true 为可见，false 为隐藏
 export const setElementProps = (props: FlowExecuteContext<SetElementPropsNodeProps>) => {
   const { engine, data } = props;
-  const { setter} = data;
+  const { setters } = data;
+  setters?.forEach((setter) => {
+    const { elementId, propName, value } = setter;
+    if (elementId && propName)
+      engine.setState({
+        [elementId]: {
+          [propName]: executeHyperValue(value),
+        },
+      });
+  });
 };
