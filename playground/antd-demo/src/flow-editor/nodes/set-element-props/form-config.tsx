@@ -10,14 +10,14 @@ export const FormConfig = () => {
   const [propList, setPropList] = useState<
     {
       name: string;
-      description: string;
+      description?: string;
     }[]
   >([]);
 
   const onSelectedElement = (elementId?: string | string[]) => {
     const element = engine.elements[elementId as string];
     const material = materials.find((material) => material.type === element.type);
-    setPropList(material?.editorConfig?.variables || []);
+    setPropList(material?.contextConfig?.variables || []);
   };
 
   return (

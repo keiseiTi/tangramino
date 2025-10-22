@@ -9,10 +9,10 @@ const InputMaterial: Material = {
     placeholder: '请输入内容',
     size: 'middle',
   },
-  editorConfig: {
-    eventFlows: [
+  contextConfig: {
+    methods: [
       {
-        event: 'onChange',
+        name: 'onChange',
         description: '内容变化时的回调',
         params: [
           {
@@ -21,7 +21,7 @@ const InputMaterial: Material = {
         ],
       },
       {
-        event: 'onPressEnter',
+        name: 'onPressEnter',
         description: '回车的回调',
         params: [
           {
@@ -30,6 +30,8 @@ const InputMaterial: Material = {
         ],
       },
     ],
+  },
+  editorConfig: {
     panels: [
       {
         title: '基础属性',

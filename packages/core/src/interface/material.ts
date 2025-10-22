@@ -1,6 +1,6 @@
 import React from 'react';
 import type { EditorConfig } from './editor-config';
-import type { ContextValue } from './context-value';
+import type { ContextConfig } from './context-config';
 
 export interface Material {
   /**
@@ -36,7 +36,7 @@ export interface Material {
    */
   editorConfig?: EditorConfig;
   /**
-   * 上下文值
+   * 流程上下文配置
    */
-  contextValue?: ContextValue;
+  contextConfig?: ContextConfig;
 }

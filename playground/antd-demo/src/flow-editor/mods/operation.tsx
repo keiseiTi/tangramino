@@ -9,7 +9,7 @@ export const Operation = () => {
     <div className={cn('p-2 text-sm text-slate-800 border-b border-slate-300 bg-gray-50', {
       'hidden': !activeElementEvent,
     })}>
-      {`${activeElementEvent?.material?.title} - ${activeElementEvent?.eventFlow?.description}`}
+      {`${activeElementEvent?.material?.title} - ${activeElementEvent?.method?.description}`}
     </div>
   );
 };

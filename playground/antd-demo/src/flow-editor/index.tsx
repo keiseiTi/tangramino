@@ -26,15 +26,15 @@ export const FlowEditor = (props: FlowEditorProps) => {
 
   const changeFlowGraphData = (data: FlowGraphData) => {
     if (activeElementEvent) {
-      const { elementId, eventFlow } = activeElementEvent;
-      const bindElementKey = elementId + '::' + eventFlow.event;
+      const { elementId, method } = activeElementEvent;
+      const bindElementKey = elementId + '::' + method.name;
       const flowId =
         schema.bindElements?.find((item) => item.id === elementId)?.flowId || uniqueId('flow');
       let nextSchema = SchemaUtils.setFlowGraph(schema, bindElementKey, data);
       nextSchema = SchemaUtils.setEventFlow(
         nextSchema,
         elementId,
-        eventFlow.event,
+        method.name,
         flowId,
         transformFlowGraph2Flow(data),
       );

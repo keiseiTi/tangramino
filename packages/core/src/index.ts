@@ -9,12 +9,7 @@ export { useMove } from './hooks/use-drag-drop';
 
 export { uniqueId } from './utils';
 
-export type {
-  EditorConfig,
-  AttributeConfig,
-  PanelConfig,
-  EventFlow,
-} from './interface/editor-config';
+export type { EditorConfig, AttributeConfig, PanelConfig } from './interface/editor-config';
 export type { Material } from './interface/material';
 export type { Plugin } from './interface/plugin';
-export type { Variable, Method, ContextValue } from './interface/context-value';
+export type { Variable, Method, ContextConfig } from './interface/context-config';

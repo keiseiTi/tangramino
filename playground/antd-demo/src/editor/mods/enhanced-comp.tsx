@@ -5,7 +5,7 @@ import {
   useMove,
   uniqueId,
   type EnhancedComponentProps,
-  type EventFlow,
+  type Method,
 } from '@tangramino/core';
 import { SchemaUtils } from '@tangramino/engine';
 import { Dropdown, Popover, Tooltip } from 'antd';
@@ -17,7 +17,7 @@ import type { FlowGraphData } from '@tangramino/flow-editor';
 export const EnhancedComponent = (props: EnhancedComponentProps) => {
   const { material, elementProps, children } = props;
   const elementId = elementProps['data-element-id'] as string;
-  const eventFlows = material.editorConfig?.eventFlows || [];
+  const methods = material.contextConfig?.methods || [];
 
   const { mode, setMode, setFlowGraphData, setActiveElementEvent } = useEditorContext();
   const { activeElement, setActiveElement, schema, setSchema, insertPosition } = useEditorCore();
@@ -59,13 +59,13 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     label: parent.material.title,
   }));
 
-  const openFlowEditor = (eventFlow: EventFlow, e: React.MouseEvent) => {
+  const openFlowEditor = (method: Method, e: React.MouseEvent) => {
     e.stopPropagation();
     const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
       schema!,
-      `${elementId}::${eventFlow.event}`,
+      `${elementId}::${method.name}`,
     );
-    setActiveElementEvent({ elementId, eventFlow, material });
+    setActiveElementEvent({ elementId, method, material });
     setMode('logic');
     setFlowGraphData(
       flowGraphData || {
@@ -111,19 +111,19 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
                 padding: '8px 8px 4px 8px',
               },
             }}
-            title={eventFlows.map((flow) => (
+            title={methods.map((method) => (
               <div
-                key={flow.event}
+                key={method.name}
                 className={cn('text-xs text-gray-100 cursor-pointer hover:text-blue-400 mb-1')}
-                onClick={openFlowEditor.bind(this, flow)}
+                onClick={openFlowEditor.bind(this, method)}
               >
-                <span>{flow.description}</span>
+                <span>{method.description}</span>
               </div>
             ))}
           >
             <PartitionOutlined
               className={cn('ml-2 pl-2 border-l border-gray-400', {
-                'hidden!': !eventFlows.length,
+                'hidden!': !methods.length,
               })}
             />
           </Tooltip>

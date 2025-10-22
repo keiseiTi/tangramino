@@ -10,16 +10,16 @@ const ButtonMaterial: Material = {
     type: 'default',
     size: 'middle',
   },
-  editorConfig: {
+  contextConfig: {
     variables: [
       {
         name: 'text',
         description: '按钮文本',
       },
     ],
-    eventFlows: [
+    methods: [
       {
-        event: 'onClick',
+        name: 'onClick',
         description: '点击事件',
         params: [
           {
@@ -28,6 +28,8 @@ const ButtonMaterial: Material = {
         ],
       },
     ],
+  },
+  editorConfig: {
     panels: [
       {
         title: '属性',
