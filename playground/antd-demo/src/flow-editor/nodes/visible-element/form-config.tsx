@@ -17,7 +17,7 @@ export const FormConfig = () => {
         label={<span className='text-xs'>显隐设置</span>}
         help={<span className='text-xs'>设置元素的可见性，true 为可见，false 为隐藏</span>}
       >
-        <HyperInput showTypes={['boolean', 'code']} />
+        <HyperInput showTypes={['boolean', 'expression', 'code']} />
       </Form.Item>
     </>
   );

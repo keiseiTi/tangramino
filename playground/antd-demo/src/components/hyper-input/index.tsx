@@ -38,10 +38,14 @@ const hyperValueOptions = [
 
 export const HyperInput = (props: HyperValueEditorProps) => {
   const { value, onChange, showTypes } = props;
-  const [inputType, setInputType] = useState<HyperValue['type']>(value?.type || 'string');
+  const [inputType, setInputType] = useState<HyperValue['type']>();
 
   useEffect(() => {
-    setInputType(showTypes?.length ? showTypes[0] : value?.type || 'string');
+    if (showTypes?.length && !value?.type) {
+      setInputType(showTypes[0]);
+    } else {
+      setInputType(value?.type || 'string');
+    }
   }, [value?.type, showTypes]);
 
   const onTypeChange = (type: HyperValue['type']) => {
@@ -52,7 +56,6 @@ export const HyperInput = (props: HyperValueEditorProps) => {
   const renderInput = () => {
     switch (inputType) {
       case 'string':
-      case 'expression':
         return (
           <Input
             value={value?.value as string}
@@ -83,7 +86,15 @@ export const HyperInput = (props: HyperValueEditorProps) => {
             <Radio value={false}>否</Radio>
           </Radio.Group>
         );
-
+      case 'expression':
+        return (
+          <Input.TextArea
+            value={value?.value as string}
+            onChange={(e) => {
+              onChange?.({ type: inputType, value: e.target.value });
+            }}
+          />
+        );
       case 'code':
         return (
           <FunctionEditor
