@@ -34,8 +34,8 @@ export const EnhancedComp = React.forwardRef<HTMLDivElement, EnhancedCompProps>(
     const schema = engine?.getSchema();
 
     const selectedElement = (e: React.MouseEvent) => {
-      onClick?.(e);
       e.stopPropagation();
+      onClick?.(e);
       if (activeElement?.id !== elementId) {
         const parents = SchemaUtils.getParents(schema!, elementId);
         const parentElements: ActiveElement[] = [];

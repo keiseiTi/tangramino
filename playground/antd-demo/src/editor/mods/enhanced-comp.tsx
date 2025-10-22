@@ -43,6 +43,7 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
 
   const selectedElement = (_: React.MouseEvent) => {
     setPopoverOpen(false);
+    setActiveElementEvent({ elementId, material });
   };
 
   const deleteElement = () => {
@@ -65,8 +66,6 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
       schema!,
       `${elementId}::${method.name}`,
     );
-    setActiveElementEvent({ elementId, method, material });
-    setMode('logic');
     setFlowGraphData(
       flowGraphData || {
         nodes: [
@@ -82,6 +81,8 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
         edges: [],
       },
     );
+    setActiveElementEvent({ elementId, method, material });
+    setMode('logic');
   };
 
   return (

@@ -4,8 +4,8 @@ import type { Material, Method } from '@tangramino/core';
 
 type ActiveElementEvent = {
   elementId: string;
-  method: Method;
   material: Material;
+  method?: Method;
 };
 
 export const useEditorContext = create<{
