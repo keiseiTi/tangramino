@@ -44,6 +44,10 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
   const selectedElement = (_: React.MouseEvent) => {
     setPopoverOpen(false);
     setActiveElementEvent({ elementId, material });
+    setFlowGraphData({
+      nodes: [],
+      edges: [],
+    });
   };
 
   const deleteElement = () => {

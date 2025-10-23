@@ -3,14 +3,15 @@ import { useEditorContext } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
 import { Select } from 'antd';
 import { SchemaUtils } from '@tangramino/engine';
-import { uniqueId, useEditorCore, type Material } from '@tangramino/core';
-import type { FlowGraphData } from '@tangramino/flow-editor';
+import { uniqueId, useEditorCore } from '@tangramino/core';
+import { useClientContext, type FlowGraphData } from '@tangramino/flow-editor';
 
 export const Operation = () => {
   const { activeElementEvent, setFlowGraphData, setActiveElementEvent } = useEditorContext();
   const { schema } = useEditorCore();
   const { elementId, material, method } = activeElementEvent || {};
   const [selectedMethod, setSelectedMethod] = useState<string>();
+  const clientContext = useClientContext();
 
   useEffect(() => {
     setSelectedMethod(method?.description);
@@ -19,30 +20,34 @@ export const Operation = () => {
   const onSelectMethod = (methodName: string) => {
     if (activeElementEvent) {
       setSelectedMethod(methodName);
-      const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
+      // 从 schema 中获取 flowGraphData
+      let flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
         schema!,
         `${elementId}::${methodName}`,
       );
-      setFlowGraphData(
-        flowGraphData || {
-          nodes: [
-            {
-              id: 'start_' + uniqueId(undefined, 8),
-              type: 'start',
-              meta: {
-                position: { x: 0, y: 0 },
-              },
-              data: {},
+      flowGraphData = flowGraphData || {
+        nodes: [
+          {
+            id: 'start_' + uniqueId(undefined, 8),
+            type: 'start',
+            meta: {
+              position: { x: 0, y: 0 },
             },
-          ],
-          edges: [],
-        },
-      );
+            data: {},
+          },
+        ],
+        edges: [],
+      };
+      // 设置 flowGraphData
+      setFlowGraphData(flowGraphData);
+      // 找到对应的 method 并且更新到 activeElementEvent
       const findMethod = material?.contextConfig?.methods?.find((item) => item.name === methodName);
       setActiveElementEvent({
         ...activeElementEvent,
         method: findMethod,
       });
+      // 重新加载 document
+      clientContext.document.reload(flowGraphData);
     }
   };
 
