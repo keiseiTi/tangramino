@@ -25,15 +25,16 @@ export const FunctionEditor = (props: CodeEditorProps) => {
         width={800}
         classNames={{ body: 'h-120' }}
         destroyOnHidden={true}
+        centered={true}
         open={open}
         onOk={onOk}
         onCancel={() => setOpen(false)}
       >
-        <div className='border border-solid border-gray-300 m-2'>
+        <div className='border border-solid border-gray-300'>
           <CodeEditor
             value={code}
             onChange={onCodeChange}
-            classNames='h-112'
+            classNames='h-120'
             placeholder={`输入函数体逻辑 \n\n 例如：console.log("Hello world!");`}
           />
         </div>

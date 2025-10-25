@@ -8,6 +8,7 @@ export const AttributePanel = () => {
 
   useEffect(() => {
     if (activeNode) {
+      form.resetFields();
       form.setFieldsValue({
         alias: activeNode.title,
         ...activeNode.data,
