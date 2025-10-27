@@ -4,6 +4,7 @@ import {
   FlowEditor as BaseFlowEditor,
   EditorRenderer,
   type FlowGraphData,
+  type FlowEditorProps as BaseFlowEditorProps,
 } from '@tangramino/flow-editor';
 import { message } from 'antd';
 import { SchemaUtils } from '@tangramino/engine';
@@ -55,9 +56,25 @@ export const FlowEditor = (props: FlowEditorProps) => {
     }
   };
 
+  const canAddLine: BaseFlowEditorProps['canAddLine'] = (_, fromPort) => {
+    if (fromPort.node.flowNodeType === 'condition') {
+      if (fromPort.availableLines.length >= 2) {
+        return false;
+      }
+    } else if (fromPort.node.flowNodeType === 'action') {
+      return false;
+    }
+    return true;
+  };
+
   return (
     <div className={className}>
-      <BaseFlowEditor nodes={nodes} value={flowGraphData} onChange={changeFlowGraphData}>
+      <BaseFlowEditor
+        nodes={nodes}
+        value={flowGraphData}
+        onChange={changeFlowGraphData}
+        canAddLine={canAddLine}
+      >
         <div className='flex h-full'>
           <NodePanel nodes={nodes} />
           <div className='flex-1 flex flex-col'>

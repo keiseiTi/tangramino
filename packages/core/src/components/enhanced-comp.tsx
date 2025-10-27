@@ -33,7 +33,7 @@ export const EnhancedComp = React.forwardRef<HTMLDivElement, EnhancedCompProps>(
 
     const schema = engine?.getSchema();
 
-    const selectedElement = (e: React.MouseEvent) => {
+    const selectElement = (e: React.MouseEvent) => {
       e.stopPropagation();
       onClick?.(e);
       if (activeElement?.id !== elementId) {
@@ -68,7 +68,7 @@ export const EnhancedComp = React.forwardRef<HTMLDivElement, EnhancedCompProps>(
             <Placeholder
               elementProps={elementProps}
               material={material}
-              onSelected={selectedElement}
+              onSelected={selectElement}
               renderDropPlaceholder={renderDropPlaceholder}
             />
           ),
@@ -91,7 +91,7 @@ export const EnhancedComp = React.forwardRef<HTMLDivElement, EnhancedCompProps>(
       <div
         ref={setRef}
         data-editor-id={elementId}
-        onClick={selectedElement}
+        onClick={selectElement}
         className={className}
         style={
           !material.isContainer

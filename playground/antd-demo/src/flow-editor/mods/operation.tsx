@@ -21,23 +21,10 @@ export const Operation = () => {
     if (activeElementEvent) {
       setSelectedMethod(methodName);
       // 从 schema 中获取 flowGraphData
-      let flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
+      const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
         schema!,
         `${elementId}::${methodName}`,
       );
-      flowGraphData = flowGraphData || {
-        nodes: [
-          {
-            id: 'start_' + uniqueId(undefined, 8),
-            type: 'start',
-            meta: {
-              position: { x: 0, y: 0 },
-            },
-            data: {},
-          },
-        ],
-        edges: [],
-      };
       // 设置 flowGraphData
       setFlowGraphData(flowGraphData);
       // 找到对应的 method 并且更新到 activeElementEvent

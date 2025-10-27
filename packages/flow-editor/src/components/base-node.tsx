@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   useNodeRender,
   WorkflowNodeRenderer,
@@ -8,25 +8,23 @@ import { useEditorContext } from '../context/editor-context';
 
 export const BaseNode = (props: WorkflowNodeProps) => {
   const { node } = props;
-  const { id, type, data, form, updateData } = useNodeRender();
+  const { id, type, data, form, updateData, selected } = useNodeRender();
   const { setActiveNode } = useEditorContext();
 
   const nodeRegistry = node.getNodeRegistry();
 
-  const onSelectedNode = () => {
-    setActiveNode({
-      id,
-      data,
-      type: type as string,
-      title: nodeRegistry.title,
-      renderForm: nodeRegistry.renderForm,
-      updateData,
-    });
-  };
+  useEffect(() => {
+    if (selected) {
+      setActiveNode({
+        id,
+        data,
+        type: type as string,
+        title: nodeRegistry.title,
+        renderForm: nodeRegistry.renderForm,
+        updateData,
+      });
+    }
+  }, [selected]);
 
-  return (
-    <WorkflowNodeRenderer node={node}>
-      <div onClick={onSelectedNode}>{form?.render()}</div>
-    </WorkflowNodeRenderer>
-  );
+  return <WorkflowNodeRenderer node={node}>{form?.render()}</WorkflowNodeRenderer>;
 };

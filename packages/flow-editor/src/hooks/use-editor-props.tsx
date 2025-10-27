@@ -4,18 +4,34 @@ import { BaseNode } from '../components/base-node';
 import type { FreeLayoutProps } from '@flowgram.ai/free-layout-editor';
 import type { FlowGraphData, FlowNode } from '../interface/node';
 
-interface UseEditorPropsProps {
+export interface UseEditorPropsProps {
+  readonly?: boolean;
   value?: FlowGraphData | undefined;
   nodes?: FlowNode[] | undefined;
   onChange?: ((value: FlowGraphData) => void) | undefined;
+  canAddLine?: FreeLayoutProps['canAddLine'];
+  canDeleteNode?: FreeLayoutProps['canDeleteNode'];
+  canDeleteLine?: FreeLayoutProps['canDeleteLine'];
+  canResetLine?: FreeLayoutProps['canResetLine'];
+  canDropToNode?: FreeLayoutProps['canDropToNode'];
 }
 
 export const useEditorProps = (props: UseEditorPropsProps) => {
-  const {  value, nodes, onChange } = props;
+  const {
+    value,
+    nodes,
+    readonly,
+    onChange,
+    canAddLine,
+    canDeleteNode,
+    canDeleteLine,
+    canResetLine,
+    canDropToNode,
+  } = props;
   return useMemo<FreeLayoutProps>(
     () => ({
       background: true,
-      readonly: false,
+      readonly: readonly ?? false,
       initialData: value || { nodes: [], edges: [] },
       nodeRegistries: generateNodeRegistries(nodes || []),
       fromNodeJSON(node, json) {
@@ -49,6 +65,26 @@ export const useEditorProps = (props: UseEditorPropsProps) => {
         enable: true,
         enableChangeNode: true,
       },
+      canAddLine(...args) {
+        const [, fromPort, toPort] = args;
+        if (fromPort.node === toPort.node) {
+          return false;
+        }
+        return canAddLine?.(...args) ?? true;
+      },
+      canDeleteNode(...args) {
+        return canDeleteNode?.(...args) ?? true;
+      },
+      canDeleteLine(...args) {
+        return canDeleteLine?.(...args) ?? true;
+      },
+      canResetLine(...args) {
+        return canResetLine?.(...args) ?? true;
+      },
+      canDropToNode(...args) {
+        return canDropToNode?.(...args) ?? true;
+      },
+
       onInit: () => {},
       onAllLayersRendered(ctx) {
         ctx.tools.fitView(false);

@@ -1,24 +1,21 @@
 import React from 'react';
 import { FreeLayoutEditorProvider } from '@flowgram.ai/free-layout-editor';
 import { Wrapper } from './components/wrapper';
-import { useEditorProps } from './hooks/use-editor-props';
+import { useEditorProps, type UseEditorPropsProps } from './hooks/use-editor-props';
 import { EditorContextProvider } from './context/editor-context';
-import type { FlowGraphData, FlowNode } from './interface/node';
 import '@flowgram.ai/free-layout-editor/index.css';
 
-export interface FlowEditorProps {
+export interface FlowEditorProps extends UseEditorPropsProps {
   children?: React.ReactNode;
-  nodes?: FlowNode[];
-  value?: FlowGraphData;
-  onChange?: (flowGraphData: FlowGraphData) => void;
 }
 
 export const FlowEditor = (props: FlowEditorProps) => {
-  const { children, nodes, value, onChange } = props;
+  const { children, nodes, value, onChange, ...rest } = props;
   const editorProps = useEditorProps({
     nodes,
     value,
     onChange,
+    ...rest,
   });
 
   return (

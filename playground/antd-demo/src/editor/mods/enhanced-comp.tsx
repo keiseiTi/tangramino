@@ -41,13 +41,12 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     }
   }, [mode]);
 
-  const selectedElement = (_: React.MouseEvent) => {
+  const selectElement = (_: React.MouseEvent) => {
     setPopoverOpen(false);
-    setActiveElementEvent({ elementId, material });
-    setFlowGraphData({
-      nodes: [],
-      edges: [],
-    });
+    const firstMethod = material.contextConfig?.methods?.[0];
+    if (firstMethod) {
+      updateFlowGraphData(firstMethod);
+    }
   };
 
   const deleteElement = () => {
@@ -59,35 +58,25 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     setActiveElement(null);
   };
 
-  const parentMenus = activeElement?.parents?.map((parent) => ({
-    key: parent.id,
-    label: parent.material.title,
-  }));
-
   const openFlowEditor = (method: Method, e: React.MouseEvent) => {
     e.stopPropagation();
+    updateFlowGraphData(method);
+    setMode('logic');
+  };
+
+  const updateFlowGraphData = (method: Method) => {
     const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
       schema!,
       `${elementId}::${method.name}`,
     );
-    setFlowGraphData(
-      flowGraphData || {
-        nodes: [
-          {
-            id: 'start_' + uniqueId(undefined, 8),
-            type: 'start',
-            meta: {
-              position: { x: 0, y: 0 },
-            },
-            data: {},
-          },
-        ],
-        edges: [],
-      },
-    );
+    setFlowGraphData(flowGraphData);
     setActiveElementEvent({ elementId, method, material });
-    setMode('logic');
   };
+
+  const parentMenus = activeElement?.parents?.map((parent) => ({
+    key: parent.id,
+    label: parent.material.title,
+  }));
 
   return (
     <Popover
@@ -152,7 +141,7 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     >
       {React.cloneElement(children, {
         onClick: (e: React.MouseEvent) => {
-          selectedElement(e);
+          selectElement(e);
         },
         className: cn({
           'border-2 border-blue-600': activeElement?.id === elementId,
