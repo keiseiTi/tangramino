@@ -3,8 +3,9 @@ import { Renderer } from '@/renderer';
 import materialComponents from '@/materials';
 import { logicNodes } from '@/flow-editor/nodes/logic-nodes';
 
+const schema = JSON.parse(sessionStorage.getItem('schema') || '{}');
+
 const Preview = () => {
-  const schema = JSON.parse(sessionStorage.getItem('schema') || '{}');
   return (
     <Renderer
       schema={schema}

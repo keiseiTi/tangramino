@@ -1,6 +1,7 @@
 import type { HyperValue } from '@/interfaces/hyper-value';
+import type { FlowExecuteContext } from '@tangramino/engine';
 
-export const executeHyperValue = (hyperValue?: HyperValue) => {
+export const executeHyperValue = <T>(ctx: FlowExecuteContext<T>, hyperValue?: HyperValue) => {
   if (hyperValue) {
     switch (hyperValue.type) {
       case 'string':
