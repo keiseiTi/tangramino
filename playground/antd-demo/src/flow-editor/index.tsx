@@ -14,6 +14,8 @@ import { NodePanel } from './mods/node-panel';
 import { AttributePanel } from './mods/attribute-panel';
 import { nodes } from './nodes';
 import { Operation } from './mods/operation';
+import { createFreeLinesPlugin } from '@flowgram.ai/free-lines-plugin';
+import { CustomLineLabel } from './mods/custom-line-label';
 
 export interface FlowEditorProps {
   className?: string;
@@ -74,6 +76,11 @@ export const FlowEditor = (props: FlowEditorProps) => {
         value={flowGraphData}
         onChange={changeFlowGraphData}
         canAddLine={canAddLine}
+        plugins={[
+          createFreeLinesPlugin({
+            renderInsideLine: CustomLineLabel,
+          }),
+        ]}
       >
         <div className='flex h-full'>
           <NodePanel nodes={nodes} />

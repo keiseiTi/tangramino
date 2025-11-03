@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { generateNodeRegistries } from '../utils';
 import { BaseNode } from '../components/base-node';
-import type { FreeLayoutProps } from '@flowgram.ai/free-layout-editor';
+import type { FreeLayoutProps, Plugin } from '@flowgram.ai/free-layout-editor';
 import type { FlowGraphData, FlowNode } from '../interface/node';
 
 export interface UseEditorPropsProps {
@@ -14,6 +14,7 @@ export interface UseEditorPropsProps {
   canDeleteLine?: FreeLayoutProps['canDeleteLine'];
   canResetLine?: FreeLayoutProps['canResetLine'];
   canDropToNode?: FreeLayoutProps['canDropToNode'];
+  plugins?: Plugin[];
 }
 
 export const useEditorProps = (props: UseEditorPropsProps) => {
@@ -27,6 +28,7 @@ export const useEditorProps = (props: UseEditorPropsProps) => {
     canDeleteLine,
     canResetLine,
     canDropToNode,
+    plugins,
   } = props;
   return useMemo<FreeLayoutProps>(
     () => ({
@@ -90,7 +92,7 @@ export const useEditorProps = (props: UseEditorPropsProps) => {
         ctx.tools.fitView(false);
       },
       onDispose() {},
-      plugins: () => [],
+      plugins: () => plugins || [],
     }),
     [],
   );

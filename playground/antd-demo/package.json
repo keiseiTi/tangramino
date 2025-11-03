@@ -15,6 +15,7 @@
     "@tangramino/engine": "workspace:^",
     "@tangramino/flow-editor": "workspace:^",
     "@tangramino/react": "workspace:^",
+    "@flowgram.ai/free-lines-plugin": "^1.0.2",
     "@types/qs": "^6.14.0",
     "antd": "^5.27.3",
     "monaco-editor": "0.54.0",

@@ -20,7 +20,7 @@ export default defineConfig({
   ],
   plugins: [
     postcss({
-      extract: 'index.css'
+      extract: 'index.css',
     }),
     typescript({
       tsconfig: './tsconfig.json',
@@ -44,5 +44,6 @@ export default defineConfig({
     'nanoid',
     '@tangramino/engine',
     '@flowgram.ai/free-layout-editor',
+    '@flowgram.ai/free-lines-plugin',
   ],
 });
