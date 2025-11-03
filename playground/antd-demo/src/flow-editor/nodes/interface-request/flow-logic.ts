@@ -11,13 +11,13 @@ interface InterfaceRequestProps {
   bodyParams?: HyperValue;
 }
 
-export const interfaceRequest = async (props: FlowExecuteContext<InterfaceRequestProps>) => {
-  const { data } = props;
+export const interfaceRequest = async (ctx: FlowExecuteContext<InterfaceRequestProps>) => {
+  const { data } = ctx;
   const { url, method, headers, queryParams, bodyParams } = data;
-  const urlValue = executeHyperValue(url);
-  const headersValue = executeHyperValue(headers);
-  const queryParamsValue = executeHyperValue(queryParams);
-  const bodyParamsValue = executeHyperValue(bodyParams);
+  const urlValue = executeHyperValue(ctx, url);
+  const headersValue = executeHyperValue(ctx, headers);
+  const queryParamsValue = executeHyperValue(ctx, queryParams);
+  const bodyParamsValue = executeHyperValue(ctx, bodyParams);
   if (urlValue && method) {
     const res = await request({
       url: urlValue,

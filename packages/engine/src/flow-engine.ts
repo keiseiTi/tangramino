@@ -18,65 +18,69 @@ export const withFlowEngine = ({ engine, schema, logicNodes = {} }: FlowEnginePr
     flowEvents.forEach((flowEvent) => {
       const { elementId, eventName, eventNodes } = flowEvent;
       engine!.injectCallback(elementId, eventName, (...args: unknown[]) => {
-        const executeFlow = generateExecuteFlow({
+        // let returnValueMap: Record<string, unknown> = {};
+        const generator = generateExecuteFlow({
           engine,
           eventNodes,
           logicNodes,
           args,
+          // returnValueMap,
         });
-        run(executeFlow);
+        run(generator);
       });
     });
   }
 };
 
-interface ExecuteFlowProps {
+interface ExecuteFlowOptions {
   eventNodes: FlowEventNode[];
   args: unknown[];
   logicNodes?: LogicNodes;
   engine: Engine;
+  // returnValueMap: Record<string, unknown>;
 }
 
-function* generateExecuteFlow(props: ExecuteFlowProps) {
-  const { eventNodes, logicNodes, args, engine } = props;
+function* generateExecuteFlow(options: ExecuteFlowOptions): Generator<unknown, void, unknown> {
+  const { eventNodes, logicNodes, args, engine } = options;
   for (let i = 0; i < eventNodes.length; i++) {
     const eventNode = eventNodes[i]!;
+    const logicFlow =
+      logicNodes?.[eventNode.type] || ((() => {}) as LogicExecuteFn<Record<string, unknown>>);
+    yield executeFlowNode({
+      engine,
+      eventNode,
+      logicFlow,
+      // returnValueMap,
+    });
     if (eventNode.children.length > 0) {
-      run(
-        generateExecuteFlow({
-          engine,
-          eventNodes: eventNode.children as FlowEventNode[],
-          args: args,
-          logicNodes: logicNodes || {},
-        }),
-      );
-    } else {
-      yield executeFlowNode({
+      yield* generateExecuteFlow({
         engine,
-        eventNode,
-        logicFlow:
-          logicNodes?.[eventNode.type] || ((() => {}) as LogicExecuteFn<Record<string, unknown>>),
+        eventNodes: eventNode.children as FlowEventNode[],
+        args: args,
+        logicNodes: logicNodes || {},
       });
     }
   }
 }
 
-interface ExecuteFlowNodeProps {
+interface ExecuteFlowNodeOptions {
   eventNode: FlowEventNode;
   logicFlow: LogicExecuteFn<Record<string, unknown>>;
   engine: Engine;
 }
 
-function executeFlowNode(props: ExecuteFlowNodeProps) {
-  const { eventNode, logicFlow, engine } = props;
-  logicFlow({
+function executeFlowNode(options: ExecuteFlowNodeOptions) {
+  const { eventNode, logicFlow, engine } = options;
+  const ctx = {
     engine,
     data: eventNode.props,
-  });
+  };
+  logicFlow(ctx);
 }
 
 const run = (executeFlow: Generator<unknown, void, unknown>) => {
   const next = executeFlow.next();
+  console.log(next);
   if (!next.done) {
     run(executeFlow);
   }

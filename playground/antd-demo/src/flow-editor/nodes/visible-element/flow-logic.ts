@@ -8,10 +8,10 @@ interface VisibleElementNodeProps {
 }
 
 // 设置元素的可见性，true 为可见，false 为隐藏
-export const visibleElement = (props: FlowExecuteContext<VisibleElementNodeProps>) => {
-  const { engine, data } = props;
+export const visibleElement = (ctx: FlowExecuteContext<VisibleElementNodeProps>) => {
+  const { engine, data } = ctx;
   const { value, elementIds } = data;
-  const visible = executeHyperValue(value);
+  const visible = executeHyperValue(ctx, value);
   if (Array.isArray(elementIds)) {
     if (visible === false) {
       engine.hiddenElements(elementIds);
