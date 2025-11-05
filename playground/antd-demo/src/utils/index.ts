@@ -27,15 +27,25 @@ export const transformFlowGraph2Flow = (flowGraphData: FlowGraphData): Flow => {
   edges.forEach((edge) => {
     const sourceNodeId = edge.sourceNodeID;
     const targetNodeId = edge.targetNodeID;
+    const sourceNode = flowNodes[sourceNodeId];
+    const targetNode = flowNodes[targetNodeId];
 
     // 为源节点添加 next 关系
-    if (flowNodes[sourceNodeId]) {
-      flowNodes[sourceNodeId].next.push(targetNodeId);
+    if (sourceNode) {
+      if (sourceNode.type === 'condition') {
+        if (edge.data?.value === true) {
+          sourceNode.props.trueNode = targetNodeId;
+        }
+        if (edge.data?.value === false) {
+          sourceNode.props.falseNode = targetNodeId;
+        }
+      }
+      sourceNode.next.push(targetNodeId);
     }
 
     // 为目标节点添加 prev 关系
-    if (flowNodes[targetNodeId]) {
-      flowNodes[targetNodeId].prev.push(sourceNodeId);
+    if (targetNode) {
+      targetNode.prev.push(sourceNodeId);
     }
   });
 

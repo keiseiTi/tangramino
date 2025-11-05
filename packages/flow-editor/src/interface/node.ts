@@ -1,6 +1,6 @@
 import React from 'react';
 import type {
-  FlowNodeMeta,
+  WorkflowNodeMeta,
   WorkflowEdgeJSON,
   WorkflowNodeJSON,
 } from '@flowgram.ai/free-layout-editor';
@@ -17,7 +17,7 @@ export interface FlowNode {
   /**
    * 节点元数据
    */
-  nodeMeta?: FlowNodeMeta;
+  nodeMeta?: Partial<WorkflowNodeMeta>;
   /**
    * 节点渲染
    */
@@ -30,6 +30,7 @@ export interface FlowNode {
    * 流程逻辑
    */
   flowLogic?: <T>(ctx: T) => Promise<unknown> | unknown;
+
   /**
    * 节点默认属性
    */
