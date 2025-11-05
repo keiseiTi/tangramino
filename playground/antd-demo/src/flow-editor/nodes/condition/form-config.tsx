@@ -9,7 +9,7 @@ export const FormConfig = () => {
         <Input />
       </Form.Item>
       <Form.Item
-        name='condition'
+        name='judgment'
         label={<span className='text-xs'>条件判断</span>}
         help={
           <div>

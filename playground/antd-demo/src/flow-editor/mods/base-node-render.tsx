@@ -15,9 +15,6 @@ export const BaseNodeRender = (props: BaseNodeRenderProps) => {
       className={cn(
         'w-20 p-2 bg-blue-500 text-white flex justify-center items-center rounded-4',
         props.className,
-        {
-          'bg-red-700': selected,
-        },
       )}
     >
       {data?.alias || props.title}

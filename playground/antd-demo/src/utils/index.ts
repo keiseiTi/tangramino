@@ -3,6 +3,11 @@ import type { FlowGraphData } from '@tangramino/flow-editor';
 
 export * from './cn';
 
+type Condition = {
+  value: boolean;
+  nextNode: string;
+};
+
 export const transformFlowGraph2Flow = (flowGraphData: FlowGraphData): Flow => {
   const { nodes, edges } = flowGraphData;
 
@@ -33,11 +38,12 @@ export const transformFlowGraph2Flow = (flowGraphData: FlowGraphData): Flow => {
     // 为源节点添加 next 关系
     if (sourceNode) {
       if (sourceNode.type === 'condition') {
-        if (edge.data?.value === true) {
-          sourceNode.props.trueNode = targetNodeId;
-        }
-        if (edge.data?.value === false) {
-          sourceNode.props.falseNode = targetNodeId;
+        sourceNode.props.condition = sourceNode.props.condition || [];
+        if (typeof edge.data?.value === 'boolean') {
+          (sourceNode.props.condition as Condition[]).push({
+            value: edge.data?.value,
+            nextNode: targetNodeId,
+          });
         }
       }
       sourceNode.next.push(targetNodeId);
