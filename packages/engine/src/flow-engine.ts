@@ -1,5 +1,6 @@
 import { parseFlow } from './';
 import type { Engine, Schema, LogicNodes, FlowEventNode, LogicExecuteFn } from './';
+import { isPromise } from './utils';
 
 interface FlowEngineProps {
   engine: Engine;
@@ -18,13 +19,13 @@ export const withFlowEngine = ({ engine, schema, logicNodes = {} }: FlowEnginePr
     flowEvents.forEach((flowEvent) => {
       const { elementId, eventName, eventNodes } = flowEvent;
       engine!.injectCallback(elementId, eventName, (...args: unknown[]) => {
-        // let returnValueMap: Record<string, unknown> = {};
+        const returnValMap: Record<string, unknown> = {};
         const generator = generateExecuteFlow({
           engine,
           eventNodes,
           logicNodes,
           args,
-          // returnValueMap,
+          returnValMap,
         });
         run(generator);
       });
@@ -37,27 +38,29 @@ interface ExecuteFlowOptions {
   args: unknown[];
   logicNodes?: LogicNodes;
   engine: Engine;
-  // returnValueMap: Record<string, unknown>;
+  returnValMap: Record<string, unknown>;
 }
 
 function* generateExecuteFlow(options: ExecuteFlowOptions): Generator<unknown, void, unknown> {
-  const { eventNodes, logicNodes, args, engine } = options;
+  const { eventNodes, logicNodes, args, engine, returnValMap } = options;
   for (let i = 0; i < eventNodes.length; i++) {
     const eventNode = eventNodes[i]!;
     const logicFlow =
       logicNodes?.[eventNode.type] || ((() => {}) as LogicExecuteFn<Record<string, unknown>>);
-    yield executeFlowNode({
+    const data = yield executeFlowNode({
       engine,
       eventNode,
       logicFlow,
-      // returnValueMap,
+      returnValMap,
     });
+    returnValMap[eventNode.id] = data;
     if (eventNode.children.length > 0) {
       yield* generateExecuteFlow({
         engine,
         eventNodes: eventNode.children as FlowEventNode[],
         args: args,
         logicNodes: logicNodes || {},
+        returnValMap,
       });
     }
   }
@@ -67,21 +70,27 @@ interface ExecuteFlowNodeOptions {
   eventNode: FlowEventNode;
   logicFlow: LogicExecuteFn<Record<string, unknown>>;
   engine: Engine;
+  returnValMap: Record<string, unknown>;
 }
 
 function executeFlowNode(options: ExecuteFlowNodeOptions) {
-  const { eventNode, logicFlow, engine } = options;
+  const { eventNode, logicFlow, engine, returnValMap } = options;
   const ctx = {
     engine,
     data: eventNode.props,
+    lastReturnedVal: returnValMap,
   };
-  logicFlow(ctx);
+  const returnVal = logicFlow(ctx);
+  return returnVal;
 }
 
-const run = (executeFlow: Generator<unknown, void, unknown>) => {
-  const next = executeFlow.next();
-  console.log(next);
+const run = (executeFlow: Generator<unknown, void, unknown>, lastValue?: unknown) => {
+  const next = executeFlow.next(lastValue);
   if (!next.done) {
-    run(executeFlow);
+    if (isPromise(next.value)) {
+      (next.value as Promise<unknown>).then((res) => run(executeFlow, res));
+    } else {
+      run(executeFlow, next.value);
+    }
   }
 };

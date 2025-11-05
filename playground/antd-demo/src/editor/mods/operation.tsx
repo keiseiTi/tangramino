@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEditorCore } from '@tangramino/core';
-import { Button, Radio, type RadioChangeEvent } from 'antd';
+import { Button, message, Radio, type RadioChangeEvent } from 'antd';
 import { cn } from '@/utils';
 import { useEditorContext } from '@/hooks/use-editor-context';
 interface OperationProps {
@@ -13,6 +13,7 @@ export const Operation = (props: OperationProps) => {
 
   const onSave = () => {
     sessionStorage.setItem('schema', JSON.stringify(schema));
+    message.success('保存成功');
   };
 
   const onPreview = () => {
