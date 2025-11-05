@@ -10,6 +10,7 @@ export const executeHyperValue = <T>(ctx: FlowExecuteContext<T>, hyperValue?: Hy
       case 'null':
         return hyperValue.value;
       case 'expression':
+        return new Function('return ' + hyperValue.value || '')();
       case 'code':
         return new Function(hyperValue.value || '')();
     }

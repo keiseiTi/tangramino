@@ -68,7 +68,6 @@ const recursionLayout = (structure: Layout['structure'], node: string): LayoutTr
   });
 };
 
-// 修复的递归：将子节点挂到当前 newEventNode.children
 const recursionFlowNodes = (
   nodeId: string,
   nodes: {

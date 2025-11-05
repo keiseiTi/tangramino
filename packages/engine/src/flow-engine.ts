@@ -18,7 +18,7 @@ export const withFlowEngine = ({ engine, schema, logicNodes = {} }: FlowEnginePr
 
     flowEvents.forEach((flowEvent) => {
       const { elementId, eventName, eventNodes } = flowEvent;
-      engine!.injectCallback(elementId, eventName, (...args: unknown[]) => {
+      engine.injectCallback(elementId, eventName, (...args: unknown[]) => {
         const returnValMap: Record<string, unknown> = {};
         const generator = generateExecuteFlow({
           engine,
@@ -45,16 +45,29 @@ function* generateExecuteFlow(options: ExecuteFlowOptions): Generator<unknown, v
   const { eventNodes, logicNodes, args, engine, returnValMap } = options;
   for (let i = 0; i < eventNodes.length; i++) {
     const eventNode = eventNodes[i]!;
+    const eventNodeChildren = eventNode.children || [];
     const logicFlow =
       logicNodes?.[eventNode.type] || ((() => {}) as LogicExecuteFn<Record<string, unknown>>);
-    const data = yield executeFlowNode({
+    const returnVal = yield executeFlowNode({
       engine,
       eventNode,
       logicFlow,
       returnValMap,
     });
-    returnValMap[eventNode.id] = data;
-    if (eventNode.children.length > 0) {
+    returnValMap[eventNode.id] = returnVal;
+    if (eventNode.type === 'condition') {
+      const conditionItem = (
+        eventNode.props?.['condition'] as { value: boolean; nextNode: string }[]
+      )?.find?.((item) => item.value === returnVal);
+      const nextNode = eventNodeChildren.find((item) => item.id === conditionItem?.nextNode);
+      yield* generateExecuteFlow({
+        engine,
+        eventNodes: nextNode ? [nextNode] : [],
+        args: args,
+        logicNodes: logicNodes || {},
+        returnValMap,
+      });
+    } else {
       yield* generateExecuteFlow({
         engine,
         eventNodes: eventNode.children as FlowEventNode[],
