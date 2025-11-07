@@ -10,7 +10,8 @@
     "watch": "pnpm --parallel -F @tangramino/* watch",
     "lint": "eslint packages/* --ext .js,.jsx,.ts,.tsx",
     "prepare": "husky",
-    "site": "pnpm -F site dev"
+    "site": "pnpm -F site dev",
+    "site:build": "pnpm -F site build"
   },
   "keywords": [
     "low-code",
