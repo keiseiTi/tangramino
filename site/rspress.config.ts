@@ -6,10 +6,10 @@ export default defineConfig({
   base: '/tangramino',
   title: 'Tangramino',
   description: '可视化低代码搭建',
-  icon: '/tangramino/icon.svg',
+  icon: '/icon.svg',
   logo: {
-    light: '/tangramino/logo.png',
-    dark: '/tangramino/logo.png',
+    light: '/logo.png',
+    dark: '/logo.png',
   },
   themeConfig: {
     socialLinks: [
