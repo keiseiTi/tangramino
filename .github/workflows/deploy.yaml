@@ -22,22 +22,26 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+          # 👇 关键：安装 pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
-          run_install: false
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
       - name: Build with Tangramino Site
         run: pnpm site:build
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
