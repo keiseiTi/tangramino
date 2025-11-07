@@ -3,11 +3,13 @@ import { defineConfig } from 'rspress/config';
 
 export default defineConfig({
   root: path.join(__dirname, 'docs'),
+  base: '/tangramino',
   title: 'Tangramino',
-  icon: '/tangramino.svg',
+  description: '可视化低代码搭建',
+  icon: '/tangramino/icon.svg',
   logo: {
-    light: '/tangramino.png',
-    dark: '/tangramino.png',
+    light: '/tangramino/logo.png',
+    dark: '/tangramino/logo.png',
   },
   themeConfig: {
     socialLinks: [
