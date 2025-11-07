@@ -1,0 +1,9 @@
+[
+  {
+    "type": "dir",
+    "label": "开始",
+    "name": "start",
+    "collapsible": true,
+    "collapsed": false
+  }
+]
