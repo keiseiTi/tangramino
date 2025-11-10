@@ -3,6 +3,14 @@ name: Deploy Tangramino Site to GITHUB Pages
 on:
   push:
     branches: [main]
+    paths:
+      - 'site'
+      - '.github/workflows/deploy.yaml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'site'
+      - '.github/workflows/deploy.yaml'
   workflow_dispatch:
 
 permissions:
