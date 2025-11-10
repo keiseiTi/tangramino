@@ -16,4 +16,9 @@ export interface Plugin {
     ) => void;
     afterSetElementProps?: (nextSchema: Schema) => void;
   };
+  // TODO
+  editorContext?: {
+    mountedEditor?: () => void;
+    afterInitMaterials?: () => void;
+  };
 }

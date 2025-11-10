@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { SchemaUtils } from '@tangramino/engine';
-import { useEditorCore, usePluginStore } from '@tangramino/core';
+import { useEditorCore, usePluginCore } from '@tangramino/core';
 import { Input, Radio, Checkbox, Select, Switch, Tabs, Form, InputNumber, ColorPicker } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import { cn } from '@/utils';
-import type { ActiveElement } from '@tangramino/core';
+import type { ActiveElement, Method } from '@tangramino/core';
 import type {
   AttributeConfig,
   RadioAttributeConfig,
@@ -13,14 +13,18 @@ import type {
   CustomAttributeConfig,
   PanelConfig,
 } from '@/interfaces/material';
+import type { FlowGraphData } from '@tangramino/flow-editor';
+import { useEditorContext } from '@/hooks/use-editor-context';
 
 export const AttributePanel = () => {
   const { activeElement, setActiveElement, engine, schema, setSchema } = useEditorCore();
-  const { beforeSetElementProps, afterSetElementProps } = usePluginStore();
+  const { beforeSetElementProps, afterSetElementProps } = usePluginCore();
+  const { setFlowGraphData, setActiveElementEvent, setMode } = useEditorContext();
   const [activePanel, setActivePanel] = useState<string>('0');
   const [form] = Form.useForm();
 
   const material = activeElement?.material;
+  const methods = material?.contextConfig?.methods;
 
   useEffect(() => {
     if (activeElement) {
@@ -37,6 +41,17 @@ export const AttributePanel = () => {
     setActiveElement(element);
   };
 
+  const selectElementMethod = (method: Method) => {
+    const elementId = activeElement!.id;
+    const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
+      schema!,
+      `${elementId}::${method.name}`,
+    );
+    setFlowGraphData(flowGraphData);
+    setActiveElementEvent({ elementId, method, material: material! });
+    setMode('logic');
+  };
+
   const onValuesChange = (changedFields: Record<string, unknown>) => {
     beforeSetElementProps(schema, activeElement!.id, changedFields);
     const newSchema = SchemaUtils.setElementProps(schema, activeElement!.id, changedFields);
@@ -44,12 +59,10 @@ export const AttributePanel = () => {
     setSchema(newSchema);
   };
 
-  // 统一处理 Form.Item 的 label
   const renderLabel = (label: React.ReactNode) => {
     return typeof label === 'string' ? <span className='text-xs'>{label}</span> : label;
   };
 
-  // 统一渲染各种配置的函数
   const renderFormItem = (config: AttributeConfig) => {
     const { field, label, uiType } = config;
     let children: React.ReactNode = null;
@@ -105,7 +118,42 @@ export const AttributePanel = () => {
     );
   };
 
+  const renderMaterialMethods = (): React.ReactElement[] => {
+    return (
+      methods?.map((method) => (
+        <div
+          key={method.name}
+          className='mb-2 bg-sky-100 p-1 cursor-pointer rounded'
+          onClick={() => selectElementMethod(method)}
+        >
+          <div className=' text-gray-800'>{method.name}</div>
+          <div className='text-xs  text-gray-400'>{method.description}</div>
+        </div>
+      )) || []
+    );
+  };
+
   const renderPanelConfig = (config: PanelConfig[]) => {
+    const tabsItems = config.map((item, index) => ({
+      key: String(index),
+      label: <div className='px-2'>{item.title}</div>,
+      style: {
+        padding: '0 8px',
+      },
+      children: item.configs?.map(renderFormItem),
+    }));
+
+    if (methods?.length) {
+      tabsItems.push({
+        key: 'event',
+        label: <div className='px-2'>事件</div>,
+        style: {
+          padding: '0 8px',
+        },
+        children: renderMaterialMethods(),
+      });
+    }
+
     return (
       <Form form={form} onValuesChange={onValuesChange}>
         <Tabs
@@ -113,14 +161,7 @@ export const AttributePanel = () => {
           activeKey={activePanel}
           tabBarGutter={4}
           onChange={setActivePanel}
-          items={config.map((item, index) => ({
-            key: String(index),
-            label: <div className='px-2 w-34 text-center'>{item.title}</div>,
-            style: {
-              padding: '0 8px',
-            },
-            children: item.configs?.map(renderFormItem),
-          }))}
+          items={tabsItems}
         />
       </Form>
     );

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import type { Plugin } from '../interface/plugin';
 import type { Schema, InsertElement } from '@tangramino/engine';
 
-export interface PluginStore {
+export interface PluginCore {
   plugins: Plugin[];
   addPlugin: (plugins: Plugin[]) => void;
   beforeInsertElement: (schema: Schema, targetId: string, insertElement: InsertElement) => void;
@@ -15,7 +15,7 @@ export interface PluginStore {
   afterSetElementProps: (nextSchema: Schema) => void;
 }
 
-export const usePluginStore = create<PluginStore>((set, get) => ({
+export const usePluginCore = create<PluginCore>((set, get) => ({
   plugins: [],
   addPlugin: (plugins: Plugin[]) =>
     set((state) => ({
@@ -75,6 +75,6 @@ export const usePluginStore = create<PluginStore>((set, get) => ({
  * 传入插件 id，即可获取对应的插件的实例
  */
 export const usePluginContext = <T extends Plugin>(id: string): T => {
-  const plugin = usePluginStore((state) => state.plugins.find((plugin) => plugin.id === id)) as T;
+  const plugin = usePluginCore((state) => state.plugins.find((plugin) => plugin.id === id)) as T;
   return plugin;
 };

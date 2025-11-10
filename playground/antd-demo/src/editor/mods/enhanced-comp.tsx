@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   useEditorCore,
-  usePluginStore,
+  usePluginCore,
   useMove,
   uniqueId,
   type EnhancedComponentProps,
@@ -21,7 +21,7 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
 
   const { mode, setMode, setFlowGraphData, setActiveElementEvent } = useEditorContext();
   const { activeElement, setActiveElement, schema, setSchema, insertPosition } = useEditorCore();
-  const { beforeRemoveElement, afterRemoveElement } = usePluginStore();
+  const { beforeRemoveElement, afterRemoveElement } = usePluginCore();
   const MoveElement = useMove({ elementId, elementProps, material });
   const [popoverOpen, setPopoverOpen] = useState(false);
 
