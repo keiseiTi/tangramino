@@ -29,6 +29,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
     afterInsertElement,
     beforeMoveElement,
     afterMoveElement,
+    beforeInitMaterials,
   } = usePluginCore();
 
   useEffect(() => {
@@ -38,14 +39,15 @@ export const EditorProvider = (props: EditorProviderProps) => {
   }, [outerSchema, setSchema]);
 
   useEffect(() => {
-    if (Array.isArray(materials) && materials.length) {
-      setMaterials(materials);
-    }
-  }, [materials]);
+    addPlugin([...(plugins || [])]);
+  }, [plugins]);
 
   useEffect(() => {
-    addPlugin([...(plugins || [])]);
-  }, [addPlugin, plugins]);
+    if (Array.isArray(materials) && materials.length) {
+      beforeInitMaterials(materials);
+      setMaterials(materials);
+    }
+  }, [materials, beforeInitMaterials]);
 
   const onDragStart = (event: DragStartEvent) => {
     const { active } = event;

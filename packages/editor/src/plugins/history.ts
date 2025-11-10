@@ -1,5 +1,5 @@
-import type { Plugin } from '../interface/plugin';
 import type { Schema } from '@tangramino/engine';
+import type { Plugin } from '../interface/plugin';
 
 type InsertOperation = {
   type: 'insert';

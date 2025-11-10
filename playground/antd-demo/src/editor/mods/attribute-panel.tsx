@@ -123,7 +123,7 @@ export const AttributePanel = () => {
       methods?.map((method) => (
         <div
           key={method.name}
-          className='mb-2 bg-sky-100 p-1 cursor-pointer rounded'
+          className='mb-2 bg-gray-100 py-1 px-2 cursor-pointer rounded'
           onClick={() => selectElementMethod(method)}
         >
           <div className=' text-gray-800'>{method.name}</div>

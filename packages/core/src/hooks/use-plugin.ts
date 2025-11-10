@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import type { Plugin } from '../interface/plugin';
 import type { Schema, InsertElement } from '@tangramino/engine';
+import type { Plugin } from '../interface/plugin';
+import type { Material } from '../interface/material';
 
 export interface PluginCore {
   plugins: Plugin[];
@@ -13,6 +14,7 @@ export interface PluginCore {
   afterRemoveElement: (schema: Schema) => void;
   beforeSetElementProps: (schema: Schema, targetId: string, props: Record<string, unknown>) => void;
   afterSetElementProps: (nextSchema: Schema) => void;
+  beforeInitMaterials: (materials: Material[]) => void;
 }
 
 export const usePluginCore = create<PluginCore>((set, get) => ({
@@ -67,6 +69,12 @@ export const usePluginCore = create<PluginCore>((set, get) => ({
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
       plugin.transformSchema?.afterSetElementProps?.(nextSchema);
+    });
+  },
+  beforeInitMaterials: (materials: Material[]) => {
+    const plugins = get().plugins;
+    plugins.forEach((plugin) => {
+      plugin.editorContext?.beforeInitMaterials?.(materials);
     });
   },
 }));

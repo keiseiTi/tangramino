@@ -1,4 +1,5 @@
 import type { Schema, InsertElement } from '@tangramino/engine';
+import type { Material } from './material';
 
 export interface Plugin {
   id: string;
@@ -16,9 +17,7 @@ export interface Plugin {
     ) => void;
     afterSetElementProps?: (nextSchema: Schema) => void;
   };
-  // TODO
   editorContext?: {
-    mountedEditor?: () => void;
-    afterInitMaterials?: () => void;
+    beforeInitMaterials?: (materials: Material[]) => void;
   };
 }

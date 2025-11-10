@@ -1,5 +1,11 @@
 import React from 'react';
-import { EditorProvider, CanvasEditor, DragOverlay, useEditorCore } from '@tangramino/core';
+import {
+  EditorProvider,
+  CanvasEditor,
+  DragOverlay,
+  useEditorCore,
+  materialPlugin,
+} from '@tangramino/core';
 import { cn } from '@/utils';
 import { materialGroups } from '@/materials/group';
 import { FlowEditor } from '@/flow-editor';
@@ -28,7 +34,11 @@ const EditorPage = (props: EditorPageProps) => {
   const { mode } = useEditorContext();
 
   return (
-    <EditorProvider materials={materials} schema={schema || defaultSchema}>
+    <EditorProvider
+      materials={materials}
+      schema={schema || defaultSchema}
+      plugins={[materialPlugin()]}
+    >
       <div className='flex flex-col w-full h-screen min-w-[980px] overflow-auto bg-white'>
         <Operation />
         <div
