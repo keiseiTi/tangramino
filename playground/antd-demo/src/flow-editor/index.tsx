@@ -52,6 +52,7 @@ export const FlowEditor = (props: FlowEditorProps) => {
         flowId,
         transformFlowGraph2Flow(data),
       );
+      console.log('keiseiTi :>> ', 'nextSchema',  nextSchema);
       setSchema(nextSchema);
     } else {
       message.info('请先选择元素');

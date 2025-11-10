@@ -10,6 +10,10 @@ export const materialPlugin = (): Plugin => ({
           name: 'initialization',
           description: '初始化',
         });
+        material.contextConfig = {
+          ...material.contextConfig,
+          methods,
+        }
       });
     },
   },

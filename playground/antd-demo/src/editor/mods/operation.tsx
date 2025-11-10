@@ -3,13 +3,16 @@ import { useEditorCore } from '@tangramino/core';
 import { Button, message, Radio, type RadioChangeEvent } from 'antd';
 import { cn } from '@/utils';
 import { useEditorContext } from '@/hooks/use-editor-context';
+import { SchemaUtils } from '@tangramino/engine';
+import type { FlowGraphData } from '@tangramino/flow-editor';
 interface OperationProps {
   className?: string;
 }
 export const Operation = (props: OperationProps) => {
   const { className } = props;
-  const { schema } = useEditorCore();
-  const { mode, setMode } = useEditorContext();
+  const { schema, materials } = useEditorCore();
+  const { mode, setMode, activeElementEvent, setActiveElementEvent, setFlowGraphData } =
+    useEditorContext();
 
   const onSave = () => {
     sessionStorage.setItem('schema', JSON.stringify(schema));
@@ -21,6 +24,23 @@ export const Operation = (props: OperationProps) => {
   };
 
   const onModeChange = (e: RadioChangeEvent) => {
+    if (!activeElementEvent) {
+      const basicPage = SchemaUtils.getElementsByType(schema, 'basicPage')[0];
+      if (basicPage) {
+        const basicPageMaterial = materials.find((material) => material.type === basicPage.type);
+        const method = basicPageMaterial?.contextConfig?.methods?.[0]!;
+        setActiveElementEvent({
+          elementId: basicPage.id,
+          material: basicPageMaterial!,
+          method,
+        });
+        const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
+          schema!,
+          `${basicPage.id}::${method.name}`,
+        );
+        setFlowGraphData(flowGraphData);
+      }
+    }
     setMode(e.target.value);
   };
 

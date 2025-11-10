@@ -1,4 +1,12 @@
-import type { Elements, LayoutTree, Schema, InsertElement, Flows, BindElement, Flow } from '../';
+import type {
+  Elements,
+  LayoutTree,
+  Schema,
+  InsertElement,
+  Flows,
+  BindElement,
+  Flow,
+} from '../';
 
 /**
  * 往 schema 里插入元素
@@ -323,6 +331,22 @@ const setElementProps = (schema: Schema, elementId: string, props: Record<string
 };
 
 /**
+ * 获取 schema 中所有指定类型的元素
+ * @param schema
+ * @param type
+ * @returns 所有指定类型的元素
+ */
+const getElementsByType = (schema: Schema, type: string) => {
+  const { elements } = schema;
+  return Object.entries(elements)
+    .map(([id, element]) => ({
+      id,
+      ...element,
+    }))
+    .filter((element) => element.type === type);
+};
+
+/**
  * 组合 schema
  * @param elements
  * @param layout
@@ -430,6 +454,7 @@ export const SchemaUtils = {
   moveElement,
   getParents,
   setElementProps,
+  getElementsByType,
   combineSchema,
   getFlowGraph,
   setFlowGraph,

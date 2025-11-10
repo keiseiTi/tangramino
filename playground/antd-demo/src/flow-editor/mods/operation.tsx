@@ -8,7 +8,7 @@ import { useClientContext, type FlowGraphData } from '@tangramino/flow-editor';
 
 export const Operation = () => {
   const { activeElementEvent, setFlowGraphData, setActiveElementEvent } = useEditorContext();
-  const { schema } = useEditorCore();
+  const { schema, materials } = useEditorCore();
   const { elementId, material, method } = activeElementEvent || {};
   const [selectedMethod, setSelectedMethod] = useState<string>();
   const clientContext = useClientContext();
@@ -17,24 +17,68 @@ export const Operation = () => {
     setSelectedMethod(method?.description);
   }, [method]);
 
+  const onSelectElement = (elementId: string) => {
+    if(elementId === activeElementEvent?.elementId) {
+      return;
+    }
+    const nextElement = schema?.elements[elementId];
+    const nextMaterial = materials.find((material) => material.type === nextElement?.type)!;
+    const nextMaterialMethods = nextMaterial.contextConfig?.methods;
+    if (nextMaterialMethods?.length) {
+      const firstMethod = nextMaterialMethods[0];
+      const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
+        schema!,
+        `${elementId}::${firstMethod.name}`,
+      ) || {
+        nodes: [
+          {
+            id: 'start_' + uniqueId(undefined, 8),
+            type: 'start',
+            meta: {
+              position: { x: 0, y: 0 },
+            },
+            data: {},
+          },
+        ],
+        edges: [],
+      };
+      setFlowGraphData(flowGraphData);
+      setSelectedMethod(firstMethod.name);
+      setActiveElementEvent({
+        elementId: elementId,
+        material: nextMaterial,
+        method: firstMethod,
+      });
+      clientContext.document.reload(flowGraphData);
+    }
+  };
+
   const onSelectMethod = (methodName: string) => {
     if (activeElementEvent) {
       setSelectedMethod(methodName);
-      // 从 schema 中获取 flowGraphData
       const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
         schema!,
         `${elementId}::${methodName}`,
-      );
-      // 设置 flowGraphData
+      ) || {
+        nodes: [
+          {
+            id: 'start_' + uniqueId(undefined, 8),
+            type: 'start',
+            meta: {
+              position: { x: 0, y: 0 },
+            },
+            data: {},
+          },
+        ],
+        edges: [],
+      };
       setFlowGraphData(flowGraphData);
-      // 找到对应的 method 并且更新到 activeElementEvent
       const findMethod = material?.contextConfig?.methods?.find((item) => item.name === methodName);
       setActiveElementEvent({
         ...activeElementEvent,
         method: findMethod,
       });
-      // 重新加载 document
-      clientContext.document.reload(flowGraphData);
+      clientContext.operation.fromJSON(flowGraphData);
     }
   };
 
@@ -47,7 +91,18 @@ export const Operation = () => {
         },
       )}
     >
-      <span className='mr-2'>{`${material?.title}`}</span>
+      <Select
+        className='w-40'
+        size='small'
+        variant='underlined'
+        style={{ marginRight: 8 }}
+        value={material?.title}
+        onChange={onSelectElement}
+        options={Object.keys(schema.elements).map((id) => ({
+          label: materials.find((material) => material.type === schema.elements[id].type)?.title,
+          value: id,
+        }))}
+      />
       <Select
         className='w-40'
         size='small'
