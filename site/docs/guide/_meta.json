@@ -5,5 +5,27 @@
     "name": "start",
     "collapsible": true,
     "collapsed": false
-  }
+  },
+  {
+    "type": "dir",
+    "label": "概念",
+    "name": "concept",
+    "collapsible": true,
+    "collapsed": false
+  },
+  {
+    "type": "dir",
+    "label": "进阶",
+    "name": "advanced",
+    "collapsible": true,
+    "collapsed": false
+  },
+  {
+    "type": "dir",
+    "label": "插件",
+    "name": "plugin",
+    "collapsible": true,
+    "collapsed": false
+  },
+  "contribution"
 ]

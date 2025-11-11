@@ -7,6 +7,7 @@ export default defineConfig({
   title: 'Tangramino',
   description: '可视化低代码搭建',
   icon: '/icon.svg',
+  logoText: 'Tangramino',
   logo: {
     light: '/logo.png',
     dark: '/logo.png',
