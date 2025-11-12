@@ -13,6 +13,7 @@ export default defineConfig({
     dark: '/logo.png',
   },
   themeConfig: {
+    outlineTitle: '大纲',
     socialLinks: [
       {
         icon: 'github',
