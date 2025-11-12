@@ -10,7 +10,7 @@ export interface Material {
   /**
    * 物料名称
    */
-  title: React.ReactNode;
+  title: string;
   /**
    * 物料类型
    */
