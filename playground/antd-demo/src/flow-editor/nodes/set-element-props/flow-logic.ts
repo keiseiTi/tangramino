@@ -10,7 +10,6 @@ interface SetElementPropsNodeProps {
   }[];
 }
 
-// 设置元素的可见性，true 为可见，false 为隐藏
 export const setElementProps = (ctx: FlowExecuteContext<SetElementPropsNodeProps>) => {
   const { engine, data } = ctx;
   const { setters } = data;

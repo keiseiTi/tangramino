@@ -18,7 +18,7 @@ export const Operation = () => {
   }, [method]);
 
   const onSelectElement = (elementId: string) => {
-    if(elementId === activeElementEvent?.elementId) {
+    if (elementId === activeElementEvent?.elementId) {
       return;
     }
     const nextElement = schema?.elements[elementId];

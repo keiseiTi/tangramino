@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import type { HyperValue } from '@/interfaces/hyper-value';
 import { Input, InputNumber, Radio, Select } from 'antd';
 import { FunctionEditor } from '../function-editor';
+import { ContextOptions } from '../context-options';
 
 export interface HyperValueEditorProps {
   showTypes?: HyperValue['type'][];
@@ -27,11 +28,15 @@ const hyperValueOptions = [
     value: 'null',
   },
   {
+    label: '上下文',
+    value: 'contextValue',
+  },
+  {
     label: '表达式',
     value: 'expression',
   },
   {
-    label: '代码',
+    label: '函数',
     value: 'code',
   },
 ];
@@ -85,6 +90,15 @@ export const HyperInput = (props: HyperValueEditorProps) => {
             <Radio value={true}>是</Radio>
             <Radio value={false}>否</Radio>
           </Radio.Group>
+        );
+      case 'contextValue':
+        return (
+          <ContextOptions
+            value={value?.value as string}
+            onChange={(v) => {
+              onChange?.({ type: inputType, value: v });
+            }}
+          />
         );
       case 'expression':
         return (

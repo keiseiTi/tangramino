@@ -430,7 +430,7 @@ const setEventFlow = (
   const { bindElements, flows } = schema;
 
   const _bindElements = [...(bindElements || [])];
-  if (!_bindElements.some((_) => _.id === elementId)) {
+  if (!_bindElements.some((_) => _.id === elementId && _.event === event)) {
     _bindElements.push({
       id: elementId,
       event,

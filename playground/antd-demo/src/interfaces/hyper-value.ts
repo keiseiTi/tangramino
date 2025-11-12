@@ -28,10 +28,16 @@ export type CodeValue = {
   value?: string;
 };
 
+export type ContextConfigValue = {
+  type: 'contextValue';
+  value?: string;
+};
+
 export type HyperValue =
   | StringValue
   | NumberValue
   | BooleanValue
   | NullValue
   | ExpressionValue
-  | CodeValue;
+  | CodeValue
+  | ContextConfigValue;

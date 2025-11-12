@@ -10,6 +10,12 @@ const InputMaterial: Material = {
     size: 'middle',
   },
   contextConfig: {
+    variables: [
+      {
+        name: 'value',
+        description: '当前值',
+      },
+    ],
     methods: [
       {
         name: 'onChange',

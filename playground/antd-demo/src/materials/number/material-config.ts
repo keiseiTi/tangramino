@@ -6,8 +6,27 @@ const NumberMaterial: Material = {
   title: '数字框',
   type: 'number',
   defaultProps: {
-    placeholder: '请输入数字',
+    placeholder: '请输入',
     size: 'middle',
+  },
+  contextConfig: {
+    variables: [
+      {
+        name: 'value',
+        description: '当前值',
+      },
+    ],
+    methods: [
+      {
+        name: 'onChange',
+        description: '内容变化时的回调',
+        params: [
+          {
+            description: '输入事件参数',
+          },
+        ],
+      },
+    ],
   },
   editorConfig: {
     panels: [

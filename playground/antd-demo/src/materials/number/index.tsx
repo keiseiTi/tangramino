@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { InputNumber as AntdInputNumber, type InputNumberProps } from 'antd';
 
 export type IProps = InputNumberProps & {
@@ -7,6 +7,24 @@ export type IProps = InputNumberProps & {
 };
 
 export const Number = (props: IProps) => {
-  const { margin, padding, ...restProps } = props;
-  return <AntdInputNumber style={{ margin, padding }} {...restProps} />;
+  const { margin, padding, value, onChange, ...restProps } = props;
+  const [innerValue, setInnerValue] = useState<string | number | null>();
+
+  useEffect(() => {
+    setInnerValue(value);
+  }, [value]);
+
+  const handleChange = (v: string | number | null) => {
+    setInnerValue(v);
+    onChange?.(v);
+  };
+
+  return (
+    <AntdInputNumber
+      style={{ margin, padding }}
+      value={innerValue}
+      onChange={handleChange}
+      {...restProps}
+    />
+  );
 };

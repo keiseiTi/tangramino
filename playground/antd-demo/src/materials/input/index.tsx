@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input as AntdInput, type InputProps } from 'antd';
 
 export type IProps = InputProps & {
@@ -6,17 +6,21 @@ export type IProps = InputProps & {
   padding?: number | string;
   width?: number | string;
   height?: number | string;
+  value?: string;
 };
 
 export const Input = (props: IProps) => {
-  const {
-    margin,
-    padding,
-    width,
-    height,
-    style,
-    ...restProps
-  } = props;
+  const { margin, padding, width, height, style, onChange, value, ...restProps } = props;
+  const [innerValue, setInnerValue] = useState<string>();
+
+  useEffect(() => {
+    setInnerValue(value);
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInnerValue(e.target.value);
+    onChange?.(e);
+  };
 
   const customStyle = {
     margin,
@@ -27,9 +31,6 @@ export const Input = (props: IProps) => {
   };
 
   return (
-    <AntdInput
-      style={customStyle}
-      {...restProps}
-    />
+    <AntdInput style={customStyle} value={innerValue} onChange={handleChange} {...restProps} />
   );
 };
