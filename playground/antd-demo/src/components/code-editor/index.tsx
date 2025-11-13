@@ -7,10 +7,11 @@ export interface CodeEditorProps {
   onChange?: (value: string) => void;
   classNames?: string;
   placeholder?: string;
+  language?: string;
 }
 
 export const CodeEditor = (props: CodeEditorProps) => {
-  const { value, onChange, classNames, placeholder } = props;
+  const { value, onChange, classNames, placeholder, language } = props;
   const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor | null>(null);
   const monacoEl = useRef(null);
 
@@ -21,7 +22,7 @@ export const CodeEditor = (props: CodeEditorProps) => {
 
         return monaco.editor.create(monacoEl.current!, {
           value: value,
-          language: 'typescript',
+          language: language || 'typescript',
           placeholder: placeholder
         });
       });
@@ -39,5 +40,11 @@ export const CodeEditor = (props: CodeEditorProps) => {
     }
   }, [editor]);
 
-  return <div className={cn('w-full h-100', classNames)} ref={monacoEl}></div>;
+  useEffect(() => {
+    if (editor && typeof value === 'string' && value !== editor.getValue()) {
+      editor.setValue(value);
+    }
+  }, [editor, value]);
+
+  return <div className={cn('w-full', classNames ?? 'h-100')} ref={monacoEl}></div>;
 };
