@@ -1,6 +1,6 @@
 import React from 'react';
 import { Select } from 'antd';
-import { useEditorCore } from '@tangramino/core';
+import { useEditorCore } from '@tangramino/base-editor';
 
 interface IProps {
   value?: string[] | string;

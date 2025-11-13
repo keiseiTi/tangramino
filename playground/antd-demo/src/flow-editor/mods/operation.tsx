@@ -3,7 +3,7 @@ import { useEditorContext } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
 import { Select } from 'antd';
 import { SchemaUtils } from '@tangramino/engine';
-import { uniqueId, useEditorCore } from '@tangramino/core';
+import { uniqueId, useEditorCore } from '@tangramino/base-editor';
 import { useClientContext, type FlowGraphData } from '@tangramino/flow-editor';
 
 export const Operation = () => {

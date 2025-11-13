@@ -6,7 +6,7 @@ import {
   uniqueId,
   type EnhancedComponentProps,
   type Method,
-} from '@tangramino/core';
+} from '@tangramino/base-editor';
 import { SchemaUtils } from '@tangramino/engine';
 import { Dropdown, Popover, Tooltip } from 'antd';
 import { DeleteOutlined, DragOutlined, PartitionOutlined } from '@ant-design/icons';

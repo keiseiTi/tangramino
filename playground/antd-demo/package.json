@@ -12,7 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "~5.6.1",
     "@flowgram.ai/free-lines-plugin": "^1.0.2",
-    "@tangramino/core": "workspace:^",
+    "@tangramino/base-editor": "workspace:^",
     "@tangramino/engine": "workspace:^",
     "@tangramino/flow-editor": "workspace:^",
     "@tangramino/react": "workspace:^",

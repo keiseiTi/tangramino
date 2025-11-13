@@ -3,7 +3,7 @@ import { Button, Form, Input, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { HyperInput } from '@/components/hyper-input';
 import { ElementSelect } from '@/flow-editor/mods/element-select';
-import { useEditorCore } from '@tangramino/core';
+import { useEditorCore } from '@tangramino/base-editor';
 
 export const FormConfig = () => {
   const { engine, materials } = useEditorCore();

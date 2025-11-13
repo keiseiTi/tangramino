@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Button, message } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useEditorCore } from '@tangramino/core';
+import { useEditorCore } from '@tangramino/base-editor';
 import { CodeEditor } from '@/components/code-editor';
 import { SchemaUtils, type Schema } from '@tangramino/engine';
 import { cn } from '@/utils';

@@ -1,7 +1,7 @@
 {
-  "name": "@tangramino/core",
+  "name": "@tangramino/base-editor",
   "version": "0.1.0",
-  "description": "A visual drag and drop base editor core",
+  "description": "A visual drag and drop base editor",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./types/index.d.ts",

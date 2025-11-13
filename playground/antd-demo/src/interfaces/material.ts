@@ -4,7 +4,7 @@ import type {
   AttributeConfig as BasicAttributeConfig,
   PanelConfig as BasicPanelConfig,
   EditorConfig as BasicEditorConfig,
-} from '@tangramino/core';
+} from '@tangramino/base-editor';
 import type {
   InputProps,
   InputNumberProps,

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { uniqueId, useEditorCore } from '@tangramino/core';
+import { uniqueId, useEditorCore } from '@tangramino/base-editor';
 import {
   FlowEditor as BaseFlowEditor,
   EditorRenderer,

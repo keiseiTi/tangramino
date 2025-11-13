@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { SchemaUtils } from '@tangramino/engine';
-import { useEditorCore, usePluginCore } from '@tangramino/core';
+import { useEditorCore, usePluginCore } from '@tangramino/base-editor';
 import { Input, Radio, Checkbox, Select, Switch, Tabs, Form, InputNumber, ColorPicker } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import { cn } from '@/utils';
-import type { ActiveElement, Method } from '@tangramino/core';
+import type { ActiveElement, Method } from '@tangramino/base-editor';
 import type {
   AttributeConfig,
   RadioAttributeConfig,

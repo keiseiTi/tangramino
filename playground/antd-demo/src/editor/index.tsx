@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditorProvider, DragOverlay, useEditorCore, materialPlugin } from '@tangramino/core';
+import { EditorProvider, DragOverlay, useEditorCore, materialPlugin } from '@tangramino/base-editor';
 import { materialGroups } from '@/materials/group';
 import { Operation } from './mods/operation';
 import { defaultSchema } from '../constant';

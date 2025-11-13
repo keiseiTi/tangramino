@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { Button, Form, Input, Select, Space, Switch, message, Popconfirm } from 'antd';
-import { useEditorCore } from '@tangramino/core';
+import { useEditorCore } from '@tangramino/base-editor';
 import { cn } from '@/utils';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { SchemaUtils } from '@tangramino/engine';

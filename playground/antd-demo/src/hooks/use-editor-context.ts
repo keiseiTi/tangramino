@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { FlowGraphData } from '@tangramino/flow-editor';
-import { uniqueId, type Material, type Method } from '@tangramino/core';
+import { uniqueId, type Material, type Method } from '@tangramino/base-editor';
 
 export type ActiveElementEvent = {
   elementId: string;

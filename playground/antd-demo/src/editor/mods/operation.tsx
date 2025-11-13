@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEditorCore } from '@tangramino/core';
+import { useEditorCore } from '@tangramino/base-editor';
 import { Button, message, Radio, type RadioChangeEvent } from 'antd';
 import { cn } from '@/utils';
 import { useEditorContext } from '@/hooks/use-editor-context';

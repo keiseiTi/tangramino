@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Draggable, type Material } from '@tangramino/core';
+import { Draggable, type Material } from '@tangramino/base-editor';
 import { cn } from '@/utils';
 import { Collapse } from 'antd';
 

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useEditorCore } from '@tangramino/core';
+import { useEditorCore } from '@tangramino/base-editor';
 
 export const useContextOptions = () => {
   const { schema, materials } = useEditorCore();

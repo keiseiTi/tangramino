@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { SchemaUtils } from '@tangramino/engine';
-import { useEditorCore } from '@tangramino/core';
+import { useEditorCore } from '@tangramino/base-editor';
 import { useEditorContext } from '@/hooks/use-editor-context';
 import type { FlowGraphData } from '@tangramino/flow-editor';
 

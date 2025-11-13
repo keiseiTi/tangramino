@@ -1,5 +1,5 @@
 import React from 'react';
-import { CanvasEditor, type Material } from '@tangramino/core';
+import { CanvasEditor, type Material } from '@tangramino/base-editor';
 import { FlowEditor } from '@/flow-editor';
 import { useEditorContext } from '@/hooks/use-editor-context';
 import { SchemaEditor } from './schema-editor';
