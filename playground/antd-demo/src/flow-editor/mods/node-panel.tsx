@@ -21,15 +21,15 @@ export const NodePanel = (props: NodePanelProps) => {
   };
 
   return (
-    <div className='w-48 bg-gray-50 flex flex-col'>
-      <div className='p-2 text-sm text-slate-800 border-b border-slate-300'>节点选择</div>
-      <div className='p-2 flex-1 overflow-auto h-full text-xs'>
+    <div className='w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm'>
+      <div className='h-9 px-3 flex items-center text-sm text-slate-800 border-b border-gray-200'>节点面板</div>
+      <div className='p-3 flex-1 overflow-auto h-full text-xs'>
         {nodes
           .filter((node) => node.type !== 'start')
           .map((node) => (
             <div
               key={node.type}
-              className='w-44 p-2 mb-2 bg-stone-100 cursor-pointer'
+              className='w-full p-2 mb-2 rounded-sm border border-slate-300 cursor-pointer hover:bg-zinc-100'
               onMouseDown={(e) => {
                 insertNode(e, node);
               }}

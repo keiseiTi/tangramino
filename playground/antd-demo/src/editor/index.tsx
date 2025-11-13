@@ -39,23 +39,30 @@ const EditorPage = (props: EditorPageProps) => {
       schema={schema || defaultSchema}
       plugins={[materialPlugin()]}
     >
-      <div className='flex flex-col w-full h-screen min-w-[980px] overflow-auto bg-white'>
-        <Operation />
+      <div className='flex flex-col w-full h-screen min-w-[1080px] bg-gray-50'>
+        <div className='sticky top-0 z-10 bg-white border-b border-gray-200'>
+          <Operation />
+        </div>
         <div
-          className={cn('flex-1 overflow-auto', { flex: mode === 'view', hidden: mode !== 'view' })}
+          className={cn('flex-1 overflow-hidden', {
+            flex: mode === 'view',
+            hidden: mode !== 'view',
+          })}
         >
           <MaterialPanel materialGroups={materialGroups} />
-          <div className='flex-1 p-4 bg-gray-50'>
-            <CanvasEditor
-              className='bg-white'
-              renderComponent={EnhancedComponent}
-              renderDropPlaceholder={CustomDropPlaceholder}
-            />
+          <div className='flex-1 p-4 overflow-auto'>
+            <div className='h-full border border-gray-200 bg-white shadow-sm'>
+              <CanvasEditor
+                className='size-full'
+                renderComponent={EnhancedComponent}
+                renderDropPlaceholder={CustomDropPlaceholder}
+              />
+            </div>
           </div>
           <AttributePanel />
         </div>
         {mode === 'logic' && (
-          <div className={cn('flex-1 overflow-auto')}>
+          <div className={cn('flex-1 overflow-hidden')}>
             <FlowEditor className='w-full h-screen' />
           </div>
         )}

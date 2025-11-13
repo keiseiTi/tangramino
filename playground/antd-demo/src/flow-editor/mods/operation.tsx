@@ -84,18 +84,15 @@ export const Operation = () => {
 
   return (
     <div
-      className={cn(
-        'px-2 h-[37px] flex items-center text-sm text-slate-800 border-b border-slate-300 bg-gray-50',
-        {
-          hidden: !activeElementEvent,
-        },
-      )}
+      className={cn('h-9 px-3 flex items-center text-sm text-slate-800 bg-white', {
+        hidden: !activeElementEvent,
+      })}
     >
       <Select
         className='w-40'
         size='small'
         variant='underlined'
-        style={{ marginRight: 8 }}
+        style={{ marginRight: 12 }}
         value={material?.title}
         onChange={onSelectElement}
         options={Object.keys(schema.elements).map((id) => ({

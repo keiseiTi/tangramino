@@ -46,19 +46,16 @@ export const Operation = (props: OperationProps) => {
 
   return (
     <div
-      className={cn(
-        'h-10 border-b border-gray-300 flex items-center px-2 justify-between',
-        className,
-      )}
+      className={cn('h-12 flex items-center px-3 justify-between bg-white', className)}
     >
-      <span className='text-lg font-medium'>Tangramino 低代码编辑器</span>
-      <div>
+      <span className='text-base font-semibold'>Tangramino 低代码编辑器</span>
+      <div className='flex items-center gap-3'>
         <Radio.Group optionType='button' buttonStyle='solid' value={mode} onChange={onModeChange}>
           <Radio value={'view'}>视图</Radio>
           <Radio value={'logic'}>逻辑</Radio>
         </Radio.Group>
       </div>
-      <div>
+      <div className='flex items-center'>
         <Button size='small' type='primary' onClick={onPreview} className='mr-2'>
           预览
         </Button>
