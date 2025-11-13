@@ -30,7 +30,9 @@ export type Import = {
 
 export type GlobalVariable = {
   name: string;
-  description?: string;
+  description: string;
+  type?: string;
+  defaultValue?: string | boolean | number;
 };
 
 export interface Schema extends FlowSchema {

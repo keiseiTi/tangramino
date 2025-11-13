@@ -19,8 +19,6 @@ export const Button = (props: IProps) => {
     ...style,
   };
 
-  console.log('keiseiTi :>> ', 'props',  props);
-
   return (
     <AntdButton style={customStyle} {...restProps}>
       {text}

@@ -3,6 +3,7 @@ import { Button, message } from 'antd';
 import { useEditorCore } from '@tangramino/core';
 import { CodeEditor } from '@/components/code-editor';
 import { SchemaUtils, type Schema } from '@tangramino/engine';
+import { cn } from '@/utils';
 
 export interface SchemaEditorProps {
   className?: string;
@@ -24,7 +25,7 @@ export const SchemaEditor: React.FC<SchemaEditorProps> = (props) => {
   }, [code, setSchema]);
 
   return (
-    <div className={className ? `h-full ${className}` : 'h-full'}>
+    <div className={cn('h-full', className)}>
       <div className='flex flex-col h-full'>
         <div className='flex-1'>
           <CodeEditor
