@@ -15,7 +15,7 @@ export const Operation = (props: OperationProps) => {
     useEditorContext();
 
   const onSave = () => {
-    sessionStorage.setItem('schema', JSON.stringify(schema));
+    sessionStorage.setItem('schema', JSON.stringify(SchemaUtils.normalizeSchema(schema)));
     message.success('保存成功');
   };
 

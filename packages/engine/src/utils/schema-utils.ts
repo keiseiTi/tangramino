@@ -6,6 +6,7 @@ import type {
   Flows,
   BindElement,
   Flow,
+  GlobalVariable,
 } from '../';
 
 /**
@@ -447,6 +448,44 @@ const setEventFlow = (
   };
 };
 
+/**
+ * 读取所有全局变量（返回副本，避免外部修改原数组）
+ */
+const getGlobalVariables = (schema: Schema): GlobalVariable[] => {
+  return [...(schema.context?.globalVariables || [])];
+};
+
+/**
+ * 覆写所有全局变量
+ */
+const setGlobalVariables = (schema: Schema, variables: GlobalVariable[]): Schema => {
+  return {
+    ...schema,
+    context: {
+      ...(schema.context || {}),
+      globalVariables: [...variables],
+    },
+  };
+};
+
+/**
+ * 规范 schema，确保所有字段都有默认值
+ * @param schema
+ * @returns
+ */
+const normalizeSchema = (schema: Schema): Schema => {
+  const { elements, layout, imports, context, extensions, flows, bindElements } = schema;
+  return {
+    elements,
+    layout,
+    imports: imports || [],
+    context: context || {},
+    flows: flows || {},
+    bindElements: bindElements || [],
+    extensions: extensions || {},
+  };
+};
+
 export const SchemaUtils = {
   insertElement,
   removeElement,
@@ -459,4 +498,7 @@ export const SchemaUtils = {
   getFlowGraph,
   setFlowGraph,
   setEventFlow,
+  getGlobalVariables,
+  setGlobalVariables,
+  normalizeSchema,
 };
