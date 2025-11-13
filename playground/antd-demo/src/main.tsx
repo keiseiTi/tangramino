@@ -1,4 +1,5 @@
 import React from 'react';
+import { ConfigProvider } from 'antd';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
@@ -7,6 +8,7 @@ import Editor from './editor';
 import Preview from './preview';
 import '@tangramino/flow-editor/index.css';
 import '@/components/code-editor/use-worker';
+import zhCN from 'antd/lib/locale/zh_CN';
 import './main.css';
 
 const router = createBrowserRouter([
@@ -20,4 +22,8 @@ const router = createBrowserRouter([
   },
 ]);
 
-createRoot(document.getElementById('root')!).render(<RouterProvider router={router} />);
+createRoot(document.getElementById('root')!).render(
+  <ConfigProvider locale={zhCN}>
+    <RouterProvider router={router} />
+  </ConfigProvider>,
+);
