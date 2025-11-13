@@ -135,24 +135,23 @@ export const GlobalVariablesPanel: React.FC<GlobalVariablesPanelProps> = (props)
 
   return (
     <div className={cn('h-full', className)}>
-      <div className='flex flex-col h-full p-3'>
-        <Form form={form} layout='vertical' className='flex-1 overflow-auto'>
+      <div className='flex flex-col h-full'>
+        <Form form={form} layout='vertical' className='flex-1 overflow-auto p-2!'>
           <Form.List name='variables'>
             {(fields, { remove }) => (
               <>
                 <div className='grid grid-cols-3 gap-3'>
-                  {fields.map((field) => (
+                  {fields.map((field, index) => (
                     <div
                       key={field.key}
-                      className='relative p-3 border border-gray-200 rounded-md bg-white'
+                      className={cn('relative p-3 border border-gray-200 rounded-md bg-white')}
                     >
-                      <Popconfirm
-                        title='确认删除该变量？'
-                        okText='删除'
-                        cancelText='取消'
-                        onConfirm={() => remove(field.name)}
-                      >
-                        <MinusCircleOutlined className='absolute top-3 right-3 z-10 cursor-pointer' />
+                      <Popconfirm title='确认删除该变量？' onConfirm={() => remove(field.name)}>
+                        <MinusCircleOutlined
+                          className={cn('absolute top-3 right-3 z-10 cursor-pointer', {
+                            'hidden!': index === 0,
+                          })}
+                        />
                       </Popconfirm>
                       <div className='grid grid-cols-2 gap-3'>
                         <Form.Item
@@ -208,9 +207,11 @@ export const GlobalVariablesPanel: React.FC<GlobalVariablesPanelProps> = (props)
             )}
           </Form.List>
         </Form>
-        <div className='border-t border-gray-200 pt-2 mt-2 bg-gray-50 flex justify-end'>
+        <div className='border-t border-gray-200 p-2 bg-gray-50 flex justify-end'>
           <Space>
-            <Button onClick={onAddVariable}>新增全局变量</Button>
+            <Button onClick={onAddVariable} type='primary' ghost>
+              新增全局变量
+            </Button>
             <Button type='primary' onClick={onSave}>
               保存全局变量
             </Button>

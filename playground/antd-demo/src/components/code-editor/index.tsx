@@ -23,7 +23,7 @@ export const CodeEditor = (props: CodeEditorProps) => {
         return monaco.editor.create(monacoEl.current!, {
           value: value,
           language: language || 'typescript',
-          placeholder: placeholder
+          placeholder: placeholder,
         });
       });
     }

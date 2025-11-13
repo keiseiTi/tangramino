@@ -39,9 +39,9 @@ export const FlowEditor = (props: FlowEditorProps) => {
     schemaRef.current = schema;
   }, [schema]);
 
-  // useEffect(() => {
-  //   ensureLogicEvent();
-  // }, [ensureLogicEvent]);
+  useEffect(() => {
+    ensureLogicEvent();
+  }, [schema]);
 
   const changeFlowGraphData = (data: FlowGraphData) => {
     if (activeElementEventRef.current && activeElementEventRef.current?.method) {

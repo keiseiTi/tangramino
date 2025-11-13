@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Button, message } from 'antd';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useEditorCore } from '@tangramino/core';
 import { CodeEditor } from '@/components/code-editor';
 import { SchemaUtils, type Schema } from '@tangramino/engine';
@@ -37,6 +38,12 @@ export const SchemaEditor: React.FC<SchemaEditorProps> = (props) => {
           />
         </div>
         <div className='border-t border-gray-200 p-2 bg-gray-50 flex justify-end'>
+          {/* @ts-ignore */}
+          <CopyToClipboard text={code} onCopy={() => message.success('复制成功')}>
+            <Button className='mr-4' ghost type='primary'>
+              复制 Schema
+            </Button>
+          </CopyToClipboard>
           <Button type='primary' onClick={onSave}>
             保存 Schema
           </Button>

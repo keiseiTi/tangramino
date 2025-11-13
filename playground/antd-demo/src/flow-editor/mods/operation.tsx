@@ -84,7 +84,7 @@ export const Operation = () => {
 
   return (
     <div
-      className={cn('h-9 px-3 flex items-center text-sm text-slate-800 bg-white', {
+      className={cn('h-[35px] px-3 flex items-center text-sm text-slate-800 bg-white', {
         hidden: !activeElementEvent,
       })}
     >
