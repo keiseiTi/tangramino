@@ -3,6 +3,7 @@ import { visibleElement } from './visible-element/flow-logic';
 import { setElementProps } from './set-element-props/flow-logic';
 import { interfaceRequest } from './interface-request/flow-logic';
 import { condition } from './condition/flow-logic';
+import { setGlobalVariable } from './set-global-variable/flow-logic';
 
 export const logicNodes = {
   customJS,
@@ -10,4 +11,5 @@ export const logicNodes = {
   setElementProps,
   interfaceRequest,
   condition,
+  setGlobalVariable,
 };

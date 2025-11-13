@@ -75,6 +75,15 @@ export const createEngine = (schema?: Schema): Engine => {
         listener();
       });
     },
+    setGlobalVariable: (field, value) => {
+      engine.setContextValue('globalVariables', {
+        ...engine.contextValues['globalVariables'],
+        [field]: value,
+      });
+    },
+    getGlobalVariable: (field) => {
+      return engine.contextValues['globalVariables']?.[field];
+    },
     injectCallback: (id, name, callback) => {
       engine.injectionCallback = createDraft(engine.injectionCallback);
       engine.injectionCallback[id] = engine.injectionCallback[id] || {};

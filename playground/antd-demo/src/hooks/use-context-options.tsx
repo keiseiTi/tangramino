@@ -39,8 +39,18 @@ export const useContextOptions = () => {
       .filter((_) => _);
   }, [schema, materials]);
 
+
+  const globalVariableOptions = useMemo(() => {
+    const context = schema!.context;
+    return context?.globalVariables?.map((variable) => ({
+      label: variable.description,
+      value: variable.name,
+    })) || [];
+  }, [schema, materials]);
+
   return {
     variableOptions,
     methodOptions,
+    globalVariableOptions,
   };
 };

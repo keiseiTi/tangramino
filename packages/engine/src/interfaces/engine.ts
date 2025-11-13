@@ -8,12 +8,14 @@ export interface Engine {
   extensions: Record<string, unknown>;
   injectionCallback: Record<string, ListenerMap>;
   contextValues: ContextValues;
-  setContextValue: (field: string, value: ContextValues) => void;
+  setContextValue: (field: string, value: ContextValue) => void;
   getContextValue: (field: string) => ContextValue | undefined;
   setState: (state: State) => void;
   getState: (id?: string) => State | Record<string, unknown> | null;
   setExtensions: (field: string, value: unknown) => void;
   getExtensions: (field: string) => unknown;
+  setGlobalVariable: (field: string, value: unknown) => void;
+  getGlobalVariable: (field: string) => unknown | undefined;
   showElements: (ids: string[]) => void;
   hiddenElements: (ids: string[]) => void;
   injectCallback: (id: string, name: string, callback: Listener) => void;

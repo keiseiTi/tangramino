@@ -4,6 +4,7 @@ import { customJS } from './custom-js';
 import { setElementProps } from './set-element-props';
 import { visibleElement } from './visible-element';
 import { condition } from './condition';
+import { setGlobalVariable } from './set-global-variable';
 
 export const nodes = [
   start,
@@ -12,4 +13,5 @@ export const nodes = [
   setElementProps,
   visibleElement,
   condition,
+  setGlobalVariable,
 ];

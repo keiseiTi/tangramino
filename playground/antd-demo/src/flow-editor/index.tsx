@@ -16,6 +16,7 @@ import { nodes } from './nodes';
 import { Operation } from './mods/operation';
 import { createFreeLinesPlugin } from '@flowgram.ai/free-lines-plugin';
 import { CustomLineLabel } from './mods/custom-line-label';
+import { useDefaultEvent } from '@/hooks/use-default-event';
 
 export interface FlowEditorProps {
   className?: string;
@@ -28,6 +29,7 @@ export const FlowEditor = (props: FlowEditorProps) => {
 
   const activeElementEventRef = useRef<ActiveElementEvent | null>(null);
   const schemaRef = useRef(schema);
+  const { ensureLogicEvent } = useDefaultEvent();
 
   useEffect(() => {
     activeElementEventRef.current = activeElementEvent;
@@ -36,6 +38,10 @@ export const FlowEditor = (props: FlowEditorProps) => {
   useEffect(() => {
     schemaRef.current = schema;
   }, [schema]);
+
+  // useEffect(() => {
+  //   ensureLogicEvent();
+  // }, [ensureLogicEvent]);
 
   const changeFlowGraphData = (data: FlowGraphData) => {
     if (activeElementEventRef.current && activeElementEventRef.current?.method) {
