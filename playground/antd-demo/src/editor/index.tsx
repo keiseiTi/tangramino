@@ -13,8 +13,8 @@ export interface EditorPageProps {
   schema?: Schema;
 }
 
-const localSchema = sessionStorage.getItem('schema')
-  ? JSON.parse(sessionStorage.getItem('schema')!)
+const localSchema = sessionStorage.getItem('tg_schema')
+  ? JSON.parse(sessionStorage.getItem('tg_schema')!)
   : undefined;
 
 const EditorPage = (props: EditorPageProps) => {

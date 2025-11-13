@@ -4,7 +4,7 @@ import materialComponents from '@/materials';
 import { logicNodes } from '@/flow-editor/nodes/logic-nodes';
 
 const Preview = () => {
-  const schema = JSON.parse(sessionStorage.getItem('schema') || '{}');
+  const schema = JSON.parse(sessionStorage.getItem('tg_schema') || '{}');
 
   return (
     <Renderer

@@ -12,6 +12,13 @@ type LeftPanel = 'view' | 'schema' | 'globals' | 'logic';
 
 type EditorMode = 'view' | 'logic';
 
+const initialLeftPanel: LeftPanel =
+  (typeof window !== 'undefined' ? (sessionStorage.getItem('tg_leftPanel') as LeftPanel | null) : null) ||
+  'view';
+const initialMode: EditorMode =
+  (typeof window !== 'undefined' ? (sessionStorage.getItem('tg_mode') as EditorMode | null) : null) ||
+  'view';
+
 export const useEditorContext = create<{
   leftPanel: LeftPanel;
   setLeftPanel: (leftPanel: LeftPanel) => void;
@@ -22,10 +29,22 @@ export const useEditorContext = create<{
   activeElementEvent: ActiveElementEvent | null;
   setActiveElementEvent: (activeElementEvent: ActiveElementEvent | null) => void;
 }>((set) => ({
-  leftPanel: 'view',
-  setLeftPanel: (leftPanel) => set(() => ({ leftPanel })),
-  mode: 'view',
-  setMode: (mode) => set(() => ({ mode })),
+  leftPanel: initialLeftPanel,
+  setLeftPanel: (leftPanel) =>
+    set(() => {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('tg_leftPanel', leftPanel);
+      }
+      return { leftPanel };
+    }),
+  mode: initialMode,
+  setMode: (mode) =>
+    set(() => {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('tg_mode', mode);
+      }
+      return { mode };
+    }),
   flowGraphData: {
     nodes: [],
     edges: [],

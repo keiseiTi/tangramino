@@ -7,9 +7,11 @@ import {
 } from '@ant-design/icons';
 import { useEditorContext } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
+import { useDefaultEvent } from '@/hooks/use-default-event';
 
 export const Sidebar = () => {
   const { leftPanel, setLeftPanel, mode, setMode } = useEditorContext();
+  const { ensureLogicEvent } = useDefaultEvent();
 
   const sidebarItems = useMemo(
     () => [
@@ -28,6 +30,9 @@ export const Sidebar = () => {
   useEffect(() => {
     if (leftPanel === 'logic' || leftPanel === 'view') {
       setMode(leftPanel);
+    }
+    if (leftPanel === 'logic') {
+      ensureLogicEvent();
     }
   }, [leftPanel]);
 

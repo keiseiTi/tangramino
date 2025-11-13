@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useEditorCore } from '@tangramino/core';
 import { Button, message, Radio, type RadioChangeEvent } from 'antd';
 import { cn } from '@/utils';
 import { useEditorContext } from '@/hooks/use-editor-context';
 import { SchemaUtils } from '@tangramino/engine';
-import type { FlowGraphData } from '@tangramino/flow-editor';
+import { useDefaultEvent } from '@/hooks/use-default-event';
 interface OperationProps {
   className?: string;
 }
 export const Operation = (props: OperationProps) => {
   const { className } = props;
-  const { schema, materials } = useEditorCore();
-  const { mode, setMode, activeElementEvent, setActiveElementEvent, setFlowGraphData } =
-    useEditorContext();
+  const { schema } = useEditorCore();
+  const { mode, setMode, activeElementEvent } = useEditorContext();
+  const { ensureLogicEvent } = useDefaultEvent();
 
   const onSave = () => {
-    sessionStorage.setItem('schema', JSON.stringify(SchemaUtils.normalizeSchema(schema)));
+    sessionStorage.setItem('tg_schema', JSON.stringify(SchemaUtils.normalizeSchema(schema)));
     message.success('保存成功');
   };
 
@@ -24,30 +24,15 @@ export const Operation = (props: OperationProps) => {
   };
 
   const onModeChange = (e: RadioChangeEvent) => {
-    if (!activeElementEvent) {
-      const basicPage = SchemaUtils.getElementsByType(schema, 'basicPage')[0];
-      if (basicPage) {
-        const basicPageMaterial = materials.find((material) => material.type === basicPage.type);
-        const method = basicPageMaterial?.contextConfig?.methods?.[0]!;
-        setActiveElementEvent({
-          elementId: basicPage.id,
-          material: basicPageMaterial!,
-          method,
-        });
-        const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
-          schema!,
-          `${basicPage.id}::${method.name}`,
-        );
-        setFlowGraphData(flowGraphData);
-      }
+    const nextMode = e.target.value as 'view' | 'logic';
+    if (!activeElementEvent && nextMode === 'logic') {
+      ensureLogicEvent();
     }
-    setMode(e.target.value);
+    setMode(nextMode);
   };
 
   return (
-    <div
-      className={cn('h-12 flex items-center px-3 justify-between bg-white', className)}
-    >
+    <div className={cn('h-12 flex items-center px-3 justify-between bg-white', className)}>
       <span className='text-base font-semibold'>Tangramino 低代码编辑器</span>
       <div className='flex items-center gap-3'>
         <Radio.Group optionType='button' buttonStyle='solid' value={mode} onChange={onModeChange}>
