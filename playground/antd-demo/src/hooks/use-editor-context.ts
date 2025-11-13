@@ -8,14 +8,22 @@ export type ActiveElementEvent = {
   method?: Method;
 };
 
+type LeftPanel = 'view' | 'schema' | 'globals' | 'logic';
+
+type EditorMode = 'view' | 'logic';
+
 export const useEditorContext = create<{
-  mode: 'view' | 'logic';
-  setMode: (mode: 'view' | 'logic') => void;
+  leftPanel: LeftPanel;
+  setLeftPanel: (leftPanel: LeftPanel) => void;
+  mode: EditorMode;
+  setMode: (mode: EditorMode) => void;
   flowGraphData: FlowGraphData;
   setFlowGraphData: (flowGraphData: FlowGraphData) => void;
   activeElementEvent: ActiveElementEvent | null;
   setActiveElementEvent: (activeElementEvent: ActiveElementEvent | null) => void;
 }>((set) => ({
+  leftPanel: 'view',
+  setLeftPanel: (leftPanel) => set(() => ({ leftPanel })),
   mode: 'view',
   setMode: (mode) => set(() => ({ mode })),
   flowGraphData: {

@@ -26,7 +26,7 @@ export const AttributePanel = () => {
     activeNode?.renderForm || ((() => null) as (props: { form: FormInstance }) => React.ReactNode);
 
   return (
-    <div className='w-72 bg-white border-l border-gray-200 flex flex-col shadow-sm'>
+    <div className='w-70 bg-white border-l border-gray-200 flex flex-col shadow-sm'>
       <div className='h-9 px-3 flex items-center text-slate-800 border-b border-gray-200 text-sm'>
         {activeNode?.title || activeNode?.type || '节点配置'}
       </div>

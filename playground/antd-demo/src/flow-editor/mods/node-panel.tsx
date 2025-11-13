@@ -21,7 +21,7 @@ export const NodePanel = (props: NodePanelProps) => {
   };
 
   return (
-    <div className='w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm'>
+    <div className='w-58 bg-white border-r border-gray-200 flex flex-col shadow-sm'>
       <div className='h-9 px-3 flex items-center text-sm text-slate-800 border-b border-gray-200'>节点面板</div>
       <div className='p-3 flex-1 overflow-auto h-full text-xs'>
         {nodes
