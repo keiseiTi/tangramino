@@ -9,7 +9,6 @@ export { useMove } from './hooks/use-drag-drop';
 
 export { uniqueId } from './utils';
 
-export { materialPlugin } from './plugins/material';
 export { historyPlugin } from './plugins/history';
 
 export type { EditorConfig, AttributeConfig, PanelConfig } from './interface/editor-config';

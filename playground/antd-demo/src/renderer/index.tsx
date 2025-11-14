@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { createEngine, withFlowEngine, type LogicNodes, type Schema } from '@tangramino/engine';
 import { ReactView, type Plugin } from '@tangramino/react';
+import { useInitComp } from './use-init-comp';
 
 export interface RendererProps {
   schema: Schema;
@@ -19,16 +20,18 @@ export interface RendererProps {
  */
 export const Renderer: React.FC<RendererProps> = (props) => {
   const { schema, className, plugins, components, logicNodes } = props;
-  // 创建引擎实例
+
   const engine = useMemo(() => {
     const _ = createEngine(schema);
     withFlowEngine({ engine: _, schema, logicNodes });
     return _;
   }, []);
 
+  const newComponents = useInitComp(components || {});
+
   return (
     <div className={className}>
-      <ReactView engine={engine} components={components} plugins={plugins} />
+      <ReactView engine={engine} components={newComponents} plugins={plugins} />
     </div>
   );
 };
