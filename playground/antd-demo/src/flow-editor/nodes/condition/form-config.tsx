@@ -19,7 +19,7 @@ export const FormConfig = () => {
           </div>
         }
       >
-        <HyperInput showTypes={['expression', 'code']} />
+        <HyperInput showTypes={['expression', 'function']} />
       </Form.Item>
     </>
   );

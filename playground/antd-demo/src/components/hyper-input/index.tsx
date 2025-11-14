@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { HyperValue } from '@/interfaces/hyper-value';
 import { Input, InputNumber, Radio, Select } from 'antd';
-import { FunctionEditor } from '../function-editor';
+import { FunctionEditor, type FunctionEditorProps } from '../function-editor';
 import { ContextOptions } from '../context-options';
 
 export interface HyperValueEditorProps {
@@ -37,7 +37,7 @@ const hyperValueOptions = [
   },
   {
     label: '函数',
-    value: 'code',
+    value: 'function',
   },
 ];
 
@@ -109,10 +109,10 @@ export const HyperInput = (props: HyperValueEditorProps) => {
             }}
           />
         );
-      case 'code':
+      case 'function':
         return (
           <FunctionEditor
-            value={value?.value as string}
+            value={value?.value as FunctionEditorProps['value']}
             onChange={(e) => {
               onChange?.({ type: inputType, value: e });
             }}

@@ -1,3 +1,5 @@
+import type { Param } from '@/interfaces/custom-types';
+
 export type StringValue = {
   type: 'string';
   value?: string;
@@ -23,9 +25,12 @@ export type ExpressionValue = {
   value?: string;
 };
 
-export type CodeValue = {
-  type: 'code';
-  value?: string;
+export type FunctionValue = {
+  type: 'function';
+  value?: {
+    params?: Param[];
+    body?: string;
+  };
 };
 
 export type ContextConfigValue = {
@@ -39,5 +44,5 @@ export type HyperValue =
   | BooleanValue
   | NullValue
   | ExpressionValue
-  | CodeValue
+  | FunctionValue
   | ContextConfigValue;

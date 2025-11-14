@@ -1,10 +1,10 @@
 import { executeHyperValue } from '@/utils/execute';
-import type { BooleanValue, CodeValue } from '@/interfaces/hyper-value';
+import type { BooleanValue, FunctionValue } from '@/interfaces/hyper-value';
 import type { FlowExecuteContext } from '@tangramino/engine';
 
 interface VisibleElementNodeProps {
   elementIds: string[];
-  value: CodeValue | BooleanValue;
+  value: FunctionValue | BooleanValue;
 }
 
 // 设置元素的可见性，true 为可见，false 为隐藏

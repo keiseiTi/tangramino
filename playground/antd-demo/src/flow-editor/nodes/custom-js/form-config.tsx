@@ -8,8 +8,8 @@ export const FormConfig = () => {
       <Form.Item name='alias' label={<span className='text-xs'>节点别名</span>}>
         <Input />
       </Form.Item>
-      <Form.Item name='code' label={<span className='text-xs'>自定义代码</span>}>
-        <HyperInput showTypes={['code']} />
+      <Form.Item name='value' label={<span className='text-xs'>自定义代码</span>}>
+        <HyperInput showTypes={['function']} />
       </Form.Item>
     </>
   );

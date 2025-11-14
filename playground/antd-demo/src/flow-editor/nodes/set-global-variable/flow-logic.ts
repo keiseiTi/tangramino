@@ -11,8 +11,9 @@ export const setGlobalVariable = (ctx: FlowExecuteContext<SetGlobalVariableNodeP
   const { setters } = data;
   if (setters) {
     setters.forEach(({ name, value }) => {
-      if (name) {
-        engine.setGlobalVariable(name, executeHyperValue(ctx, value));
+      const [namespace, varName] = name.split('.');
+      if (namespace && varName) {
+        engine.setGlobalVariable(varName, executeHyperValue(ctx, value));
       }
     });
   }

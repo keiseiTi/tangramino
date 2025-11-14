@@ -9,7 +9,7 @@ export const FormConfig = () => {
         <Input />
       </Form.Item>
       <Form.Item name='url' label={<span className='text-xs'>请求 URL</span>}>
-        <HyperInput showTypes={['string', 'expression', 'code']} />
+        <HyperInput showTypes={['string', 'expression', 'function']} />
       </Form.Item>
       <Form.Item name='method' label={<span className='text-xs'>请求方法</span>}>
         <Select
@@ -23,13 +23,13 @@ export const FormConfig = () => {
         />
       </Form.Item>
       <Form.Item name='headers' label={<span className='text-xs'>请求头参数</span>}>
-        <HyperInput showTypes={['code']} />
+        <HyperInput showTypes={['function']} />
       </Form.Item>
       <Form.Item name='queryParams' label={<span className='text-xs'>查询参数</span>}>
-        <HyperInput showTypes={['code']} />
+        <HyperInput showTypes={['function']} />
       </Form.Item>
       <Form.Item name='bodyParams' label={<span className='text-xs'>请求体参数</span>}>
-        <HyperInput showTypes={['code']} />
+        <HyperInput showTypes={['function']} />
       </Form.Item>
     </>
   );

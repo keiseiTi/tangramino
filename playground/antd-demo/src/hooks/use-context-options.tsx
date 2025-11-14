@@ -13,7 +13,8 @@ export const useContextOptions = () => {
         if (findOne?.contextConfig?.variables) {
           return findOne.contextConfig.variables.map((variable) => ({
             label: findOne.title + '(' + variable.description + ')',
-            value: id + '.' + variable.name,
+            value: `state.${id}.${variable.name}`,
+            name: variable.name,
           }));
         }
         return [];
@@ -31,7 +32,8 @@ export const useContextOptions = () => {
         if (findOne?.contextConfig?.methods) {
           return findOne.contextConfig.methods.map((method) => ({
             label: findOne.title + '(' + method.description + ')',
-            value: method.name,
+            value: `method.${id}.${method.name}`,
+            name: method.name,
           }));
         }
       })
@@ -39,13 +41,15 @@ export const useContextOptions = () => {
       .filter((_) => _);
   }, [schema, materials]);
 
-
   const globalVariableOptions = useMemo(() => {
     const context = schema!.context;
-    return context?.globalVariables?.map((variable) => ({
-      label: variable.description,
-      value: variable.name,
-    })) || [];
+    return (
+      context?.globalVariables?.map((variable) => ({
+        label: variable.description,
+        value: 'global.' + variable.name,
+        name: variable.name,
+      })) || []
+    );
   }, [schema, materials]);
 
   return {
