@@ -1,8 +1,8 @@
 import type { Engine } from './engine';
 
 export interface FlowSchema {
-  flows?: Flows;
   bindElements?: BindElement[];
+  flows?: Flows;
 }
 
 export type Flows = {
