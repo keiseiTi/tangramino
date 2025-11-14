@@ -7,12 +7,13 @@ import type { Param } from '@/interfaces/custom-types';
 
 interface IProps {
   className?: string;
+  style?: React.CSSProperties;
   value?: Param[];
   onChange?: (value: Param[]) => void;
 }
 
 export const ParamsSetter = (props: IProps) => {
-  const { className, value, onChange } = props;
+  const { className, value, style, onChange } = props;
   const [list, setList] = useState<Param[]>([]);
   const { variableOptions, globalVariableOptions } = useContextOptions();
 
@@ -55,19 +56,30 @@ export const ParamsSetter = (props: IProps) => {
   };
 
   const addItem = (index: number) => {
-    setList([
+    const newList = [
       ...list.slice(0, index + 1),
       { name: undefined, value: undefined },
       ...list.slice(index + 1),
-    ]);
+    ];
+    setList(newList);
+    if (onChange) {
+      onChange(newList);
+    }
   };
 
   const removeItem = (index: number) => {
-    setList(list.filter((_, i) => i !== index));
+    const newList = list.filter((_, i) => i !== index);
+    setList(newList);
+    if (onChange) {
+      onChange(newList);
+    }
   };
 
   return (
-    <div className={cn('border border-solid border-gray-300 p-2 rounded-sm', className)}>
+    <div
+      className={cn('border border-solid border-gray-300 p-2 rounded-sm', className)}
+      style={style}
+    >
       {list.map((item, index) => (
         <div
           className={cn('flex items-center', {

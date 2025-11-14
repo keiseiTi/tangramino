@@ -4,15 +4,13 @@ import { Button, message, Radio, type RadioChangeEvent } from 'antd';
 import { cn } from '@/utils';
 import { useEditorContext } from '@/hooks/use-editor-context';
 import { SchemaUtils } from '@tangramino/engine';
-import { useDefaultEvent } from '@/hooks/use-default-event';
 interface OperationProps {
   className?: string;
 }
 export const Operation = (props: OperationProps) => {
   const { className } = props;
   const { schema } = useEditorCore();
-  const { mode, setMode, activeElementEvent } = useEditorContext();
-  const { ensureLogicEvent } = useDefaultEvent();
+  const { mode, setMode, setLeftPanel } = useEditorContext();
 
   const onSave = () => {
     sessionStorage.setItem('tg_schema', JSON.stringify(SchemaUtils.normalizeSchema(schema)));
@@ -25,10 +23,8 @@ export const Operation = (props: OperationProps) => {
 
   const onModeChange = (e: RadioChangeEvent) => {
     const nextMode = e.target.value as 'view' | 'logic';
-    if (!activeElementEvent && nextMode === 'logic') {
-      ensureLogicEvent();
-    }
     setMode(nextMode);
+    setLeftPanel(nextMode);
   };
 
   return (

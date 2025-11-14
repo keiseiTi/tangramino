@@ -5,13 +5,11 @@ import {
   DatabaseOutlined,
   BranchesOutlined,
 } from '@ant-design/icons';
-import { useEditorContext } from '@/hooks/use-editor-context';
+import { useEditorContext, type LeftPanel } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
-import { useDefaultEvent } from '@/hooks/use-default-event';
 
 export const Sidebar = () => {
-  const { leftPanel, setLeftPanel, mode, setMode } = useEditorContext();
-  const { ensureLogicEvent } = useDefaultEvent();
+  const { leftPanel, setLeftPanel, setMode } = useEditorContext();
 
   const sidebarItems = useMemo(
     () => [
@@ -22,19 +20,12 @@ export const Sidebar = () => {
     ],
     [],
   );
-
-  useEffect(() => {
-    setLeftPanel(mode);
-  }, [mode]);
-
-  useEffect(() => {
-    if (leftPanel === 'logic' || leftPanel === 'view') {
-      setMode(leftPanel);
+  const onLeftPanelChange = (leftPanelKey: LeftPanel) => {
+    setLeftPanel(leftPanelKey);
+    if (leftPanelKey === 'view' || leftPanelKey === 'logic') {
+      setMode(leftPanelKey);
     }
-    if (leftPanel === 'logic') {
-      ensureLogicEvent();
-    }
-  }, [leftPanel]);
+  };
 
   return (
     <div className='w-14 h-full border-r border-gray-200 bg-white'>
@@ -49,7 +40,7 @@ export const Sidebar = () => {
                 'bg-gray-100! text-blue-600 border border-blue-200': leftPanel === item.key,
               },
             )}
-            onClick={() => setLeftPanel(item.key)}
+            onClick={onLeftPanelChange.bind(this, item.key)}
           >
             <span className='text-lg'>{item.icon}</span>
             <span className='text-[10px] mt-0.5'>{item.label}</span>

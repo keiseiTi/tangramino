@@ -9,11 +9,22 @@ interface FlowEngineProps {
 }
 
 export const withFlowEngine = ({ engine, schema, logicNodes = {} }: FlowEngineProps) => {
-  const { flows, bindElements } = schema;
+  const { flows, bindElements, context } = schema;
   if (flows && bindElements) {
     const flowEvents = parseFlow({
       flows,
       bindElements,
+    });
+
+    context?.globalVariables?.forEach((variable) => {
+      if (['number', 'string', 'boolean'].includes(variable.type || '')) {
+        engine.setGlobalVariable(variable.name, variable.defaultValue);
+      } else if (['array', 'object'].includes(variable.type || '')) {
+        engine.setGlobalVariable(
+          variable.name,
+          new Function((variable.defaultValue as string) || '')(),
+        );
+      }
     });
 
     flowEvents.forEach((flowEvent) => {

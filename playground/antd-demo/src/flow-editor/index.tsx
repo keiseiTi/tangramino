@@ -29,7 +29,7 @@ export const FlowEditor = (props: FlowEditorProps) => {
 
   const activeElementEventRef = useRef<ActiveElementEvent | null>(null);
   const schemaRef = useRef(schema);
-  const { ensureLogicEvent } = useDefaultEvent();
+  const { ensureLogicEvent, forceUpdate, setForceUpdate } = useDefaultEvent();
 
   useEffect(() => {
     activeElementEventRef.current = activeElementEvent;
@@ -41,6 +41,7 @@ export const FlowEditor = (props: FlowEditorProps) => {
 
   useEffect(() => {
     ensureLogicEvent();
+    setForceUpdate(forceUpdate + 1);
   }, [schema]);
 
   const changeFlowGraphData = (data: FlowGraphData) => {
@@ -79,6 +80,7 @@ export const FlowEditor = (props: FlowEditorProps) => {
     <div className={className}>
       <BaseFlowEditor
         nodes={nodes}
+        key={forceUpdate}
         value={flowGraphData}
         onChange={changeFlowGraphData}
         canAddLine={canAddLine}

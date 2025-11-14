@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
 import { Modal } from 'antd';
 import { ParamsSetter } from './params-setter';
@@ -17,11 +17,24 @@ export const FunctionEditor = (props: FunctionEditorProps) => {
   const { value, onChange } = props;
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState<string>(value?.body || '');
-  const [params, setVariables] = useState<Param[]>(value?.params || []);
+  const [params, setParams] = useState<Param[]>(
+    value?.params || [{ name: undefined, value: undefined }],
+  );
+
+  useEffect(() => {
+    if (open) {
+      if (Array.isArray(value?.params) && value?.params.length) {
+        setParams(value?.params);
+      } else {
+        setParams([{ name: undefined, value: undefined }]);
+      }
+      setCode(value?.body || '');
+    }
+  }, [value, open]);
 
   const onOk = () => {
     onChange?.({
-      params: params,
+      params: params.filter((param) => param.name),
       body: code,
     });
     setOpen(false);
@@ -44,13 +57,18 @@ export const FunctionEditor = (props: FunctionEditorProps) => {
         onOk={onOk}
         onCancel={() => setOpen(false)}
       >
-        <div className='flex flex-col'>
-          <ParamsSetter className='mb-2' value={params} onChange={setVariables} />
-          <div className='border border-solid border-gray-300'>
+        <div className='flex flex-col h-full overflow-hidden'>
+          <ParamsSetter
+            className='mb-2'
+            style={{ height: 50 + (params.length - 1) * 40 }}
+            value={params}
+            onChange={setParams}
+          />
+          <div className='border border-solid border-gray-300 flex-1 overflow-hidden'>
             <CodeEditor
               value={code}
               onChange={onCodeChange}
-              classNames='h-100'
+              classNames='h-120'
               placeholder={`输入函数体逻辑 \n\n 例如：console.log("Hello world!");`}
             />
           </div>

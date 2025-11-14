@@ -17,8 +17,6 @@ export const executeHyperValue = <T>(ctx: FlowExecuteContext<T>, hyperValue?: Hy
       case 'expression':
         return new Function('return ' + hyperValue.value || '')();
       case 'function':
-        console.log(hyperValue.value);
-        // const variableStr = hyperValue.
         const { params, body } = hyperValue.value || {};
         const filterParams = params?.filter((param) => param.name && param.value) || [];
         const funValue: unknown[] = [];

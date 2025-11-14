@@ -1,12 +1,13 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { SchemaUtils } from '@tangramino/engine';
 import { useEditorCore } from '@tangramino/base-editor';
 import { useEditorContext } from '@/hooks/use-editor-context';
 import type { FlowGraphData } from '@tangramino/flow-editor';
 
-export const useDefaultEvent = (): { ensureLogicEvent: () => void } => {
+export const useDefaultEvent = () => {
   const { schema, materials } = useEditorCore();
   const { setActiveElementEvent, setFlowGraphData } = useEditorContext();
+  const [forceUpdate, setForceUpdate] = useState<number>(0);
 
   const ensureLogicEvent = useCallback((): void => {
     const basicPage = SchemaUtils.getElementsByType(schema, 'basicPage')[0];
@@ -29,5 +30,5 @@ export const useDefaultEvent = (): { ensureLogicEvent: () => void } => {
     setFlowGraphData(flowGraphData);
   }, [schema, materials, setActiveElementEvent, setFlowGraphData]);
 
-  return { ensureLogicEvent };
+  return { ensureLogicEvent, forceUpdate, setForceUpdate };
 };
