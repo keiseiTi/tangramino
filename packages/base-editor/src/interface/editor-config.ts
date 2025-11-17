@@ -18,6 +18,23 @@ export type AttributeConfig = {
    */
   defaultValue?: string | number | boolean;
   /**
+   * 联动显示
+   */
+  linkageShow?: {
+    /**
+     * 关联的字段
+     */
+    field: string;
+    /**
+     * 关联字段的值
+     */
+    value?: string | number | boolean;
+    /**
+     * 当被关联的字段有值时，展示当前配置
+     */
+    isNotEmpty?: boolean;
+  }[];
+  /**
    * 自定义渲染
    */
   render?: (props: AttributeConfig) => React.ReactNode;

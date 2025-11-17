@@ -4,27 +4,47 @@ import { useEditorCore, usePluginCore } from '@tangramino/base-editor';
 import { Input, Radio, Checkbox, Select, Switch, Tabs, Form, InputNumber, ColorPicker } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import { cn } from '@/utils';
+import { useEditorContext } from '@/hooks/use-editor-context';
 import type { ActiveElement, Method } from '@tangramino/base-editor';
 import type {
   AttributeConfig,
-  RadioAttributeConfig,
   CheckboxAttributeConfig,
-  SelectAttributeConfig,
   CustomAttributeConfig,
   PanelConfig,
 } from '@/interfaces/material';
 import type { FlowGraphData } from '@tangramino/flow-editor';
-import { useEditorContext } from '@/hooks/use-editor-context';
 
 export const AttributePanel = () => {
   const { activeElement, setActiveElement, engine, schema, setSchema } = useEditorCore();
   const { beforeSetElementProps, afterSetElementProps } = usePluginCore();
-  const { setFlowGraphData, setActiveElementEvent, setMode } = useEditorContext();
+  const { setFlowGraphData, setActiveElementEvent, setMode, setLeftPanel } = useEditorContext();
   const [activePanel, setActivePanel] = useState<string>('0');
+  const [elementShowMap, setElementShowMap] = useState<Record<string, boolean>>({});
   const [form] = Form.useForm();
 
   const material = activeElement?.material;
   const methods = material?.contextConfig?.methods;
+
+  const isNotEmpty = (v: unknown): boolean => {
+    if (v === undefined || v === null) return false;
+    if (typeof v === 'string') return v.trim().length > 0;
+    if (Array.isArray(v)) return v.length > 0;
+    return true;
+  };
+
+  const evaluateLinkageVisibility = (
+    config: AttributeConfig,
+    values: Record<string, unknown>,
+  ): boolean => {
+    const rules = config.linkageShow;
+    if (!rules || rules.length === 0) return true;
+    return rules.every((rule) => {
+      const rv = values[rule.field];
+      if (rule.isNotEmpty) return isNotEmpty(rv);
+      if (Object.prototype.hasOwnProperty.call(rule, 'value')) return rv === rule.value;
+      return isNotEmpty(rv);
+    });
+  };
 
   useEffect(() => {
     if (activeElement) {
@@ -34,6 +54,14 @@ export const AttributePanel = () => {
         ...state,
       });
       setActivePanel('0');
+      const values = { elementId: activeElement.id, ...state } as Record<string, unknown>;
+      const linkageConfigs = (material?.editorConfig?.panels || [])
+        .flatMap((p) => p.configs || [])
+        .filter((c) => Array.isArray(c.linkageShow) && c.linkageShow.length);
+      const hasValue = linkageConfigs.some((c) =>
+        evaluateLinkageVisibility(c as AttributeConfig, values),
+      );
+      setElementShowMap((prev) => ({ ...prev, [activeElement.id]: hasValue }));
     }
   }, [activeElement, engine]);
 
@@ -50,6 +78,7 @@ export const AttributePanel = () => {
     setFlowGraphData(flowGraphData);
     setActiveElementEvent({ elementId, method, material: material! });
     setMode('logic');
+    setLeftPanel('logic');
   };
 
   const onValuesChange = (changedFields: Record<string, unknown>) => {
@@ -57,6 +86,14 @@ export const AttributePanel = () => {
     const newSchema = SchemaUtils.setElementProps(schema, activeElement!.id, changedFields);
     afterSetElementProps(newSchema);
     setSchema(newSchema);
+    const values = form.getFieldsValue(true) as Record<string, unknown>;
+    const linkageConfigs = (material?.editorConfig?.panels || [])
+      .flatMap((p) => p.configs || [])
+      .filter((c) => Array.isArray(c.linkageShow) && c.linkageShow.length);
+    const hasValue = linkageConfigs.some((c) =>
+      evaluateLinkageVisibility(c as AttributeConfig, values),
+    );
+    setElementShowMap((prev) => ({ ...prev, [activeElement!.id]: hasValue }));
   };
 
   const renderLabel = (label: React.ReactNode) => {
@@ -65,43 +102,43 @@ export const AttributePanel = () => {
 
   const renderFormItem = (config: AttributeConfig) => {
     const { field, label, uiType } = config;
+    const values = form.getFieldsValue(true) as Record<string, unknown>;
+    if (!evaluateLinkageVisibility(config, values)) {
+      return null;
+    }
     let children: React.ReactNode = null;
-
+    let valuePropName = 'value';
     switch (uiType) {
       case 'text':
         children = <span>{form.getFieldValue(field) as string}</span>;
         break;
       case 'input':
-        children = <Input />;
+        children = <Input {...config.props} />;
         break;
       case 'number':
-        children = <InputNumber style={{ width: '100%' }} />;
+        children = <InputNumber style={{ width: '100%' }} {...config.props} />;
         break;
       case 'radio':
-        children = <Radio.Group options={(config as RadioAttributeConfig).props?.options} />;
+        children = <Radio.Group {...config.props} />;
         break;
       case 'checkbox':
         const checkboxConfig = config as CheckboxAttributeConfig;
+        valuePropName = 'checked';
         if (Array.isArray(checkboxConfig.props?.options) && checkboxConfig.props?.options.length) {
           children = <Checkbox.Group options={checkboxConfig.props.options} />;
         } else {
-          children = <Checkbox />;
+          children = <Checkbox {...config.props} />;
         }
         break;
       case 'select':
-        const selectConfig = config as SelectAttributeConfig;
-        children = (
-          <Select
-            options={selectConfig.props?.options}
-            placeholder={selectConfig.props?.placeholder}
-          />
-        );
+        children = <Select {...config.props} />;
         break;
       case 'switch':
-        children = <Switch />;
+        valuePropName = 'checked';
+        children = <Switch {...config.props} />;
         break;
       case 'color':
-        children = <ColorPicker />;
+        children = <ColorPicker {...config.props} />;
         break;
       case 'custom':
         const customConfig = config as CustomAttributeConfig;
@@ -112,7 +149,7 @@ export const AttributePanel = () => {
     }
 
     return (
-      <Form.Item label={renderLabel(label)} name={field} key={field}>
+      <Form.Item label={renderLabel(label)} name={field} key={field} valuePropName={valuePropName}>
         {children}
       </Form.Item>
     );
