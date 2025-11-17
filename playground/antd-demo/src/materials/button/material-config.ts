@@ -16,6 +16,14 @@ const ButtonMaterial: Material = {
         name: 'text',
         description: '按钮文本',
       },
+      {
+        name: 'disabled',
+        description: '禁用按钮',
+      },
+      {
+        name: 'loading',
+        description: '按钮载入状态',
+      },
     ],
     methods: [
       {
@@ -47,6 +55,7 @@ const ButtonMaterial: Material = {
             field: 'type',
             uiType: 'select',
             props: {
+              allowClear: true,
               options: [
                 { label: '默认', value: 'default' },
                 { label: '主要', value: 'primary' },
@@ -59,10 +68,10 @@ const ButtonMaterial: Material = {
           {
             label: '按钮形状',
             field: 'shape',
-            uiType: 'radio',
+            uiType: 'select',
             props: {
+              allowClear: true,
               options: [
-                { label: '默认', value: 'default' },
                 { label: '圆形', value: 'circle' },
                 { label: '圆角', value: 'round' },
               ],
@@ -81,29 +90,32 @@ const ButtonMaterial: Material = {
             },
           },
           {
-            label: '禁用',
-            field: 'disabled',
-            uiType: 'switch',
+            label: '跳转的地址',
+            field: 'href',
+            uiType: 'input',
           },
           {
-            label: '危险按钮',
-            field: 'danger',
-            uiType: 'switch',
+            label: '跳转的目标',
+            field: 'target',
+            uiType: 'select',
+            props: {
+              allowClear: true,
+              options: [
+                { label: '当前窗口', value: '_self' },
+                { label: '新窗口', value: '_blank' },
+              ],
+            },
+            linkageShow: [
+              {
+                field: 'href',
+                isNotEmpty: true,
+              },
+            ],
           },
           {
-            label: '幽灵按钮',
+            label: '按钮背景透明',
             field: 'ghost',
-            uiType: 'switch',
-          },
-          {
-            label: '块级按钮',
-            field: 'block',
-            uiType: 'switch',
-          },
-          {
-            label: '加载中',
-            field: 'loading',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
         ],
       },
