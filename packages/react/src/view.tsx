@@ -1,7 +1,6 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ELEMENT_UPDATE, VIEW_UPDATE, type LayoutNode, type Engine } from '@tangramino/engine';
 import { HocComponent } from './components/hoc';
-import { useMounted } from './hooks/use-mounted';
 import type { Plugin } from './plugin';
 
 export interface ReactViewProps {
@@ -26,7 +25,12 @@ export const ReactView = (props: ReactViewProps) => {
     >
   >({});
 
-  const isMounted = useMounted();
+  const isMounted = useRef(false);
+
+  if (!isMounted.current) {
+    (plugins || []).forEach((plugin: Plugin) => plugin(engine));
+    isMounted.current = true;
+  }
 
   useLayoutEffect(() => {
     const unsubscribeFn = engine.subscribe(VIEW_UPDATE, () => {
@@ -48,34 +52,6 @@ export const ReactView = (props: ReactViewProps) => {
       unsubscribeFn();
     };
   }, [engine]);
-
-  if (!isMounted) {
-    (plugins || []).forEach((plugin: Plugin) => plugin(engine));
-
-    // const elements = engine.elements;
-    // const enhanceComponent: Record<
-    //   string,
-    //   React.ComponentType<{
-    //     data: Record<string, unknown>;
-    //     hidden?: boolean | undefined;
-    //   }>
-    // > = {};
-    // if (typeof components === 'object' && components != null) {
-    //   Object.keys(elements).forEach((id: string) => {
-    //     const { type } = elements[id]!;
-    //     if (components[type]) {
-    //       const Component = HocComponent({
-    //         id,
-    //         type,
-    //         engine,
-    //         Comp: components[type],
-    //       });
-    //       enhanceComponent[id] = Component;
-    //     }
-    //   });
-    //   compMapElement.current = enhanceComponent;
-    // }
-  }
 
   useEffect(() => {
     const elements = engine.elements;

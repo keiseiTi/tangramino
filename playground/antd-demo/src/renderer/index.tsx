@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { createEngine, withFlowEngine, type LogicNodes, type Schema } from '@tangramino/engine';
+import { modePlugin } from '@tangramino/base-editor';
 import { ReactView, type Plugin } from '@tangramino/react';
 import { useInitComp } from './use-init-comp';
 
@@ -27,11 +28,15 @@ export const Renderer: React.FC<RendererProps> = (props) => {
     return _;
   }, []);
 
-  const newComponents = useInitComp(components || {});
+  const _components = useInitComp(components || {});
+
+  const _plugins = useMemo(() => {
+    return [...(plugins || []), modePlugin('render')];
+  }, []);
 
   return (
     <div className={className}>
-      <ReactView engine={engine} components={newComponents} plugins={plugins} />
+      <ReactView engine={engine} components={_components} plugins={_plugins} />
     </div>
   );
 };

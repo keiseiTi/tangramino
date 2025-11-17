@@ -40,3 +40,14 @@ export interface Material {
    */
   contextConfig?: ContextConfig;
 }
+
+export interface MaterialComponentProps {
+  /**
+   * 是否只读
+   */
+  tg_readonly?: boolean;
+  /**
+   * 状态
+   */
+  tg_mode?: 'edit' | 'render';
+}

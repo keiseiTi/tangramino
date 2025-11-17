@@ -41,7 +41,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
 
   useEffect(() => {
     addPlugin([...(plugins || [])]);
-  }, [plugins]);
+  }, []);
 
   useEffect(() => {
     if (Array.isArray(materials) && materials.length) {
