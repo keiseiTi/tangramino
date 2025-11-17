@@ -9,6 +9,10 @@ const ContainerMaterial: Material = {
   editorConfig: {
     panels: [
       {
+        title: '属性',
+        configs: [],
+      },
+      {
         title: '样式',
         configs: [
           {

@@ -12,7 +12,7 @@ const SelectMaterial: Material = {
   editorConfig: {
     panels: [
       {
-        title: '基础属性',
+        title: '属性',
         configs: [
           {
             label: '占位符',
@@ -62,11 +62,6 @@ const SelectMaterial: Material = {
               placeholder: '请输入当前值',
             },
           },
-        ],
-      },
-      {
-        title: '功能属性',
-        configs: [
           {
             label: '可搜索',
             field: 'showSearch',
@@ -102,11 +97,6 @@ const SelectMaterial: Material = {
               step: 1,
             },
           },
-        ],
-      },
-      {
-        title: '选项配置',
-        configs: [
           {
             label: '选项数据',
             field: 'options',
@@ -134,8 +124,10 @@ const SelectMaterial: Material = {
           },
         ],
       },
+
+
       {
-        title: '样式配置',
+        title: '样式',
         configs: [
           {
             label: '外边距',

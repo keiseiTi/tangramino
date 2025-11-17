@@ -12,7 +12,7 @@ const FloatButtonMaterial: Material = {
   editorConfig: {
     panels: [
       {
-        title: '基础属性',
+        title: '属性',
         configs: [
           {
             label: '按钮类型',
@@ -65,11 +65,6 @@ const FloatButtonMaterial: Material = {
               placeholder: '请输入工具提示文本',
             },
           },
-        ],
-      },
-      {
-        title: '状态属性',
-        configs: [
           {
             label: '禁用',
             field: 'disabled',
@@ -82,8 +77,9 @@ const FloatButtonMaterial: Material = {
           },
         ],
       },
+
       {
-        title: '样式配置',
+        title: '样式',
         configs: [
           {
             label: '外边距',

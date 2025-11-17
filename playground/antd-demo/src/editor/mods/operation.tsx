@@ -37,10 +37,10 @@ export const Operation = (props: OperationProps) => {
         </Radio.Group>
       </div>
       <div className='flex items-center'>
-        <Button size='small' type='primary' onClick={onPreview} className='mr-2'>
+        <Button type='primary' ghost onClick={onPreview} className='mr-2'>
           预览
         </Button>
-        <Button size='small' type='primary' ghost onClick={onSave}>
+        <Button type='primary' onClick={onSave}>
           保存
         </Button>
       </div>

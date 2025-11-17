@@ -16,7 +16,7 @@ const ModalMaterial: Material = {
   editorConfig: {
     panels: [
       {
-        title: '基础属性',
+        title: '属性',
         configs: [
           {
             label: '打开状态',
@@ -58,11 +58,6 @@ const ModalMaterial: Material = {
             field: 'centered',
             uiType: 'switch',
           },
-        ],
-      },
-      {
-        title: '交互属性',
-        configs: [
           {
             label: '可关闭',
             field: 'closable',
@@ -88,11 +83,6 @@ const ModalMaterial: Material = {
             field: 'keyboard',
             uiType: 'switch',
           },
-        ],
-      },
-      {
-        title: '按钮配置',
-        configs: [
           {
             label: '取消文本',
             field: 'cancelText',
@@ -130,8 +120,10 @@ const ModalMaterial: Material = {
           },
         ],
       },
+
+
       {
-        title: '样式配置',
+        title: '样式',
         configs: [
           {
             label: '外边距',

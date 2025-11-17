@@ -15,6 +15,10 @@ const InputMaterial: Material = {
         name: 'value',
         description: '当前值',
       },
+      {
+        name: 'disabled',
+        description: '是否禁用',
+      },
     ],
     methods: [
       {

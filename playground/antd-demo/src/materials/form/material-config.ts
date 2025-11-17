@@ -14,7 +14,7 @@ const FormMaterial: Material = {
   editorConfig: {
     panels: [
       {
-        title: '基础属性',
+        title: '属性',
         configs: [
           {
             label: '布局',
@@ -53,11 +53,6 @@ const FormMaterial: Material = {
               placeholder: '请输入表单名称',
             },
           },
-        ],
-      },
-      {
-        title: '校验配置',
-        configs: [
           {
             label: '初始值',
             field: 'initialValues',
@@ -104,11 +99,6 @@ const FormMaterial: Material = {
               ],
             },
           },
-        ],
-      },
-      {
-        title: '布局配置',
-        configs: [
           {
             label: '标签对齐',
             field: 'labelAlign',
@@ -154,8 +144,10 @@ const FormMaterial: Material = {
           },
         ],
       },
+
+
       {
-        title: '样式配置',
+        title: '样式',
         configs: [
           {
             label: '外边距',
