@@ -19,7 +19,7 @@ import Number from './number/material-config';
 import BasicPage from './basic-page/material-config';
 import Container from './container/material-config';
 import Text from './text/material-config';
-import FloatButton from './float-button/material-config';
+import Textarea from './textarea/material-config';
 
 export const materialGroups = [
   {
@@ -37,6 +37,7 @@ export const materialGroups = [
       Switch,
       DatePicker,
       TimePicker,
+      Textarea,
       Tree,
       TreeSelect,
       Cascader,
@@ -46,10 +47,6 @@ export const materialGroups = [
   {
     title: '展示组件',
     children: [Table, Button, Text],
-  },
-  {
-    title: '导航组件',
-    children: [FloatButton],
   },
 ];
 

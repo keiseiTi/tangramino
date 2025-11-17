@@ -78,18 +78,6 @@ const ButtonMaterial: Material = {
             },
           },
           {
-            label: '按钮大小',
-            field: 'size',
-            uiType: 'radio',
-            props: {
-              options: [
-                { label: '大', value: 'large' },
-                { label: '中', value: 'middle' },
-                { label: '小', value: 'small' },
-              ],
-            },
-          },
-          {
             label: '跳转的地址',
             field: 'href',
             uiType: 'input',
@@ -123,12 +111,23 @@ const ButtonMaterial: Material = {
         title: '样式',
         configs: [
           {
+            label: '按钮大小',
+            field: 'size',
+            uiType: 'radio',
+            props: {
+              options: [
+                { label: '大', value: 'large' },
+                { label: '中', value: 'middle' },
+                { label: '小', value: 'small' },
+              ],
+            },
+          },
+          {
             label: '外边距',
             field: 'margin',
             uiType: 'number',
             props: {
               min: 0,
-              max: 100,
               step: 1,
               suffix: 'px',
             },
@@ -139,7 +138,6 @@ const ButtonMaterial: Material = {
             uiType: 'number',
             props: {
               min: 0,
-              max: 50,
               step: 1,
               suffix: 'px',
             },
@@ -150,7 +148,6 @@ const ButtonMaterial: Material = {
             uiType: 'number',
             props: {
               min: 0,
-              max: 500,
               step: 1,
               suffix: 'px',
             },
@@ -161,7 +158,6 @@ const ButtonMaterial: Material = {
             uiType: 'number',
             props: {
               min: 0,
-              max: 100,
               step: 1,
               suffix: 'px',
             },

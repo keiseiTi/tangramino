@@ -19,8 +19,7 @@ import { Number } from './number';
 import { BasicPage } from './basic-page';
 import { Container } from './container';
 import { Text } from './text';
-import { FloatButtonComponent } from './float-button';
-import type React from 'react';
+import { Textarea } from './textarea';
 
 export const materialComponents = {
   button: Button,
@@ -29,6 +28,7 @@ export const materialComponents = {
   checkbox: Checkbox,
   radio: Radio,
   switch: Switch,
+  textarea: Textarea,
   form: Form,
   table: Table,
   tabs: Tabs,
@@ -44,7 +44,6 @@ export const materialComponents = {
   basicPage: BasicPage,
   container: Container,
   text: Text,
-  floatButton: FloatButtonComponent,
 };
 
 export default materialComponents;

@@ -142,7 +142,8 @@ export const AttributePanel = () => {
         break;
       case 'custom':
         const customConfig = config as CustomAttributeConfig;
-        children = customConfig.render?.({ ...customConfig });
+        const CustomComp = customConfig.render;
+        children = <CustomComp {...customConfig} />;
         break;
       default:
         return null;

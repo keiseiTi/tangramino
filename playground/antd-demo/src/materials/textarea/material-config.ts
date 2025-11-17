@@ -1,10 +1,11 @@
-import { Input } from './index';
+import { Textarea } from './index';
 import type { Material } from '@/interfaces/material';
+import { AutoSize } from './mods/auto-size';
 
-const InputMaterial: Material = {
-  Component: Input,
-  title: '输入框',
-  type: 'input',
+const TextareaMaterial: Material = {
+  Component: Textarea,
+  title: '文本域',
+  type: 'textarea',
   defaultProps: {
     placeholder: '请输入内容',
     size: 'middle',
@@ -61,26 +62,14 @@ const InputMaterial: Material = {
             },
           },
           {
-            label: '前置标签',
-            field: 'addonBefore',
-            uiType: 'input',
-            props: {},
-          },
-          {
-            label: '后置标签',
-            field: 'addonAfter',
-            uiType: 'input',
-            props: {},
-          },
-          {
-            label: '允许清除',
-            field: 'allowClear',
-            uiType: 'checkbox',
-          },
-          {
-            label: '显示字数',
+            label: '显示字数统计',
             field: 'showCount',
             uiType: 'checkbox',
+          },
+          {
+            field: 'autoSize',
+            uiType: 'custom',
+            render: AutoSize,
           },
         ],
       },
@@ -145,4 +134,4 @@ const InputMaterial: Material = {
   },
 };
 
-export default InputMaterial;
+export default TextareaMaterial;
