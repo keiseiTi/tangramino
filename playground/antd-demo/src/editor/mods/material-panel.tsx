@@ -13,7 +13,7 @@ export const MaterialPanel = (props: { materialGroups: MaterialGroup[] }) => {
   const [activeKeys, setActiveKeys] = useState(['0', '1', '2', '3', '4', '5', '6']);
 
   return (
-    <div className={cn('w-58 border-r-1 border-gray-200 h-full overflow-auto select-none')}>
+    <div className={cn('w-60 h-full overflow-auto select-none')}>
       <Collapse
         className='w-full'
         expandIconPosition='end'

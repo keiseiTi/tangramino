@@ -209,7 +209,7 @@ export const AttributePanel = () => {
     <div className={cn('w-70 border-l-1 border-gray-200 bg-white flex flex-col shadow-sm')}>
       {activeElement ? (
         <>
-          <div className='border-b border-gray-200 h-9 px-3 text-sm flex items-center text-stone-600 gap-1'>
+          <div className='border-b border-gray-200 h-9.5 px-3 text-sm flex items-center text-stone-600 gap-1'>
             {activeElement.parents?.map((element) => (
               <div
                 key={element.id}

@@ -35,7 +35,7 @@ const EditorPage = (props: EditorPageProps) => {
         <div className='flex-1 overflow-hidden'>
           <div className='flex h-full w-full'>
             <Sidebar />
-            <div className='flex-1 flex min-w-0'>
+            <div className='flex-1 flex min-w-0 relative'>
               <MainContent materialGroups={materialGroups} />
             </div>
           </div>

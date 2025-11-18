@@ -13,11 +13,13 @@ export type LeftPanel = 'view' | 'schema' | 'globals' | 'logic' | 'datasource';
 type EditorMode = 'view' | 'logic';
 
 const initialLeftPanel: LeftPanel =
-  (typeof window !== 'undefined' ? (sessionStorage.getItem('tg_leftPanel') as LeftPanel | null) : null) ||
-  'view';
+  (typeof window !== 'undefined'
+    ? (sessionStorage.getItem('tg_leftPanel') as LeftPanel | null)
+    : null) || 'view';
 const initialMode: EditorMode =
-  (typeof window !== 'undefined' ? (sessionStorage.getItem('tg_mode') as EditorMode | null) : null) ||
-  'view';
+  (typeof window !== 'undefined'
+    ? (sessionStorage.getItem('tg_mode') as EditorMode | null)
+    : null) || 'view';
 
 export const useEditorContext = create<{
   leftPanel: LeftPanel;
