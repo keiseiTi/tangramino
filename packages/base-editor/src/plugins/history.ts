@@ -39,6 +39,7 @@ type SetPropsOperation = {
   type: 'setProps';
   targetId: string;
   props?: Record<string, unknown>;
+  prevProps?: Record<string, unknown>;
 };
 
 type HistoryOperation = InsertOperation | MoveOperation | RemoveOperation | SetPropsOperation;
@@ -193,6 +194,16 @@ export const historyPlugin = (options?: HistoryOptions): HistoryPlugin => {
         if (limit > 0 && undos.length > limit) undos.shift();
         redos.length = 0;
       },
+      beforeSetElementProps: (schema, targetId, props) => {
+        const prevState = schema.elements[targetId]?.props || {};
+        const prevProps: Record<string, unknown> = {};
+        Object.keys(props || {}).forEach((k) => {
+          prevProps[k] = prevState[k];
+        });
+        undos.push({ type: 'setProps', targetId, props, prevProps });
+        if (limit > 0 && undos.length > limit) undos.shift();
+        redos.length = 0;
+      },
     },
     undo: (schema: Schema): Schema => {
       const operation = undos.pop();
@@ -231,7 +242,11 @@ export const historyPlugin = (options?: HistoryOptions): HistoryPlugin => {
           break;
         }
         case 'setProps': {
-          // 留空：当前未在 hooks 中记录 setProps
+          nextSchema = SchemaUtils.setElementProps(
+            nextSchema,
+            operation.targetId,
+            operation.prevProps || {},
+          );
           redos.push(operation);
           if (limit > 0 && redos.length > limit) redos.shift();
           break;
@@ -276,6 +291,11 @@ export const historyPlugin = (options?: HistoryOptions): HistoryPlugin => {
           break;
         }
         case 'setProps': {
+          nextSchema = SchemaUtils.setElementProps(
+            nextSchema,
+            operation.targetId,
+            operation.props || {},
+          );
           undos.push(operation);
           if (limit > 0 && undos.length > limit) undos.shift();
           break;

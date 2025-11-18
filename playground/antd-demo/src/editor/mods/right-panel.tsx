@@ -32,7 +32,7 @@ export const RightPanel = ({ materialGroups }: RightPanelProps): JSX.Element => 
   return (
     <>
       <div
-        className={cn('absolute top-0 -left-0.5 z-300 cursor-pointer text-gray-600', {
+        className={cn('absolute top-0 -left-0.5 z-300 cursor-pointer text-gray-600 hover:text-blue-600', {
           block: hidden,
           hidden: !hidden,
         })}

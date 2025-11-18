@@ -18,7 +18,7 @@ interface IProps {
 }
 
 export const MainContent = ({ materialGroups }: IProps) => {
-  const { leftPanel } = useEditorContext();
+  const { leftPanel, viewportWidth } = useEditorContext();
 
   if (leftPanel === 'schema') {
     return (
@@ -61,11 +61,16 @@ export const MainContent = ({ materialGroups }: IProps) => {
       <RightPanel materialGroups={materialGroups} />
       <div className='flex-1 p-3 overflow-hidden min-w-0'>
         <div className='h-full border border-gray-200 bg-white shadow-sm overflow-auto'>
-          <CanvasEditor
-            className='size-full'
-            renderComponent={EnhancedComponent}
-            renderDropPlaceholder={CustomDropPlaceholder}
-          />
+          <div
+            className='mx-auto'
+            style={{ width: (viewportWidth < 1440 && viewportWidth > 768) ? 'auto' : viewportWidth }}
+          >
+            <CanvasEditor
+              className='size-full'
+              renderComponent={EnhancedComponent}
+              renderDropPlaceholder={CustomDropPlaceholder}
+            />
+          </div>
         </div>
       </div>
       <AttributePanel />

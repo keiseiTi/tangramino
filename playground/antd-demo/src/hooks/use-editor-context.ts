@@ -11,6 +11,7 @@ export type ActiveElementEvent = {
 export type LeftPanel = 'view' | 'schema' | 'globals' | 'logic' | 'datasource';
 
 type EditorMode = 'view' | 'logic';
+type ViewportDevice = 'PC' | 'PAD' | 'MOBILE';
 
 const initialLeftPanel: LeftPanel =
   (typeof window !== 'undefined'
@@ -20,12 +21,29 @@ const initialMode: EditorMode =
   (typeof window !== 'undefined'
     ? (sessionStorage.getItem('tg_mode') as EditorMode | null)
     : null) || 'view';
+const initialViewportDevice: ViewportDevice =
+  (typeof window !== 'undefined'
+    ? (sessionStorage.getItem('tg_viewportDevice') as ViewportDevice | null)
+    : null) || 'PC';
+const defaultDeviceWidths: Record<ViewportDevice, number> = {
+  PC: 1296,
+  PAD: 768,
+  MOBILE: 375,
+};
+const initialViewportWidth: number =
+  (typeof window !== 'undefined'
+    ? Number(sessionStorage.getItem('tg_viewportWidth'))
+    : NaN) || defaultDeviceWidths[initialViewportDevice];
 
 export const useEditorContext = create<{
   leftPanel: LeftPanel;
   setLeftPanel: (leftPanel: LeftPanel) => void;
   mode: EditorMode;
   setMode: (mode: EditorMode) => void;
+  viewportDevice: ViewportDevice;
+  setViewportDevice: (device: ViewportDevice) => void;
+  viewportWidth: number;
+  setViewportWidth: (width: number) => void;
   flowGraphData: FlowGraphData;
   setFlowGraphData: (flowGraphData: FlowGraphData) => void;
   activeElementEvent: ActiveElementEvent | null;
@@ -46,6 +64,25 @@ export const useEditorContext = create<{
         sessionStorage.setItem('tg_mode', mode);
       }
       return { mode };
+    }),
+  viewportDevice: initialViewportDevice,
+  setViewportDevice: (device) =>
+    set((state) => {
+      const nextWidth = defaultDeviceWidths[device];
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('tg_viewportDevice', device);
+        sessionStorage.setItem('tg_viewportWidth', String(nextWidth));
+      }
+      return { viewportDevice: device, viewportWidth: nextWidth };
+    }),
+  viewportWidth: initialViewportWidth,
+  setViewportWidth: (width) =>
+    set(() => {
+      const w = Math.max(240, Math.floor(width || 0));
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('tg_viewportWidth', String(w));
+      }
+      return { viewportWidth: w };
     }),
   flowGraphData: {
     nodes: [],

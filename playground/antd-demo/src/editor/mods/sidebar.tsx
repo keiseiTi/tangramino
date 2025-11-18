@@ -5,6 +5,7 @@ import {
   DatabaseOutlined,
   BranchesOutlined,
   ApiOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { useEditorContext, type LeftPanel } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
@@ -31,7 +32,7 @@ export const Sidebar = () => {
 
   return (
     <div className='w-14 h-full border-r border-gray-200 bg-white'>
-      <div className='flex flex-col items-center py-2 space-y-2'>
+      <div className='flex flex-col items-center py-2 space-y-2 h-full'>
         {sidebarItems.map((item) => (
           <button
             key={item.key}
@@ -48,6 +49,15 @@ export const Sidebar = () => {
             <span className='text-[10px] mt-0.5'>{item.label}</span>
           </button>
         ))}
+        <a
+          href='https://keiseiti.github.io/tangramino/guide/start/introduce.html'
+          target='_blank'
+          rel='noreferrer'
+          className='w-12 h-12 mt-auto flex flex-col items-center justify-center rounded-md text-gray-700 hover:bg-gray-100'
+        >
+          <QuestionCircleOutlined className='mb-2' />
+          <span className='text-[10px]'>使用文档</span>
+        </a>
       </div>
     </div>
   );

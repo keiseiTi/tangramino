@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditorProvider, DragOverlay, useEditorCore } from '@tangramino/base-editor';
+import { EditorProvider, DragOverlay, useEditorCore, historyPlugin } from '@tangramino/base-editor';
 import { materialGroups } from '@/materials/group';
 import { materialPlugin } from '@/plugins/material';
 import { Operation } from './mods/operation';
@@ -26,7 +26,7 @@ const EditorPage = (props: EditorPageProps) => {
     <EditorProvider
       materials={materials}
       schema={schema || defaultSchema}
-      plugins={[materialPlugin()]}
+      plugins={[historyPlugin(), materialPlugin()]}
     >
       <div className='flex flex-col w-full h-screen min-w-[1080px] bg-gray-50'>
         <div className='sticky top-0 z-10 bg-white border-b border-gray-200'>
