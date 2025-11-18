@@ -20,10 +20,14 @@ export const withFlowEngine = ({ engine, schema, logicNodes = {} }: FlowEnginePr
       if (['number', 'string', 'boolean'].includes(variable.type || '')) {
         engine.setGlobalVariable(variable.name, variable.defaultValue);
       } else if (['array', 'object'].includes(variable.type || '')) {
-        engine.setGlobalVariable(
-          variable.name,
-          new Function((variable.defaultValue as string) || '')(),
-        );
+        try {
+          engine.setGlobalVariable(
+            variable.name,
+            new Function((variable.defaultValue as string) || '')(),
+          );
+        } catch (e) {
+          console.error(e);
+        }
       }
     });
 

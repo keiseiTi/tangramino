@@ -72,7 +72,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
       return;
     }
 
-    const dragData = active.data.current as Material;
+    const dragData = active.data.current as unknown;
     const dropData = over.data.current as {
       id: string;
       props: Record<string, unknown>;
@@ -84,9 +84,9 @@ export const EditorProvider = (props: EditorProviderProps) => {
       // 插入元素
       if (String(over.id).endsWith('-placeholder')) {
         const newElement = {
-          id: uniqueId(dragData.type),
-          type: dragData.type,
-          props: dragData.defaultProps || {},
+          id: uniqueId((dragData as Material).type),
+          type: (dragData as Material).type,
+          props: (dragData as Material).defaultProps || {},
         };
         beforeInsertElement(schema, dropData.id, newElement);
         newSchema = SchemaUtils.insertElement(schema, dropData.id, newElement);
@@ -95,9 +95,9 @@ export const EditorProvider = (props: EditorProviderProps) => {
       // 插入到同级元素中
       if (dropData.position && !String(active.id).endsWith('-move')) {
         const newElement = {
-          id: uniqueId(dragData.type),
-          type: dragData.type,
-          props: dragData.defaultProps || {},
+          id: uniqueId((dragData as Material).type),
+          type: (dragData as Material).type,
+          props: (dragData as Material).defaultProps || {},
         };
         beforeInsertElement(schema, dropData.id, newElement);
         newSchema = SchemaUtils.insertAdjacentElement(
@@ -110,7 +110,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
       }
       // 移动元素
       if (String(active.id).endsWith('-move')) {
-        const dragElement = dragData as unknown as { id: string; material: Material };
+        const dragElement = dragData as { id: string; material: Material };
         beforeMoveElement(schema, dragElement.id, dropData.id);
         newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
           mode: 'same-level',

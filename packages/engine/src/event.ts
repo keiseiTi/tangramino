@@ -47,7 +47,9 @@ export const Event = {
       const fnIndex = listenerMap[event_name].findIndex(
         (fn) => fn === listener,
       );
-      listenerMap[event_name].splice(fnIndex, 1);
+      if (fnIndex >= 0) {
+        listenerMap[event_name].splice(fnIndex, 1);
+      }
     }
   },
   offAll: (

@@ -4,7 +4,7 @@ export { EditorRenderer, type PlaygroundReactRendererProps } from './components/
 export { PlaygroundContext } from './context/playground-context';
 export { useEditorContext } from './context/editor-context';
 
-export { useDragNode } from './hooks/use-darg-node';
+export { useDragNode } from './hooks/use-drag-node';
 export { useClientContext, useNodeContext } from './hooks/use-context';
 
 export type { FlowNode, FlowGraphData } from './interface/node';
