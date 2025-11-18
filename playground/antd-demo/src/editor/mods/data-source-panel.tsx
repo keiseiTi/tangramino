@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { Button, Form, Input, Modal, Select, Space, message, Popconfirm } from 'antd';
 import { useDataSources, type DataSourceItem, type HttpMethod } from '@/hooks/use-data-sources';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { cn } from '@/utils';
 
 interface DataSourcePanelProps {
@@ -113,13 +114,9 @@ export const DataSourcePanel: React.FC<DataSourcePanelProps> = (props) => {
                 <div className='text-xs text-gray-700 mt-1'>方法：{item.method}</div>
                 <div className='flex justify-end mt-3'>
                   <Space size={8}>
-                    <Button size='small' onClick={() => onOpenEdit(item)}>
-                      编辑
-                    </Button>
+                    <EditOutlined onClick={() => onOpenEdit(item)} />
                     <Popconfirm title='确认删除该数据源？' onConfirm={() => onDelete(item.id)}>
-                      <Button size='small' danger>
-                        删除
-                      </Button>
+                      <DeleteOutlined />
                     </Popconfirm>
                   </Space>
                 </div>
