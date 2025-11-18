@@ -8,7 +8,7 @@ export type ActiveElementEvent = {
   method?: Method;
 };
 
-export type LeftPanel = 'view' | 'schema' | 'globals' | 'logic';
+export type LeftPanel = 'view' | 'schema' | 'globals' | 'logic' | 'datasource';
 
 type EditorMode = 'view' | 'logic';
 

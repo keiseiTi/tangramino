@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
   AppstoreOutlined,
   CodeOutlined,
   DatabaseOutlined,
   BranchesOutlined,
+  ApiOutlined,
 } from '@ant-design/icons';
 import { useEditorContext, type LeftPanel } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
@@ -17,6 +18,7 @@ export const Sidebar = () => {
       { key: 'logic' as const, label: '逻辑编辑', icon: <BranchesOutlined /> },
       { key: 'schema' as const, label: 'Schema', icon: <CodeOutlined /> },
       { key: 'globals' as const, label: '全局变量', icon: <DatabaseOutlined /> },
+      { key: 'datasource' as const, label: '数据源', icon: <ApiOutlined /> },
     ],
     [],
   );
