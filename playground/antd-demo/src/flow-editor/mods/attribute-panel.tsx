@@ -27,7 +27,7 @@ export const AttributePanel = () => {
 
   return (
     <div className='w-70 bg-white border-l border-gray-200 flex flex-col shadow-sm'>
-      <div className='h-9 px-3 flex items-center text-slate-800 border-b border-gray-200 text-sm'>
+      <div className='h-9.5 px-3 flex items-center text-slate-800 border-b border-gray-200 text-sm'>
         {activeNode?.title || activeNode?.type || '节点配置'}
       </div>
       {activeNode ? (

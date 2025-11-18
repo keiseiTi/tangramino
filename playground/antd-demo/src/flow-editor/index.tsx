@@ -10,10 +10,9 @@ import { message } from 'antd';
 import { SchemaUtils } from '@tangramino/engine';
 import { transformFlowGraph2Flow } from '@/utils';
 import { useEditorContext, type ActiveElementEvent } from '@/hooks/use-editor-context';
-import { NodePanel } from './mods/node-panel';
 import { AttributePanel } from './mods/attribute-panel';
 import { nodes } from './nodes';
-import { Operation } from './mods/operation';
+import { OperationPanel } from './mods/operation-panel';
 import { createFreeLinesPlugin } from '@flowgram.ai/free-lines-plugin';
 import { CustomLineLabel } from './mods/custom-line-label';
 import { useDefaultEvent } from '@/hooks/use-default-event';
@@ -86,9 +85,10 @@ export const FlowEditor = (props: FlowEditorProps) => {
         ]}
       >
         <div className='flex h-full'>
-          <NodePanel nodes={nodes} />
+          <div className='flex flex-col h-full'>
+            <OperationPanel nodes={nodes} />
+          </div>
           <div className='flex-1 flex flex-col'>
-            <Operation />
             <EditorRenderer className='flex-1 relative' />
           </div>
           <AttributePanel />
