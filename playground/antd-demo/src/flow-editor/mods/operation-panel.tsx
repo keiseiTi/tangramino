@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Tree, Tabs, ConfigProvider } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { uniqueId, useEditorCore } from '@tangramino/base-editor';
@@ -86,9 +86,9 @@ export const OperationPanel = (props: OperationTreeProps): JSX.Element => {
         activeKey={activeTab}
         onChange={setActiveTab}
         size='small'
-        centered
         tabBarStyle={{
           margin: 0,
+          padding: '0 6px',
         }}
         items={[
           {
@@ -107,6 +107,7 @@ export const OperationPanel = (props: OperationTreeProps): JSX.Element => {
                 <Tree
                   className='p-2!'
                   treeData={treeData}
+                  defaultSelectedKeys={[(treeData?.[0].children?.[0]?.key as string) || '']}
                   switcherIcon={<DownOutlined />}
                   onSelect={onSelect}
                   defaultExpandAll
