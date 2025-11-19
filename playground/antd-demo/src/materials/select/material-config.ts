@@ -1,4 +1,5 @@
 import { Select } from './index';
+import { OptionsConfig } from '@/components/options-config';
 import type { Material } from '@/interfaces/material';
 
 const SelectMaterial: Material = {
@@ -8,6 +9,25 @@ const SelectMaterial: Material = {
   defaultProps: {
     placeholder: '请选择',
     size: 'middle',
+    options: [],
+  },
+  contextConfig: {
+    variables: [
+      {
+        name: 'value',
+        description: '当前值',
+      },
+      {
+        name: 'options',
+        description: '选项',
+      },
+    ],
+    methods: [
+      {
+        name: 'onChange',
+        description: '值改变时的回调',
+      },
+    ],
   },
   editorConfig: {
     panels: [
@@ -23,24 +43,12 @@ const SelectMaterial: Material = {
             },
           },
           {
-            label: '大小',
-            field: 'size',
-            uiType: 'radio',
-            props: {
-              options: [
-                { label: '大', value: 'large' },
-                { label: '中', value: 'middle' },
-                { label: '小', value: 'small' },
-              ],
-            },
-          },
-          {
             label: '模式',
             field: 'mode',
             uiType: 'select',
             props: {
+              allowClear: true,
               options: [
-                { label: '默认', value: undefined },
                 { label: '多选', value: 'multiple' },
                 { label: '标签', value: 'tags' },
               ],
@@ -55,80 +63,33 @@ const SelectMaterial: Material = {
             },
           },
           {
-            label: '当前值',
-            field: 'value',
-            uiType: 'input',
-            props: {
-              placeholder: '请输入当前值',
-            },
-          },
-          {
-            label: '可搜索',
-            field: 'showSearch',
-            uiType: 'switch',
-          },
-          {
             label: '允许清除',
             field: 'allowClear',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
-            label: '禁用',
-            field: 'disabled',
-            uiType: 'switch',
-          },
-          {
-            label: '自动获取焦点',
-            field: 'autoFocus',
-            uiType: 'switch',
-          },
-          {
-            label: '虚拟滚动',
-            field: 'virtual',
-            uiType: 'switch',
-          },
-          {
-            label: '最大标签数',
-            field: 'maxTagCount',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 100,
-              step: 1,
-            },
-          },
-          {
-            label: '选项数据',
+            label: '选项',
             field: 'options',
-            uiType: 'input',
-            props: {
-              placeholder: '[{ label: "选项1", value: "1" }, { label: "选项2", value: "2" }]',
-            },
-          },
-          {
-            label: '选项过滤',
-            field: 'filterOption',
-            uiType: 'switch',
-          },
-          {
-            label: '选项排序',
-            field: 'optionFilterProp',
-            uiType: 'select',
-            props: {
-              options: [
-                { label: 'label', value: 'label' },
-                { label: 'value', value: 'value' },
-                { label: 'children', value: 'children' },
-              ],
-            },
+            uiType: 'custom',
+            render: OptionsConfig,
           },
         ],
       },
-
-
       {
         title: '样式',
         configs: [
+          {
+            label: '大小',
+            field: 'size',
+            uiType: 'radio',
+            props: {
+              options: [
+                { label: '大', value: 'large' },
+                { label: '中', value: 'middle' },
+                { label: '小', value: 'small' },
+              ],
+            },
+          },
           {
             label: '外边距',
             field: 'margin',
@@ -158,32 +119,6 @@ const SelectMaterial: Material = {
             props: {
               min: 0,
               max: 500,
-              step: 1,
-              unit: 'px',
-            },
-          },
-          {
-            label: '背景色',
-            field: 'backgroundColor',
-            uiType: 'color',
-          },
-          {
-            label: '文字颜色',
-            field: 'color',
-            uiType: 'color',
-          },
-          {
-            label: '边框颜色',
-            field: 'borderColor',
-            uiType: 'color',
-          },
-          {
-            label: '圆角',
-            field: 'borderRadius',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 20,
               step: 1,
               unit: 'px',
             },
