@@ -48,20 +48,11 @@ const TextareaMaterial: Material = {
         title: '属性',
         configs: [
           {
-            label: '占位符',
-            field: 'placeholder',
-            uiType: 'input',
-            props: {
-              placeholder: '请输入占位符文本',
-            },
-          },
-          {
             label: '最大长度',
             field: 'maxLength',
             uiType: 'number',
             props: {
               min: 0,
-              max: 1000,
               step: 1,
             },
           },
@@ -71,13 +62,20 @@ const TextareaMaterial: Material = {
             uiType: 'checkbox',
           },
           {
+            label: '占位符',
+            field: 'placeholder',
+            uiType: 'input',
+            props: {
+              placeholder: '请输入占位符文本',
+            },
+          },
+          {
             field: 'autoSize',
             uiType: 'custom',
             render: AutoSize,
           },
         ],
       },
-      
     ],
   },
 };

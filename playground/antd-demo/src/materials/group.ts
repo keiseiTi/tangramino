@@ -27,7 +27,7 @@ export const materialGroups = [
     children: [BasicPage, Container, Form, Tabs, Modal, Drawer],
   },
   {
-    title: '输入组件',
+    title: '原子组件',
     children: [
       Input,
       Number,
@@ -38,7 +38,6 @@ export const materialGroups = [
       DatePicker,
       TimePicker,
       Textarea,
-      Tree,
       TreeSelect,
       Cascader,
       Upload,
@@ -46,7 +45,7 @@ export const materialGroups = [
   },
   {
     title: '展示组件',
-    children: [Table, Button, Text],
+    children: [Button, Text, Table, Tree],
   },
 ];
 

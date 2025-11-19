@@ -6,7 +6,7 @@ import type { FlowGraphData } from '@tangramino/flow-editor';
 
 export const useDefaultEvent = () => {
   const { schema, materials } = useEditorCore();
-  const { setActiveElementEvent, setFlowGraphData } = useEditorContext();
+  const { activeElementEvent, setActiveElementEvent, setFlowGraphData } = useEditorContext();
   const [forceUpdate, setForceUpdate] = useState<number>(0);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export const useDefaultEvent = () => {
 
     const basicPageMaterial = materials.find((material) => material.type === basicPage.type);
     const method = basicPageMaterial?.contextConfig?.methods?.[0];
-    if (!basicPageMaterial || !method) return;
+    if (!basicPageMaterial || !method || activeElementEvent) return;
 
     setActiveElementEvent({
       elementId: basicPage.id,
@@ -29,7 +29,7 @@ export const useDefaultEvent = () => {
     );
     setFlowGraphData(flowGraphData);
     setForceUpdate(forceUpdate + 1);
-  }, [materials, setActiveElementEvent, setFlowGraphData]);
+  }, [materials, activeElementEvent, setActiveElementEvent, setFlowGraphData]);
 
   return { forceUpdate, setForceUpdate };
 };

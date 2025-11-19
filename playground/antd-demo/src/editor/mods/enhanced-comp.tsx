@@ -3,7 +3,6 @@ import {
   useEditorCore,
   usePluginCore,
   useMove,
-  uniqueId,
   type EnhancedComponentProps,
   type Method,
 } from '@tangramino/base-editor';
@@ -12,16 +11,17 @@ import { Dropdown, Popover, Tooltip } from 'antd';
 import { DeleteOutlined, DragOutlined, PartitionOutlined } from '@ant-design/icons';
 import { useEditorContext } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
-import type { FlowGraphData } from '@tangramino/flow-editor';
+import { useLogicEvent } from '@/hooks/use-logic-event';
 
 export const EnhancedComponent = (props: EnhancedComponentProps) => {
   const { material, elementProps, children } = props;
   const elementId = elementProps['data-element-id'] as string;
   const methods = material.contextConfig?.methods || [];
 
-  const { mode, setMode, setFlowGraphData, setActiveElementEvent } = useEditorContext();
+  const { mode } = useEditorContext();
   const { activeElement, setActiveElement, schema, setSchema, insertPosition } = useEditorCore();
   const { beforeRemoveElement, afterRemoveElement } = usePluginCore();
+  const { openFlow } = useLogicEvent();
   const MoveElement = useMove({ elementId, elementProps, material });
   const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -41,14 +41,6 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     }
   }, [mode]);
 
-  const selectElement = (_: React.MouseEvent) => {
-    setPopoverOpen(false);
-    const firstMethod = material.contextConfig?.methods?.[0];
-    if (firstMethod) {
-      updateFlowGraphData(firstMethod);
-    }
-  };
-
   const deleteElement = () => {
     setPopoverOpen(false);
     beforeRemoveElement(schema!, elementId);
@@ -60,17 +52,11 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
 
   const openFlowEditor = (method: Method, e: React.MouseEvent) => {
     e.stopPropagation();
-    updateFlowGraphData(method);
-    setMode('logic');
-  };
-
-  const updateFlowGraphData = (method: Method) => {
-    const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
-      schema!,
-      `${elementId}::${method.name}`,
-    );
-    setFlowGraphData(flowGraphData);
-    setActiveElementEvent({ elementId, method, material });
+    openFlow({
+      elementId,
+      method,
+      material,
+    });
   };
 
   const parentMenus = activeElement?.parents?.map((parent) => ({
@@ -141,7 +127,7 @@ export const EnhancedComponent = (props: EnhancedComponentProps) => {
     >
       {React.cloneElement(children, {
         onClick: (e: React.MouseEvent) => {
-          selectElement(e);
+          e.preventDefault();
         },
         className: cn({
           'border-2 border-blue-600': activeElement?.id === elementId,

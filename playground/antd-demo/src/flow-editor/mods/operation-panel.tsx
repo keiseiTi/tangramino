@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Tree, Tabs, ConfigProvider } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { uniqueId, useEditorCore } from '@tangramino/base-editor';
@@ -16,7 +16,7 @@ interface OperationTreeProps {
 export const OperationPanel = (props: OperationTreeProps): JSX.Element => {
   const { nodes } = props;
   const { schema, materials } = useEditorCore();
-  const { setActiveElementEvent, setFlowGraphData } = useEditorContext();
+  const { activeElementEvent, setActiveElementEvent, setFlowGraphData } = useEditorContext();
   const [activeTab, setActiveTab] = useState<string>('tree');
   const clientContext = useClientContext();
 
@@ -51,6 +51,14 @@ export const OperationPanel = (props: OperationTreeProps): JSX.Element => {
     const root = buildTree(layout.root);
     return root ? [root] : [];
   }, [schema, materials]);
+
+  const defaultSelectedKeys = useMemo(() => {
+    return activeElementEvent?.elementId
+      ? [activeElementEvent?.elementId + '::' + activeElementEvent?.method?.name]
+      : treeData?.[0].children?.[0]?.key
+        ? [treeData?.[0].children?.[0]?.key]
+        : [];
+  }, [treeData, activeElementEvent]);
 
   const onSelect = (keys: React.Key[], info: { node: any }) => {
     const key = String(keys[0] || '');
@@ -107,7 +115,7 @@ export const OperationPanel = (props: OperationTreeProps): JSX.Element => {
                 <Tree
                   className='p-2!'
                   treeData={treeData}
-                  defaultSelectedKeys={[(treeData?.[0].children?.[0]?.key as string) || '']}
+                  defaultSelectedKeys={defaultSelectedKeys}
                   switcherIcon={<DownOutlined />}
                   onSelect={onSelect}
                   defaultExpandAll

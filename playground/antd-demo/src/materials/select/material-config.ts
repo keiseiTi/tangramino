@@ -44,14 +44,6 @@ const SelectMaterial: Material = {
         title: '属性',
         configs: [
           {
-            label: '占位符',
-            field: 'placeholder',
-            uiType: 'input',
-            props: {
-              placeholder: '请输入占位符文本',
-            },
-          },
-          {
             label: '模式',
             field: 'mode',
             uiType: 'select',
@@ -61,6 +53,14 @@ const SelectMaterial: Material = {
                 { label: '多选', value: 'multiple' },
                 { label: '标签', value: 'tags' },
               ],
+            },
+          },
+          {
+            label: '占位符',
+            field: 'placeholder',
+            uiType: 'input',
+            props: {
+              placeholder: '请输入占位符文本',
             },
           },
           {
@@ -75,7 +75,6 @@ const SelectMaterial: Material = {
           },
         ],
       },
-      
     ],
   },
 };

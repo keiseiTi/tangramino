@@ -4,7 +4,6 @@ import { useEditorCore, usePluginCore } from '@tangramino/base-editor';
 import { Input, Radio, Checkbox, Select, Switch, Tabs, Form, InputNumber, ColorPicker } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import { cn } from '@/utils';
-import { useEditorContext } from '@/hooks/use-editor-context';
 import type { ActiveElement, Method } from '@tangramino/base-editor';
 import type {
   AttributeConfig,
@@ -12,15 +11,15 @@ import type {
   CustomAttributeConfig,
   PanelConfig,
 } from '@/interfaces/material';
-import type { FlowGraphData } from '@tangramino/flow-editor';
+import { useLogicEvent } from '@/hooks/use-logic-event';
 
 export const AttributePanel = () => {
   const { activeElement, setActiveElement, engine, schema, setSchema } = useEditorCore();
   const { beforeSetElementProps, afterSetElementProps } = usePluginCore();
-  const { setFlowGraphData, setActiveElementEvent, setMode, setLeftPanel } = useEditorContext();
   const [activePanel, setActivePanel] = useState<string>('0');
   const [elementShowMap, setElementShowMap] = useState<Record<string, boolean>>({});
   const [form] = Form.useForm();
+  const { openFlow } = useLogicEvent();
 
   const material = activeElement?.material;
   const methods = material?.contextConfig?.methods;
@@ -71,14 +70,7 @@ export const AttributePanel = () => {
 
   const selectElementMethod = (method: Method) => {
     const elementId = activeElement!.id;
-    const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
-      schema!,
-      `${elementId}::${method.name}`,
-    );
-    setFlowGraphData(flowGraphData);
-    setActiveElementEvent({ elementId, method, material: material! });
-    setMode('logic');
-    setLeftPanel('logic');
+    openFlow({ elementId, method, material: material! });
   };
 
   const onValuesChange = (changedFields: Record<string, unknown>) => {

@@ -63,43 +63,49 @@ export const Operation = (props: OperationProps) => {
   return (
     <div className={cn('h-12 flex items-center px-3 justify-between bg-white', className)}>
       <span className='text-base font-semibold'>Tangramino 低代码编辑器</span>
-      <div className='flex items-center gap-3 w-<0.8>'>
-        <Radio.Group
-          optionType='button'
-          buttonStyle='solid'
-          value={viewportDevice}
-          onChange={onDeviceChange}
-        >
-          <Radio value={'PC'}>PC</Radio>
-          <Radio value={'MOBILE'}>MOBILE</Radio>
-        </Radio.Group>
-        <div className='flex items-center gap-1'>
-          <span className='text-xs text-gray-600'>画布宽度</span>
-          <InputNumber
-            min={240}
-            value={viewportWidth}
-            onChange={onWidthChange}
-            size='small'
-            className='w-24'
-          />
-          <span className='text-xs text-gray-500'>px</span>
-        </div>
+      <div className='flex-1 flex items-center gap-3 justify-center'>
+        {mode === 'view' && (
+          <>
+            <Radio.Group
+              optionType='button'
+              buttonStyle='solid'
+              value={viewportDevice}
+              onChange={onDeviceChange}
+            >
+              <Radio value={'PC'}>PC</Radio>
+              <Radio value={'MOBILE'}>MOBILE</Radio>
+            </Radio.Group>
+            <div className='flex items-center gap-1'>
+              <span className='text-xs text-gray-600'>画布宽度</span>
+              <InputNumber
+                min={240}
+                value={viewportWidth}
+                onChange={onWidthChange}
+                size='small'
+                className='w-24'
+              />
+              <span className='text-xs text-gray-500'>px</span>
+            </div>
+          </>
+        )}
         <Radio.Group optionType='button' buttonStyle='solid' value={mode} onChange={onModeChange}>
           <Radio value={'view'}>视图</Radio>
           <Radio value={'logic'}>逻辑</Radio>
         </Radio.Group>
-        <Space.Compact>
-          <Button
-            icon={<UndoOutlined />}
-            disabled={!history?.canUndo?.()}
-            onClick={onUndo}
-          ></Button>
-          <Button
-            icon={<RedoOutlined />}
-            disabled={!history?.canRedo?.()}
-            onClick={onRedo}
-          ></Button>
-        </Space.Compact>
+        {mode === 'view' && (
+          <Space.Compact>
+            <Button
+              icon={<UndoOutlined />}
+              disabled={!history?.canUndo?.()}
+              onClick={onUndo}
+            ></Button>
+            <Button
+              icon={<RedoOutlined />}
+              disabled={!history?.canRedo?.()}
+              onClick={onRedo}
+            ></Button>
+          </Space.Compact>
+        )}
       </div>
       <div className='flex items-center'>
         <Button type='primary' ghost onClick={onPreview} className='mr-2'>

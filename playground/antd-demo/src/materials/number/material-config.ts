@@ -47,14 +47,6 @@ const NumberMaterial: Material = {
         title: '属性',
         configs: [
           {
-            label: '占位符',
-            field: 'placeholder',
-            uiType: 'input',
-            props: {
-              placeholder: '请输入占位符文本',
-            },
-          },
-          {
             label: '默认值',
             field: 'defaultValue',
             uiType: 'number',
@@ -112,13 +104,20 @@ const NumberMaterial: Material = {
             props: {},
           },
           {
+            label: '占位符',
+            field: 'placeholder',
+            uiType: 'input',
+            props: {
+              placeholder: '请输入占位符文本',
+            },
+          },
+          {
             label: '允许清除',
             field: 'allowClear',
             uiType: 'checkbox',
           },
         ],
       },
-      
     ],
   },
 };
