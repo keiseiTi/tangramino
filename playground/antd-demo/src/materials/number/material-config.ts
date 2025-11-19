@@ -118,67 +118,7 @@ const NumberMaterial: Material = {
           },
         ],
       },
-      {
-        title: '样式',
-        configs: [
-          {
-            label: '大小',
-            field: 'size',
-            uiType: 'radio',
-            props: {
-              options: [
-                { label: '大', value: 'large' },
-                { label: '中', value: 'middle' },
-                { label: '小', value: 'small' },
-              ],
-            },
-          },
-          {
-            label: '外边距',
-            field: 'margin',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 100,
-              step: 1,
-              suffix: 'px',
-            },
-          },
-          {
-            label: '内边距',
-            field: 'padding',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 50,
-              step: 1,
-              suffix: 'px',
-            },
-          },
-          {
-            label: '宽度',
-            field: 'width',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 500,
-              step: 1,
-              suffix: 'px',
-            },
-          },
-          {
-            label: '高度',
-            field: 'height',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 100,
-              step: 1,
-              suffix: 'px',
-            },
-          },
-        ],
-      },
+      
     ],
   },
 };

@@ -120,59 +120,7 @@ const ModalMaterial: Material = {
           },
         ],
       },
-
-
-      {
-        title: '样式',
-        configs: [
-          {
-            label: '外边距',
-            field: 'margin',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 100,
-              step: 1,
-              unit: 'px',
-            },
-          },
-          {
-            label: '内边距',
-            field: 'padding',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 50,
-              step: 1,
-              unit: 'px',
-            },
-          },
-          {
-            label: '遮罩颜色',
-            field: 'maskStyle',
-            uiType: 'input',
-            props: {
-              placeholder: '例如: { backgroundColor: "rgba(0,0,0,0.5)" }',
-            },
-          },
-          {
-            label: 'Body 样式',
-            field: 'bodyStyle',
-            uiType: 'input',
-            props: {
-              placeholder: '例如: { padding: "20px" }',
-            },
-          },
-          {
-            label: 'Wrap 类名',
-            field: 'wrapClassName',
-            uiType: 'input',
-            props: {
-              placeholder: '请输入自定义类名',
-            },
-          },
-        ],
-      },
+      
     ],
   },
 };

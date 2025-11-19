@@ -144,67 +144,7 @@ const FormMaterial: Material = {
           },
         ],
       },
-
-
-      {
-        title: '样式',
-        configs: [
-          {
-            label: '外边距',
-            field: 'margin',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 100,
-              step: 1,
-              unit: 'px',
-            },
-          },
-          {
-            label: '内边距',
-            field: 'padding',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 50,
-              step: 1,
-              unit: 'px',
-            },
-          },
-          {
-            label: '宽度',
-            field: 'width',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 1000,
-              step: 1,
-              unit: 'px',
-            },
-          },
-          {
-            label: '背景色',
-            field: 'backgroundColor',
-            uiType: 'color',
-          },
-          {
-            label: '边框颜色',
-            field: 'borderColor',
-            uiType: 'color',
-          },
-          {
-            label: '圆角',
-            field: 'borderRadius',
-            uiType: 'number',
-            props: {
-              min: 0,
-              max: 20,
-              step: 1,
-              unit: 'px',
-            },
-          },
-        ],
-      },
+      
     ],
   },
 };

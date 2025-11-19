@@ -55,21 +55,7 @@ const TreeSelectMaterial: Material = {
           },
         ],
       },
-      {
-        title: '样式',
-        configs: [
-          {
-            label: '外边距',
-            field: 'margin',
-            uiType: 'number',
-          },
-          {
-            label: '内边距',
-            field: 'padding',
-            uiType: 'number',
-          },
-        ],
-      },
+      
     ],
   },
 };
