@@ -5,16 +5,28 @@ interface IProps extends RadioProps {
   label?: string;
   margin?: number | string;
   padding?: number | string;
+  optionDisplayButton?: boolean;
 }
 
 export const Radio = (props: IProps) => {
-  const { label, margin, padding, ...rest } = props;
+  const { label, margin, padding, optionDisplayButton, ...rest } = props;
+
+  if (optionDisplayButton) {
+    return (
+      <AntdRadio.Group
+        style={{ margin, padding }}
+        optionType='button'
+        buttonStyle='solid'
+        {...rest}
+      >
+        {label}
+      </AntdRadio.Group>
+    );
+  }
+
   return (
-    <AntdRadio
-      style={{ margin, padding }}
-      {...rest}
-    >
+    <AntdRadio.Group style={{ margin, padding }} {...rest}>
       {label}
-    </AntdRadio>
+    </AntdRadio.Group>
   );
 };

@@ -18,6 +18,10 @@ const SelectMaterial: Material = {
         description: '当前值',
       },
       {
+        name: 'disabled',
+        description: '是否禁用',
+      },
+      {
         name: 'options',
         description: '选项',
       },
@@ -26,6 +30,11 @@ const SelectMaterial: Material = {
       {
         name: 'onChange',
         description: '值改变时的回调',
+        params: [
+          {
+            description: '事件参数',
+          },
+        ],
       },
     ],
   },
@@ -55,20 +64,11 @@ const SelectMaterial: Material = {
             },
           },
           {
-            label: '默认值',
-            field: 'defaultValue',
-            uiType: 'input',
-            props: {
-              placeholder: '请输入默认值',
-            },
-          },
-          {
             label: '允许清除',
             field: 'allowClear',
             uiType: 'checkbox',
           },
           {
-            label: '选项',
             field: 'options',
             uiType: 'custom',
             render: OptionsConfig,

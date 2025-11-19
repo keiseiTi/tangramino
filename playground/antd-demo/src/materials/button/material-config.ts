@@ -31,7 +31,7 @@ const ButtonMaterial: Material = {
         description: '点击事件',
         params: [
           {
-            description: '点击事件参数',
+            description: '事件参数',
           },
         ],
       },

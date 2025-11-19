@@ -23,10 +23,10 @@ const InputMaterial: Material = {
     methods: [
       {
         name: 'onChange',
-        description: '内容变化时的回调',
+        description: '值改变时的回调',
         params: [
           {
-            description: '输入事件参数',
+            description: '事件参数',
           },
         ],
       },
@@ -35,7 +35,7 @@ const InputMaterial: Material = {
         description: '回车的回调',
         params: [
           {
-            description: '输入事件参数',
+            description: '事件参数',
           },
         ],
       },

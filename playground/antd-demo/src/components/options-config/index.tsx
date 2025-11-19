@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Input, Table } from 'antd';
-import type { TableColumnsType } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Checkbox, Input, Table, message } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -25,10 +24,13 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { uniqueId } from '@tangramino/base-editor';
+import type { TableColumnsType } from 'antd';
 
 export interface OptionItem {
   label: string;
   value: string;
+  isDefault?: boolean;
 }
 
 interface OptionsConfigProps {
@@ -72,13 +74,20 @@ const Row = (props: RowProps) => {
   );
 };
 
-export const OptionsConfig: React.FC<OptionsConfigProps> = ({ value = [], onChange }) => {
-  const [dataSource, setDataSource] = useState<EditingItem[]>(() =>
-    value.map((item, index) => ({
-      ...item,
-      key: `${Date.now()}-${index}`,
-    })),
-  );
+export const OptionsConfig: React.FC<OptionsConfigProps> = (props) => {
+  const { value, onChange } = props;
+  const [dataSource, setDataSource] = useState<EditingItem[]>([]);
+
+  useEffect(() => {
+    if (Array.isArray(value)) {
+      setDataSource(
+        (value || []).map((item) => ({
+          ...item,
+          key: uniqueId(undefined, 6),
+        })),
+      );
+    }
+  }, [value]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -99,10 +108,17 @@ export const OptionsConfig: React.FC<OptionsConfigProps> = ({ value = [], onChan
   };
 
   const handleAdd = () => {
+    // 检查是否有正在编辑的项
+    const hasEditing = dataSource.some((item) => item.isEditing);
+    if (hasEditing) {
+      message.warning('请先完成当前编辑项');
+      return;
+    }
+
     const newItem: EditingItem = {
       label: '',
       value: '',
-      key: `${Date.now()}`,
+      key: uniqueId(undefined, 6),
       isEditing: true,
     };
     setDataSource([...dataSource, newItem]);
@@ -116,28 +132,25 @@ export const OptionsConfig: React.FC<OptionsConfigProps> = ({ value = [], onChan
   };
 
   const handleComplete = (record: EditingItem) => {
-    // Validate that both label and value are filled
+    // 验证名称和值是否都已填写
     if (!record.label.trim() || !record.value.trim()) {
-      // Remove the item if incomplete
-      const newData = dataSource.filter((item) => item.key !== record.key);
-      updateValue(newData);
-    } else {
-      const newData = dataSource.map((item) =>
-        item.key === record.key ? { ...item, isEditing: false } : item,
-      );
-      updateValue(newData);
+      message.error('请填写名称和值');
+      return;
     }
+
+    const newData = dataSource.map((item) =>
+      item.key === record.key ? { ...item, isEditing: false } : item,
+    );
+    updateValue(newData);
   };
 
   const handleCancel = (record: EditingItem) => {
     const originalIndex = dataSource.findIndex((item) => item.key === record.key);
 
-    // If it's a new item (was in editing mode from start), remove it
     if (!value?.[originalIndex] || record.isEditing) {
       const newData = dataSource.filter((item) => item.key !== record.key);
       setDataSource(newData);
     } else {
-      // Restore original values
       const newData = dataSource.map((item) =>
         item.key === record.key
           ? { ...value[originalIndex], key: item.key, isEditing: false }
@@ -152,7 +165,11 @@ export const OptionsConfig: React.FC<OptionsConfigProps> = ({ value = [], onChan
     updateValue(newData);
   };
 
-  const handleChange = (record: EditingItem, field: 'label' | 'value', newValue: string) => {
+  const handleChange = (
+    record: EditingItem,
+    field: 'label' | 'value' | 'defaultValue',
+    newValue: string | boolean,
+  ) => {
     const newData = dataSource.map((item) =>
       item.key === record.key ? { ...item, [field]: newValue } : item,
     );
@@ -178,10 +195,23 @@ export const OptionsConfig: React.FC<OptionsConfigProps> = ({ value = [], onChan
       key: 'label',
       width: 80,
       ellipsis: true,
+      onHeaderCell: () => {
+        return {
+          style: {
+            fontWeight: 'normal',
+          },
+        };
+      },
+      onCell: () => {
+        return {
+          style: {
+            padding: 2,
+          },
+        };
+      },
       render: (text, record) =>
         record.isEditing ? (
           <Input
-            placeholder='名称'
             value={record.label}
             onChange={(e) => handleChange(record, 'label', e.target.value)}
           />
@@ -194,22 +224,73 @@ export const OptionsConfig: React.FC<OptionsConfigProps> = ({ value = [], onChan
       dataIndex: 'value',
       key: 'value',
       ellipsis: true,
+      onHeaderCell: () => {
+        return {
+          style: {
+            fontWeight: 'normal',
+          },
+        };
+      },
+      onCell: () => {
+        return {
+          style: {
+            padding: 2,
+          },
+        };
+      },
       render: (text, record) =>
         record.isEditing ? (
-          <Input
-            placeholder='值'
-            value={record.value}
-            onChange={(e) => handleChange(record, 'value', e.target.value)}
-          />
+          <Input onChange={(e) => handleChange(record, 'value', e.target.value)} />
         ) : (
           <span>{text}</span>
         ),
+    },
+    {
+      title: '默认值',
+      dataIndex: 'isDefault',
+      key: 'isDefault',
+      align: 'center',
+      width: 60,
+      onHeaderCell: () => {
+        return {
+          style: {
+            fontWeight: 'normal',
+          },
+        };
+      },
+      onCell: () => {
+        return {
+          style: {
+            padding: 2,
+          },
+        };
+      },
+      render: (text, record) => (
+        <Checkbox
+          value={text}
+          onChange={(e) => handleChange(record, 'defaultValue', e.target.checked)}
+        />
+      ),
     },
     {
       title: '操作',
       key: 'action',
       fixed: 'right',
       width: 50,
+      onHeaderCell: () => {
+        return {
+          style: {
+            fontWeight: 'normal',
+          },
+        };
+      },
+      onCell: () => {
+        return {
+          style: {
+            padding: 2,
+          },
+        };
+      },
       render: (_, record) =>
         record.isEditing ? (
           <div className='flex gap-2'>
@@ -227,8 +308,12 @@ export const OptionsConfig: React.FC<OptionsConfigProps> = ({ value = [], onChan
 
   return (
     <div className='w-full'>
+      <div className='text-xs mb-2'>选项配置</div>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-        <SortableContext items={dataSource.map((item) => item.key)} strategy={verticalListSortingStrategy}>
+        <SortableContext
+          items={dataSource.map((item) => item.key)}
+          strategy={verticalListSortingStrategy}
+        >
           <Table
             components={{
               body: {
@@ -241,10 +326,12 @@ export const OptionsConfig: React.FC<OptionsConfigProps> = ({ value = [], onChan
             pagination={false}
             size='small'
             className='mb-1'
-            onRow={(record) => ({
-              'data-row-key': record.key,
-              'data-is-editing': record.isEditing,
-            } as any)}
+            onRow={(record) =>
+              ({
+                'data-row-key': record.key,
+                'data-is-editing': record.isEditing,
+              }) as any
+            }
           />
         </SortableContext>
       </DndContext>
@@ -254,4 +341,3 @@ export const OptionsConfig: React.FC<OptionsConfigProps> = ({ value = [], onChan
     </div>
   );
 };
-

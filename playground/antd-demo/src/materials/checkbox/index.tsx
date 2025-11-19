@@ -1,7 +1,8 @@
 import React from 'react';
-import { Checkbox as AntdCheckbox, type CheckboxProps } from 'antd';
+import { Checkbox as AntdCheckbox } from 'antd';
 
-interface IProps extends CheckboxProps {
+type AntdCheckboxGroupProps = typeof AntdCheckbox.Group;
+interface IProps extends AntdCheckboxGroupProps {
   label?: string;
   margin?: number | string;
   padding?: number | string;
@@ -9,12 +10,5 @@ interface IProps extends CheckboxProps {
 
 export const Checkbox = (props: IProps) => {
   const { label, margin, padding, ...rest } = props;
-  return (
-    <AntdCheckbox
-      style={{ margin, padding }}
-      {...rest}
-    >
-      {label}
-    </AntdCheckbox>
-  );
+  return <AntdCheckbox.Group style={{ margin, padding }} {...rest}></AntdCheckbox.Group>;
 };
