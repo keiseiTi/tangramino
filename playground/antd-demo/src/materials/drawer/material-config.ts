@@ -60,18 +60,13 @@ const DrawerMaterial: Material = {
             uiType: 'switch',
           },
           {
-            label: '样式',
-            field: 'style',
-            uiType: 'input',
-          },
-          {
             label: '类名',
             field: 'className',
             uiType: 'input',
           },
         ],
       },
-      
+
     ],
   },
 };

@@ -3,10 +3,6 @@ import { Input as AntdInput } from 'antd';
 import type { MaterialComponentProps } from '@tangramino/base-editor';
 
 export type IProps = MaterialComponentProps & {
-  margin?: number | string;
-  padding?: number | string;
-  width?: number | string;
-  height?: number | string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onPressEnter?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
@@ -17,7 +13,7 @@ export type IProps = MaterialComponentProps & {
 };
 
 export const Textarea = (props: IProps) => {
-  const { margin, padding, width, height, onChange, value, ...restProps } = props;
+  const { onChange, value, ...restProps } = props;
   const [innerValue, setInnerValue] = useState<string>();
 
   useEffect(() => {
@@ -29,16 +25,8 @@ export const Textarea = (props: IProps) => {
     onChange?.(e);
   };
 
-  const customStyle = {
-    margin,
-    padding,
-    width,
-    height,
-  };
-
   return (
     <AntdInput.TextArea
-      style={customStyle}
       value={innerValue}
       onChange={handleChange}
       {...restProps}
