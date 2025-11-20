@@ -96,7 +96,7 @@ export const ReactView = (props: ReactViewProps) => {
       });
       setCompMapElement(enhanceComponent);
     }
-  }, [engine, components]);
+  }, [engine.elements, components]);
 
   // Sync elements state when engine.elements changes
   useEffect(() => {
