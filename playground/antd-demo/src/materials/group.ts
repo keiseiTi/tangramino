@@ -21,6 +21,7 @@ import Container from './container/material-config';
 import Text from './text/material-config';
 import Textarea from './textarea/material-config';
 import DatePickerRange from './date-picker-range/material-config';
+import Slider from './slider/material-config';
 
 export const materialGroups = [
   {
@@ -35,13 +36,14 @@ export const materialGroups = [
       Checkbox,
       Radio,
       Select,
-      Switch,
+      Textarea,
       DatePicker,
       DatePickerRange,
       TimePicker,
-      Textarea,
+      Switch,
       TreeSelect,
       Cascader,
+      Slider,
       Upload,
     ],
   },

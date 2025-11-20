@@ -5,57 +5,63 @@ const TreeSelectMaterial: Material = {
   Component: TreeSelect,
   title: '树选择器',
   type: 'treeSelect',
+  defaultProps: {
+    options: [
+      {
+        label: '示例1',
+        value: '示例1',
+      },
+    ],
+  },
+  contextConfig: {
+    variables: [
+      {
+        name: 'value',
+        description: '当前值',
+      },
+      {
+        name: 'disabled',
+        description: '是否禁用',
+      },
+      {
+        name: 'treeData',
+        description: '树节点数据',
+      },
+    ],
+    methods: [
+      {
+        name: 'onChange',
+        description: '值改变时的回调',
+        params: [
+          {
+            description: '事件参数',
+          },
+        ],
+      },
+    ],
+  },
   editorConfig: {
     panels: [
       {
         title: '属性',
         configs: [
           {
-            label: '多选',
-            field: 'multiple',
-            uiType: 'switch',
-          },
-          {
             label: '占位符',
             field: 'placeholder',
             uiType: 'input',
           },
           {
+            label: '多选',
+            field: 'multiple',
+            uiType: 'checkbox',
+          },
+          {
             label: '允许清除',
             field: 'allowClear',
-            uiType: 'switch',
-          },
-          {
-            label: '禁用',
-            field: 'disabled',
-            uiType: 'switch',
-          },
-          {
-            label: '字段映射',
-            field: 'fieldNames',
-            uiType: 'input',
-          },
-          {
-            label: '弹层对齐',
-            field: 'placement',
-            uiType: 'select',
-            props: {
-              options: [
-                { label: '左下', value: 'bottomLeft' },
-                { label: '右下', value: 'bottomRight' },
-                { label: '左上', value: 'topLeft' },
-                { label: '右上', value: 'topRight' },
-              ],
-            },
-          },
-          {
-            label: '节点数据',
-            field: 'treeData',
-            uiType: 'input',
+            uiType: 'checkbox',
           },
         ],
       },
-      
     ],
   },
 };

@@ -5,6 +5,41 @@ const CascaderMaterial: Material = {
   Component: Cascader,
   title: '级联选择',
   type: 'cascader',
+  defaultProps: {
+    options: [
+      {
+        label: '示例1',
+        value: '示例1',
+      },
+    ],
+  },
+  contextConfig: {
+    variables: [
+      {
+        name: 'value',
+        description: '当前值',
+      },
+      {
+        name: 'disabled',
+        description: '是否禁用',
+      },
+      {
+        name: 'options',
+        description: '选项',
+      },
+    ],
+    methods: [
+      {
+        name: 'onChange',
+        description: '值改变时的回调',
+        params: [
+          {
+            description: '事件参数',
+          },
+        ],
+      },
+    ],
+  },
   editorConfig: {
     panels: [
       {
@@ -25,45 +60,8 @@ const CascaderMaterial: Material = {
             field: 'allowClear',
             uiType: 'switch',
           },
-          {
-            label: '禁用',
-            field: 'disabled',
-            uiType: 'switch',
-          },
-          {
-            label: '变更时触发',
-            field: 'changeOnSelect',
-            uiType: 'switch',
-          },
-          {
-            label: '显示搜索',
-            field: 'showSearch',
-            uiType: 'switch',
-          },
-          {
-            label: '展开触发',
-            field: 'expandTrigger',
-            uiType: 'radio',
-            props: {
-              options: [
-                { label: '点击', value: 'click' },
-                { label: '悬停', value: 'hover' },
-              ],
-            },
-          },
-          {
-            label: '字段映射',
-            field: 'fieldNames',
-            uiType: 'input',
-          },
-          {
-            label: '选项数据',
-            field: 'options',
-            uiType: 'input',
-          },
         ],
       },
-      
     ],
   },
 };

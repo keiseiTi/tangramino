@@ -21,6 +21,7 @@ import { Container } from './container';
 import { Text } from './text';
 import { Textarea } from './textarea';
 import { DatePickerRange } from './date-picker-range';
+import { Slider } from './slider';
 
 export const materialComponents = {
   button: Button,
@@ -46,6 +47,7 @@ export const materialComponents = {
   basicPage: BasicPage,
   container: Container,
   text: Text,
+  slider: Slider,
 };
 
 export default materialComponents;
