@@ -7,7 +7,6 @@ const InputMaterial: Material = {
   type: 'input',
   defaultProps: {
     placeholder: '请输入内容',
-    size: 'middle',
   },
   contextConfig: {
     variables: [

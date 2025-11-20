@@ -20,6 +20,7 @@ import BasicPage from './basic-page/material-config';
 import Container from './container/material-config';
 import Text from './text/material-config';
 import Textarea from './textarea/material-config';
+import DatePickerRange from './date-picker-range/material-config';
 
 export const materialGroups = [
   {
@@ -36,6 +37,7 @@ export const materialGroups = [
       Select,
       Switch,
       DatePicker,
+      DatePickerRange,
       TimePicker,
       Textarea,
       TreeSelect,

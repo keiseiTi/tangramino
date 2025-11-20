@@ -1,10 +1,10 @@
-import { DatePicker } from './index';
+import { DatePickerRange } from './index';
 import type { Material } from '@/interfaces/material';
 
 const DatePickerMaterial: Material = {
-  Component: DatePicker,
-  title: '日期选择器',
-  type: 'datePicker',
+  Component: DatePickerRange,
+  title: '日期范围选择器',
+  type: 'datePickerRange',
   contextConfig: {
     variables: [
       {
@@ -45,42 +45,8 @@ const DatePickerMaterial: Material = {
                   value: 'YYYY-MM-DD HH:mm:ss',
                 },
                 {
-                  label: 'YYYY-MM-DD',
-                  value: 'YYYY-MM-DD',
-                },
-                {
-                  label: 'hh:mm:ss',
-                  value: 'hh:mm:ss',
-                },
-              ],
-            },
-          },
-          {
-            label: '选择器类型',
-            field: 'picker',
-            uiType: 'select',
-            props: {
-              allowClear: true,
-              options: [
-                {
-                  label: '日期',
-                  value: 'date',
-                },
-                {
-                  label: '周',
-                  value: 'week',
-                },
-                {
-                  label: '月',
-                  value: 'month',
-                },
-                {
-                  label: '季度',
-                  value: 'quarter',
-                },
-                {
-                  label: '年',
-                  value: 'year',
+                  label: 'YYYY-MM-DD HH:mm',
+                  value: 'YYYY-MM-DD HH:mm',
                 },
               ],
             },
@@ -89,6 +55,11 @@ const DatePickerMaterial: Material = {
             label: '占位符',
             field: 'placeholder',
             uiType: 'input',
+          },
+          {
+            label: '是否显示此刻',
+            field: 'showNow',
+            uiType: 'checkbox',
           },
           {
             label: '允许清除',

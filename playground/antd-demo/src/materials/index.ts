@@ -20,6 +20,7 @@ import { BasicPage } from './basic-page';
 import { Container } from './container';
 import { Text } from './text';
 import { Textarea } from './textarea';
+import { DatePickerRange } from './date-picker-range';
 
 export const materialComponents = {
   button: Button,
@@ -36,6 +37,7 @@ export const materialComponents = {
   drawer: Drawer,
   upload: Upload,
   datePicker: DatePicker,
+  datePickerRange: DatePickerRange,
   timePicker: TimePicker,
   tree: Tree,
   treeSelect: TreeSelect,
