@@ -8,6 +8,7 @@ export { usePluginCore, usePluginContext, type PluginCore } from './hooks/use-pl
 export { useMove } from './hooks/use-drag-drop';
 
 export { uniqueId } from './utils';
+export { validatePluginDependencies, applyPluginsWithValidation } from './utils/plugin-validator';
 
 export { historyPlugin } from './plugins/history';
 export { modePlugin } from './plugins/mode-plugin';

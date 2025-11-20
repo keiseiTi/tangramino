@@ -44,31 +44,27 @@ export const Event = {
   ): void => {
     const event_name: string = namespace + '/' + eventName;
     if (listenerMap[event_name]) {
-      const fnIndex = listenerMap[event_name].findIndex(
-        (fn) => fn === listener,
-      );
+      const fnIndex = listenerMap[event_name].findIndex((fn) => fn === listener);
       if (fnIndex >= 0) {
         listenerMap[event_name].splice(fnIndex, 1);
       }
     }
   },
-  offAll: (
-    listenerMap: ListenerMap,
-    namespace: string,
-    eventName: string,
-  ): void => {
+  offAll: (listenerMap: ListenerMap, namespace: string, eventName: string): void => {
     const event_name: string = namespace + '/' + eventName;
     listenerMap[event_name] = [];
   },
-  subscribe: (
-    listenerMap: ListenerMap,
-    name: string,
-    callback: Listener,
-  ): (() => void) => {
+  subscribe: (listenerMap: ListenerMap, name: string, callback: Listener): (() => void) => {
     listenerMap[name] = listenerMap[name] || [];
     listenerMap[name].push(callback);
     return () => {
-      listenerMap[name] = [];
+      const listeners = listenerMap[name];
+      if (listeners) {
+        const index = listeners.indexOf(callback);
+        if (index >= 0) {
+          listeners.splice(index, 1);
+        }
+      }
     };
   },
 };

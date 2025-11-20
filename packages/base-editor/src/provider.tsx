@@ -12,13 +12,38 @@ import { uniqueId } from './utils';
 import type { Material } from './interface/material';
 import type { Plugin } from './interface/plugin';
 
+/**
+ * Props for the EditorProvider component
+ */
 export interface EditorProviderProps {
+  /** Initial schema for the editor */
   schema?: Schema;
+  /** Array of plugins to extend editor functionality */
   plugins?: Plugin[];
+  /** Array of available materials (components) that can be used in the editor */
   materials: Material[];
+  /** Child components to render within the editor context */
   children?: React.ReactNode;
+  /** Callback fired when the schema changes */
   onChange?: (schema: Schema) => void;
 }
+
+/**
+ * EditorProvider is the root component that provides editor context and drag-and-drop functionality
+ * Manages schema state, plugins, materials, and handles all drag-and-drop operations
+ *
+ * @example
+ * ```tsx
+ * <EditorProvider
+ *   schema={initialSchema}
+ *   materials={[ButtonMaterial, InputMaterial]}
+ *   plugins={[historyPlugin, modePlugin]}
+ *   onChange={(newSchema) => console.log('Schema changed:', newSchema)}
+ * >
+ *   <CanvasEditor />
+ * </EditorProvider>
+ * ```
+ */
 export const EditorProvider = (props: EditorProviderProps) => {
   const { schema: outerSchema, materials, plugins, children, onChange } = props;
   const { schema, setSchema, setMaterials, setActiveElement, setInsertPosition, setDragElement } =

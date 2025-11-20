@@ -110,13 +110,23 @@ export const createEngine = (schema?: Schema): Engine => {
       return Event.subscribe(listenerMap, eventName, listener);
     },
     changeSchema: (schema: Schema) => {
-      const { elements, layout, extensions } = parse(schema);
-      engine.elements = producer(elements);
-      engine.layouts = producer(layout);
-      engine.extensions = producer(extensions);
-      listenerMap[VIEW_UPDATE]?.forEach?.((listener) => {
-        listener();
-      });
+      // Validate schema before applying changes
+      if (!schema || typeof schema !== 'object') {
+        console.error('[Engine] Invalid schema: schema must be an object');
+        return;
+      }
+
+      try {
+        const { elements, layout, extensions } = parse(schema);
+        engine.elements = producer(elements);
+        engine.layouts = producer(layout);
+        engine.extensions = producer(extensions);
+        listenerMap[VIEW_UPDATE]?.forEach?.((listener) => {
+          listener();
+        });
+      } catch (error) {
+        console.error('[Engine] Error parsing schema:', error);
+      }
     },
     getSchema: () => {
       return SchemaUtils.combineSchema(

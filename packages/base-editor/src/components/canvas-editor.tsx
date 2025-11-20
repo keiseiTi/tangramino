@@ -19,46 +19,62 @@ interface CanvasEditorProps {
   renderDropPlaceholder?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
 }
 
+/**
+ * Higher-Order Component to enhance material components with editor functionality
+ */
+const withEnhancement = (
+  Comp: React.ComponentType<Record<string, unknown>>,
+  material: Material,
+  renderDropPlaceholder?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined,
+) => {
+  const EnhancedComponent = (props: Record<string, unknown>) => (
+    <EnhancedComp
+      elementProps={props}
+      material={material}
+      renderComp={(extraProps: Record<string, unknown>) => (
+        <Comp {...props} {...extraProps} />
+      )}
+      renderDropPlaceholder={renderDropPlaceholder}
+    />
+  );
+
+  EnhancedComponent.displayName = `withEnhancement(${material.type})`;
+
+  return EnhancedComponent;
+};
+
 export const CanvasEditor = (props: CanvasEditorProps) => {
   const { className, renderComponent, renderDropPlaceholder } = props;
   const { schema, materials, engine } = useEditorCore();
 
   useEffect(() => {
     engine.changeSchema(schema);
-  }, [schema]);
+  }, [schema, engine]);
 
   const components = useMemo(() => {
     return (materials || []).reduce(
       (acc, cur) => {
         if (cur.Component) {
           const Comp = cur.Component as React.ComponentType<Record<string, unknown>>;
+          // Use HOC pattern for component enhancement
+          const EnhancedComponent = withEnhancement(Comp, cur, renderDropPlaceholder);
+
           acc[cur.type] = (props: Record<string, unknown>) => {
-            // TODO: 使用 HOC
-            const enhancedComp = (
-              <EnhancedComp
-                elementProps={props}
-                material={cur}
-                renderComp={(extraProps: Record<string, unknown>) => (
-                  <Comp {...props} {...extraProps} />
-                )}
-                renderDropPlaceholder={renderDropPlaceholder}
-              />
-            );
             if (renderComponent) {
               return renderComponent({
-                children: enhancedComp,
+                children: <EnhancedComponent {...props} />,
                 elementProps: props,
                 material: cur,
               });
             }
-            return enhancedComp;
+            return <EnhancedComponent {...props} />;
           };
         }
         return acc;
       },
       {} as Record<string, React.ComponentType>,
     );
-  }, [materials]);
+  }, [materials, renderComponent, renderDropPlaceholder]);
 
   return (
     <div className={className}>

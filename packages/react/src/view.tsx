@@ -3,14 +3,33 @@ import { ELEMENT_UPDATE, VIEW_UPDATE, type LayoutNode, type Engine } from '@tang
 import { HocComponent } from './components/hoc';
 import type { Plugin } from './plugin';
 
+/**
+ * Props for the ReactView component
+ */
 export interface ReactViewProps {
+  /** The engine instance to render */
   engine: Engine;
+  /** Map of component types to their React components */
   components?: {
     [name: string]: React.ComponentType;
   };
+  /** Optional plugins to enhance the view functionality */
   plugins?: Plugin[];
 }
 
+/**
+ * ReactView component renders the engine's layout tree as React components
+ * Automatically subscribes to engine updates and re-renders when changes occur
+ *
+ * @example
+ * ```tsx
+ * <ReactView
+ *   engine={engine}
+ *   components={{ Button: MyButton, Input: MyInput }}
+ *   plugins={[myPlugin]}
+ * />
+ * ```
+ */
 export const ReactView = (props: ReactViewProps) => {
   const { engine, components, plugins } = props;
   const [elements, setElements] = useState(engine.elements);
@@ -75,11 +94,11 @@ export const ReactView = (props: ReactViewProps) => {
           enhanceComponent[id] = Component;
         }
       });
-      // compMapElement.current = enhanceComponent;
       setCompMapElement(enhanceComponent);
     }
-  }, [engine.elements, components]);
+  }, [engine, components]);
 
+  // Sync elements state when engine.elements changes
   useEffect(() => {
     setElements(engine.elements);
   }, [engine.elements]);
