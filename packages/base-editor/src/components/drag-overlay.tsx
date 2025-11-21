@@ -2,7 +2,11 @@ import React from 'react';
 import { DragOverlay as DragOverlayCore } from '@dnd-kit/core';
 import { useEditorCore } from '../hooks/use-editor-core';
 
-export const DragOverlay = (props: { children: React.ReactNode }) => {
+interface DragOverlayProps {
+  children: React.ReactNode;
+}
+
+export const DragOverlay = (props: DragOverlayProps) => {
   const { dragElement } = useEditorCore();
 
   return (

@@ -40,7 +40,7 @@ export const MaterialPanel = (props: { materialGroups: MaterialGroup[] }) => {
           },
           label: <div className='text-sm'>{group.title}</div>,
           children: group.children.map((material) => (
-            <Draggable key={material.title as string} data={material}>
+            <Draggable key={material.title as string} material={material}>
               <div className='w-25 h-8 text-xs flex justify-center items-center rounded-sm border border-slate-600 cursor-pointer hover:bg-zinc-100'>
                 {material.title}
               </div>

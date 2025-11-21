@@ -67,5 +67,10 @@ export interface MaterialComponentProps {
    * Current mode of the component
    * 状态
    */
-  tg_mode?: 'edit' | 'render';
+  tg_mode?: 'design' | 'render';
+  /**
+   * Drop placeholder to display when dragging over the component
+   * 拖拽到组件上的占位符，物料设置了 isContainer，才有这个属性
+   */
+  tg_dropPlaceholder?: React.ReactNode;
 }

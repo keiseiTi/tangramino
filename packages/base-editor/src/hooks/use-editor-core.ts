@@ -30,17 +30,10 @@ export interface EditorCore {
 }
 
 const defaultSchema = {
-  elements: {
-    basicPage: {
-      type: 'basicPage',
-      props: {},
-    },
-  },
+  elements: {},
   layout: {
-    root: 'basicPage',
-    structure: {
-      basicPage: [],
-    },
+    root: '',
+    structure: {},
   },
   extensions: {},
 };

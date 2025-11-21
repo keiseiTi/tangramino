@@ -2,19 +2,19 @@ import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import type { Material } from '../interface/material';
 
-interface MaterialMaterialProps {
-  data: Material;
+interface DraggableProps {
+  material: Material;
   children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
   isTransform?: boolean;
 }
 
-export const Draggable = (props: MaterialMaterialProps) => {
-  const { data, className, children, style, isTransform = false } = props;
+export const Draggable = (props: DraggableProps) => {
+  const { material, className, children, style, isTransform = false } = props;
   const { attributes, listeners, transform, setNodeRef } = useDraggable({
-    id: data.type + '-draggable',
-    data: data,
+    id: material.type + '-draggable',
+    data: material,
   });
 
   const inlineStyle =

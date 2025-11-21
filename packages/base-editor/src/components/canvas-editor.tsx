@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo } from 'react';
 import { ReactView } from '@tangramino/react';
-import { EnhancedComp } from './enhanced-comp';
+import { ElementWrapper } from './element-wrapper';
 import { useEditorCore } from '../hooks/use-editor-core';
-import type { Material } from '../interface/material';
-import type { DropPlaceholderProps } from './placeholder';
+import type { Material, MaterialComponentProps } from '../interface/material';
+import { type DropPlaceholderProps } from './placeholder';
 
 export interface EnhancedComponentProps {
   children: React.ReactElement;
@@ -16,65 +16,48 @@ export interface EnhancedComponentProps {
 interface CanvasEditorProps {
   className?: string;
   renderComponent?: (props: EnhancedComponentProps) => React.ReactNode;
-  renderDropPlaceholder?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
+  renderDropIndicator?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
 }
 
-/**
- * Higher-Order Component to enhance material components with editor functionality
- */
-const withEnhancement = (
-  Comp: React.ComponentType<Record<string, unknown>>,
-  material: Material,
-  renderDropPlaceholder?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined,
-) => {
-  const EnhancedComponent = (props: Record<string, unknown>) => (
-    <EnhancedComp
-      elementProps={props}
-      material={material}
-      renderComp={(extraProps: Record<string, unknown>) => (
-        <Comp {...props} {...extraProps} />
-      )}
-      renderDropPlaceholder={renderDropPlaceholder}
-    />
-  );
-
-  EnhancedComponent.displayName = `withEnhancement(${material.type})`;
-
-  return EnhancedComponent;
-};
-
 export const CanvasEditor = (props: CanvasEditorProps) => {
-  const { className, renderComponent, renderDropPlaceholder } = props;
+  const { className, renderComponent, renderDropIndicator } = props;
   const { schema, materials, engine } = useEditorCore();
 
   useEffect(() => {
     engine.changeSchema(schema);
-  }, [schema, engine]);
+  }, [schema]);
 
   const components = useMemo(() => {
     return (materials || []).reduce(
       (acc, cur) => {
         if (cur.Component) {
           const Comp = cur.Component as React.ComponentType<Record<string, unknown>>;
-          // Use HOC pattern for component enhancement
-          const EnhancedComponent = withEnhancement(Comp, cur, renderDropPlaceholder);
-
           acc[cur.type] = (props: Record<string, unknown>) => {
+            const element = (
+              <ElementWrapper
+                elementProps={props}
+                material={cur}
+                renderComponent={(extraProps: MaterialComponentProps) => (
+                  <Comp {...props} {...extraProps} />
+                )}
+                renderDropIndicator={renderDropIndicator}
+              />
+            );
             if (renderComponent) {
               return renderComponent({
-                children: <EnhancedComponent {...props} />,
+                children: element,
                 elementProps: props,
                 material: cur,
               });
             }
-            return <EnhancedComponent {...props} />;
+            return element;
           };
         }
         return acc;
       },
       {} as Record<string, React.ComponentType>,
     );
-  }, [materials, renderComponent, renderDropPlaceholder]);
+  }, [materials]);
 
   return (
     <div className={className}>

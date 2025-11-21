@@ -10,22 +10,22 @@ export const useDefaultEvent = () => {
   const [forceUpdate, setForceUpdate] = useState<number>(0);
 
   useEffect(() => {
-    const basicPage = SchemaUtils.getElementsByType(schema, 'basicPage')[0];
-    if (!basicPage) return;
-
-    const basicPageMaterial = materials.find((material) => material.type === basicPage.type);
+    const rootId = schema.layout.root;
+    if (!rootId) return;
+    const rootElement = schema.elements[rootId];
+    const basicPageMaterial = materials.find((material) => material.type === rootElement.type);
     const method = basicPageMaterial?.contextConfig?.methods?.[0];
     if (!basicPageMaterial || !method || activeElementEvent) return;
 
     setActiveElementEvent({
-      elementId: basicPage.id,
+      elementId: rootId,
       material: basicPageMaterial,
       method,
     });
 
     const flowGraphData = SchemaUtils.getFlowGraph<FlowGraphData>(
       schema!,
-      `${basicPage.id}::${method.name}`,
+      `${rootId}::${method.name}`,
     );
     setFlowGraphData(flowGraphData);
     setForceUpdate(forceUpdate + 1);

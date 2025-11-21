@@ -13,7 +13,7 @@ import { useEditorContext } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
 import { useLogicEvent } from '@/hooks/use-logic-event';
 
-export const EnhancedComponent = (props: EnhancedComponentProps) => {
+export const ElementWrapper = (props: EnhancedComponentProps) => {
   const { material, elementProps, children } = props;
   const elementId = elementProps['data-element-id'] as string;
   const methods = material.contextConfig?.methods || [];

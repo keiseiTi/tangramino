@@ -7,8 +7,8 @@ import { GlobalVariablesPanel } from './global-variables';
 import { DataSourcePanel } from './data-source-panel';
 import { RightPanel } from './right-panel';
 import { AttributePanel } from './attribute-panel';
-import { CustomDropPlaceholder } from './drop-placeholder';
-import { EnhancedComponent } from './enhanced-comp';
+import { DropIndicator } from './drop-indicator';
+import { ElementWrapper } from './element-wrapper';
 
 interface IProps {
   materialGroups: {
@@ -60,15 +60,15 @@ export const MainContent = ({ materialGroups }: IProps) => {
     <>
       <RightPanel materialGroups={materialGroups} />
       <div className='flex-1 p-3 overflow-hidden min-w-0'>
-        <div className='h-full border border-gray-200 bg-white shadow-sm overflow-auto'>
+        <div className='h-full overflow-auto'>
           <div
-            className='mx-auto'
-            style={{ width: (viewportWidth < 1440 && viewportWidth > 768) ? 'auto' : viewportWidth }}
+            className='mx-auto border border-gray-200 bg-white shadow-sm min-h-full'
+            style={{ width: viewportWidth < 1440 && viewportWidth > 568 ? 'auto' : viewportWidth }}
           >
             <CanvasEditor
               className='size-full'
-              renderComponent={EnhancedComponent}
-              renderDropPlaceholder={CustomDropPlaceholder}
+              renderComponent={ElementWrapper}
+              renderDropIndicator={DropIndicator}
             />
           </div>
         </div>

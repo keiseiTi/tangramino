@@ -12,7 +12,27 @@ const ContainerMaterial: Material = {
         title: '属性',
         configs: [],
       },
-      
+      {
+        title: '样式',
+        configs: [
+          {
+            label: '外边距',
+            field: 'margin',
+            uiType: 'number',
+            props: {
+              suffix: 'px',
+            },
+          },
+          {
+            label: '内边距',
+            field: 'padding',
+            uiType: 'number',
+            props: {
+              suffix: 'px',
+            },
+          },
+        ],
+      },
     ],
   },
 };
