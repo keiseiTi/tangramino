@@ -120,6 +120,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
     const dropData = over.data.current as {
       id: string;
       props: Record<string, unknown>;
+      material: Material;
       position?: 'before' | 'after' | 'up' | 'down';
     };
 
@@ -127,11 +128,16 @@ export const EditorProvider = (props: EditorProviderProps) => {
       let newSchema: Schema = schema;
       // 插入元素
       if (!String(active.id).endsWith('-move')) {
+        const dragMaterial = dragData as Material;
         const newElement = {
-          id: uniqueId((dragData as Material).type),
-          type: (dragData as Material).type,
-          props: (dragData as Material).defaultProps || {},
+          id: uniqueId(dragMaterial.type),
+          type: dragMaterial.type,
+          props: dragMaterial.defaultProps || {},
         };
+        if (dragMaterial.dropType && !dragMaterial.dropType.includes(dropData.material.type)) {
+          console.warn('not allowed to drag in');
+          return;
+        }
         beforeInsertElement(schema, dropData.id, newElement);
         if (dropData.position) {
           newSchema = SchemaUtils.insertAdjacentElement(

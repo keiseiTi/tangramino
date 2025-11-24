@@ -1,34 +1,16 @@
 import React from 'react';
 import { Form as AntdForm, type FormProps } from 'antd';
+import type { MaterialComponentProps } from '@tangramino/base-editor';
 
-export interface IProps extends FormProps {
+const FormItem = AntdForm.Item;
+export interface IProps extends FormProps, MaterialComponentProps {
   children?: React.ReactNode;
-  backgroundColor?: string;
-  borderColor?: string;
-  borderRadius?: number | string;
 }
 
 export const Form = (props: IProps) => {
-  const {
-    children,
-    backgroundColor,
-    borderColor,
-    borderRadius,
-    ...restProps
-  } = props;
+  const { children, tg_dropPlaceholder, ...restProps } = props;
 
-  const customStyle = {
-    backgroundColor,
-    borderColor,
-    borderRadius,
-  };
+  const formItems = React.Children.map(children, (child) => <FormItem>{child}</FormItem>);
 
-  return (
-    <AntdForm
-      style={customStyle}
-      {...restProps}
-    >
-      {children}
-    </AntdForm>
-  );
+  return <AntdForm {...restProps}>{children || tg_dropPlaceholder}</AntdForm>;
 };

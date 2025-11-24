@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { uniqueId, useEditorCore } from '@tangramino/base-editor';
+import { createFreeLinesPlugin } from '@flowgram.ai/free-lines-plugin';
 import {
   FlowEditor as BaseFlowEditor,
   EditorRenderer,
@@ -9,13 +10,12 @@ import {
 import { message } from 'antd';
 import { SchemaUtils } from '@tangramino/engine';
 import { transformFlowGraph2Flow } from '@/utils';
+import { useDefaultEvent } from '@/hooks/use-default-event';
 import { useEditorContext, type ActiveElementEvent } from '@/hooks/use-editor-context';
 import { AttributePanel } from './mods/attribute-panel';
 import { nodes } from './nodes';
 import { OperationPanel } from './mods/operation-panel';
-import { createFreeLinesPlugin } from '@flowgram.ai/free-lines-plugin';
 import { CustomLineLabel } from './mods/custom-line-label';
-import { useDefaultEvent } from '@/hooks/use-default-event';
 
 export interface FlowEditorProps {
   className?: string;

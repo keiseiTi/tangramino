@@ -29,7 +29,7 @@ export const materialGroups = [
     children: [BasicPage, Container, Form, Tabs, Modal, Drawer],
   },
   {
-    title: '原子组件',
+    title: '原子物料',
     children: [
       Input,
       Number,
@@ -48,7 +48,7 @@ export const materialGroups = [
     ],
   },
   {
-    title: '展示组件',
+    title: '展示物料',
     children: [Button, Text, Table, Tree],
   },
 ];

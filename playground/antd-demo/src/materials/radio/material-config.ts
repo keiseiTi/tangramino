@@ -6,6 +6,7 @@ const RadioMaterial: Material = {
   Component: Radio,
   title: '单选框',
   type: 'radio',
+  dropType: ['container', 'form'],
   contextConfig: {
     variables: [
       {

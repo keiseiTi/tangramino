@@ -13,7 +13,7 @@ const TableMaterial: Material = {
           {
             label: '边框',
             field: 'bordered',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '大小',
@@ -30,7 +30,7 @@ const TableMaterial: Material = {
           {
             label: '表头固定(sticky)',
             field: 'sticky',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '行 key',
@@ -65,7 +65,7 @@ const TableMaterial: Material = {
           {
             label: '加载中',
             field: 'loading',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '表格标题',

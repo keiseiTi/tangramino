@@ -67,7 +67,7 @@ export const useEditorContext = create<{
     }),
   viewportDevice: initialViewportDevice,
   setViewportDevice: (device) =>
-    set((state) => {
+    set(() => {
       const nextWidth = defaultDeviceWidths[device];
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('tg_viewportDevice', device);

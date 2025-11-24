@@ -5,6 +5,7 @@ const UploadMaterial: Material = {
   Component: Upload,
   title: '上传',
   type: 'upload',
+  dropType: ['container', 'form'],
   editorConfig: {
     panels: [
       {
@@ -30,22 +31,22 @@ const UploadMaterial: Material = {
           {
             label: '多选',
             field: 'multiple',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '禁用',
             field: 'disabled',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '拖拽上传',
             field: 'drag',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '展示文件列表',
             field: 'showUploadList',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '接受类型',
@@ -75,11 +76,11 @@ const UploadMaterial: Material = {
           {
             label: 'withCredentials',
             field: 'withCredentials',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
         ],
       },
-      
+
     ],
   },
 };

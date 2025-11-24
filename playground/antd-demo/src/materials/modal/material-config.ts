@@ -21,7 +21,7 @@ const ModalMaterial: Material = {
           {
             label: '打开状态',
             field: 'open',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '标题',
@@ -56,32 +56,32 @@ const ModalMaterial: Material = {
           {
             label: '居中显示',
             field: 'centered',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '可关闭',
             field: 'closable',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '遮罩可关闭',
             field: 'maskClosable',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '强制渲染',
             field: 'forceRender',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '显示遮罩',
             field: 'mask',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '键盘ESC关闭',
             field: 'keyboard',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '取消文本',
@@ -116,7 +116,7 @@ const ModalMaterial: Material = {
           {
             label: '确定按钮加载',
             field: 'confirmLoading',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
         ],
       },

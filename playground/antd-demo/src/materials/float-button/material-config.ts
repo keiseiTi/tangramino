@@ -68,12 +68,12 @@ const FloatButtonMaterial: Material = {
           {
             label: '禁用',
             field: 'disabled',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '危险按钮',
             field: 'danger',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
         ],
       },

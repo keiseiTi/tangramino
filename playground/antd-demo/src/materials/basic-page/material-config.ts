@@ -5,7 +5,6 @@ const BasicPageMaterial: Material = {
   title: '页面',
   type: 'basicPage',
   isContainer: true,
-  allowDrop: true,
   Component: BasicPage as React.ComponentType,
   editorConfig: {
     panels: [

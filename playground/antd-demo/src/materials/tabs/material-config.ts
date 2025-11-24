@@ -61,12 +61,12 @@ const TabsMaterial: Material = {
           {
             label: '居中',
             field: 'centered',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '销毁隐藏面板',
             field: 'destroyInactiveTabPane',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '页签项(items)',

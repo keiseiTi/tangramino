@@ -43,7 +43,7 @@ const FormMaterial: Material = {
           {
             label: '禁用',
             field: 'disabled',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '名称',
@@ -84,7 +84,7 @@ const FormMaterial: Material = {
           {
             label: '滚动到第一个错误',
             field: 'scrollToFirstError',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '必填星号',
@@ -140,11 +140,11 @@ const FormMaterial: Material = {
           {
             label: '字段顺序',
             field: 'preserve',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
         ],
       },
-      
+
     ],
   },
 };

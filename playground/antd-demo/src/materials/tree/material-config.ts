@@ -13,17 +13,17 @@ const TreeMaterial: Material = {
           {
             label: '可选中',
             field: 'checkable',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '多选',
             field: 'multiple',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '默认展开所有',
             field: 'defaultExpandAll',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '默认展开键',
@@ -38,17 +38,17 @@ const TreeMaterial: Material = {
           {
             label: '严格选中',
             field: 'checkStrictly',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '显示线',
             field: 'showLine',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '可拖拽',
             field: 'draggable',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '字段映射',

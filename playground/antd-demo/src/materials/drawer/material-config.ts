@@ -14,7 +14,7 @@ const DrawerMaterial: Material = {
           {
             label: '打开',
             field: 'open',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '标题',
@@ -47,17 +47,17 @@ const DrawerMaterial: Material = {
           {
             label: '可关闭',
             field: 'closable',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '遮罩可关闭',
             field: 'maskClosable',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '强制渲染',
             field: 'forceRender',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '类名',

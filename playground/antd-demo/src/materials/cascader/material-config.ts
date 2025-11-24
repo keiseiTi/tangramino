@@ -5,6 +5,7 @@ const CascaderMaterial: Material = {
   Component: Cascader,
   title: '级联选择',
   type: 'cascader',
+  dropType: ['container', 'form'],
   defaultProps: {
     options: [
       {
@@ -53,12 +54,12 @@ const CascaderMaterial: Material = {
           {
             label: '多选',
             field: 'multiple',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
           {
             label: '允许清除',
             field: 'allowClear',
-            uiType: 'switch',
+            uiType: 'checkbox',
           },
         ],
       },

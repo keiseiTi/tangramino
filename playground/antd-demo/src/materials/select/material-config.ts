@@ -6,6 +6,7 @@ const SelectMaterial: Material = {
   Component: Select,
   title: '选择器',
   type: 'select',
+  dropType: ['container', 'form'],
   defaultProps: {
     placeholder: '请选择',
     size: 'middle',

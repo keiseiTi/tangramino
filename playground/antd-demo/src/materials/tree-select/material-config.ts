@@ -5,6 +5,7 @@ const TreeSelectMaterial: Material = {
   Component: TreeSelect,
   title: '树选择器',
   type: 'treeSelect',
+  dropType: ['container', 'form'],
   defaultProps: {
     options: [
       {
