@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { Tree, Tabs, ConfigProvider } from 'antd';
 import { CloseOutlined, RocketOutlined, DownOutlined } from '@ant-design/icons';
-import { useEditorCore, type Material } from '@tangramino/base-editor';
+import { useEditorCore, type ActiveElement, type Material } from '@tangramino/base-editor';
+import { SchemaUtils } from '@tangramino/engine';
 import { cn } from '@/utils/cn';
 import { MaterialPanel } from './material-panel';
 import type { DataNode } from 'antd/es/tree';
@@ -11,7 +12,7 @@ interface RightPanelProps {
 }
 
 export const RightPanel = ({ materialGroups }: RightPanelProps): JSX.Element => {
-  const { schema, materials } = useEditorCore();
+  const { schema, materials, setActiveElement } = useEditorCore();
   const [hidden, setHidden] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('materials');
 
@@ -22,20 +23,51 @@ export const RightPanel = ({ materialGroups }: RightPanelProps): JSX.Element => 
       if (!element) return null;
       const material = materials.find((m) => m.type === element.type);
       const title = material?.title || element.type;
+      const parentIds = SchemaUtils.getParents(schema, id);
+      const parents: ActiveElement[] = parentIds
+        .map((pid) => {
+          const pel = elements[pid];
+          if (!pel) return null;
+          const pm = materials.find((mm) => mm.type === pel.type);
+          if (!pm) return null;
+          return { id: pid, type: pel.type, props: pel.props || {}, material: pm } as ActiveElement;
+        })
+        .filter(Boolean) as ActiveElement[];
       const children = (layout.structure[id] || []).map(buildNode).filter(Boolean) as DataNode[];
-      return { key: id, title, children };
+      return {
+        key: id,
+        title,
+        children,
+        data: {
+          id,
+          type: element.type,
+          props: element.props || {},
+          material,
+          parents,
+        },
+      } as DataNode;
     };
     const root = buildNode(layout.root);
     return root ? [root] : [];
   }, [schema, materials]);
 
+  const onSelect = (keys: React.Key[], info: { node: any }) => {
+    void keys;
+    const data = info?.node?.data as ActiveElement | undefined;
+    if (!data?.id || !data?.material) return;
+    setActiveElement(data);
+  };
+
   return (
     <>
       <div
-        className={cn('absolute top-0 -left-0.5 z-300 cursor-pointer text-gray-600 hover:text-blue-600', {
-          block: hidden,
-          hidden: !hidden,
-        })}
+        className={cn(
+          'absolute top-0 -left-0.5 z-300 cursor-pointer text-gray-600 hover:text-blue-600',
+          {
+            block: hidden,
+            hidden: !hidden,
+          },
+        )}
       >
         <RocketOutlined onClick={() => setHidden(false)} />
       </div>
@@ -76,6 +108,7 @@ export const RightPanel = ({ materialGroups }: RightPanelProps): JSX.Element => 
             <Tree
               className='p-2!'
               treeData={outlineTree}
+              onSelect={onSelect}
               switcherIcon={<DownOutlined />}
               showLine
               defaultExpandAll
