@@ -89,6 +89,25 @@ export const EditorProvider = (props: EditorProviderProps) => {
     setActiveElement(null);
   };
 
+  const onDragMove = (event: DragOverEvent) => {
+    const { over, active } = event;
+    if (!over) return;
+    const overId = over.data.current!.id as string;
+    const activeMaterial = active.data.current as Material;
+    const overMaterial = over.data.current!.material as Material;
+    if (activeMaterial.isContainer && overMaterial.isContainer) {
+      const midY = over.rect.top + over.rect.height / 2;
+      const pointY = active.rect.current.translated?.top || 0;
+      const pos = pointY < midY ? 'up' : 'down';
+      setInsertPosition({ id: overId, position: pos });
+    }
+    if (String(over.id).endsWith('-placeholder')) return;
+    const midX = over.rect.left + over.rect.width / 2;
+    const pointX = active.rect.current.translated?.left || 0;
+    const pos = pointX < midX ? 'before' : 'after';
+    setInsertPosition({ id: overId, position: pos });
+  };
+
   const onDragEnd = (event: DragEndEvent) => {
     const { over, active } = event;
 
@@ -101,46 +120,46 @@ export const EditorProvider = (props: EditorProviderProps) => {
     const dropData = over.data.current as {
       id: string;
       props: Record<string, unknown>;
-      position?: 'before' | 'after';
+      position?: 'before' | 'after' | 'up' | 'down';
     };
 
     if (dragData && dropData) {
       let newSchema: Schema = schema;
       // 插入元素
-      if (String(over.id).endsWith('-placeholder')) {
+      if (!String(active.id).endsWith('-move')) {
         const newElement = {
           id: uniqueId((dragData as Material).type),
           type: (dragData as Material).type,
           props: (dragData as Material).defaultProps || {},
         };
         beforeInsertElement(schema, dropData.id, newElement);
-        newSchema = SchemaUtils.insertElement(schema, dropData.id, newElement);
-        afterInsertElement(newSchema);
-      }
-      // 插入到同级元素中
-      if (dropData.position && !String(active.id).endsWith('-move')) {
-        const newElement = {
-          id: uniqueId((dragData as Material).type),
-          type: (dragData as Material).type,
-          props: (dragData as Material).defaultProps || {},
-        };
-        beforeInsertElement(schema, dropData.id, newElement);
-        newSchema = SchemaUtils.insertAdjacentElement(
-          schema,
-          dropData.id,
-          newElement,
-          dropData.position,
-        );
+        if (dropData.position) {
+          newSchema = SchemaUtils.insertAdjacentElement(
+            schema,
+            dropData.id,
+            newElement,
+            dropData.position as 'before' | 'after' | 'up' | 'down',
+          );
+        } else {
+          newSchema = SchemaUtils.insertElement(schema, dropData.id, newElement);
+        }
         afterInsertElement(newSchema);
       }
       // 移动元素
       if (String(active.id).endsWith('-move')) {
         const dragElement = dragData as { id: string; material: Material };
         beforeMoveElement(schema, dragElement.id, dropData.id);
-        newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
-          mode: 'same-level',
-          position: dropData.position || 'after',
-        });
+        if (dropData.position === 'up' || dropData.position === 'down') {
+          newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
+            mode: 'cross-level',
+            position: dropData.position,
+          });
+        } else {
+          newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
+            mode: 'same-level',
+            position: (dropData.position as 'before' | 'after') || 'after',
+          });
+        }
         afterMoveElement(newSchema);
       }
 
@@ -148,18 +167,6 @@ export const EditorProvider = (props: EditorProviderProps) => {
     }
 
     onDragCancel();
-  };
-
-  const onDragMove = (event: DragOverEvent) => {
-    const { over, active } = event;
-    if (!over || String(over.id).endsWith('-placeholder')) return;
-    const midX = over.rect.left + over.rect.width / 2;
-    const pointX = active.rect.current.translated?.left || 0;
-    const pos = pointX < midX ? 'before' : 'after';
-    setInsertPosition({
-      id: String(over.id),
-      position: pos,
-    });
   };
 
   const onDragCancel = () => {

@@ -12,8 +12,7 @@ export const BasicPage = (props: BasicPageProps) => {
 
   return (
     <div className='overflow-auto h-full w-full' style={{ margin, padding }}>
-      {children}
-      {tg_dropPlaceholder}
+      {children || tg_dropPlaceholder}
     </div>
   );
 };

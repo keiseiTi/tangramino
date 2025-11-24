@@ -140,6 +140,14 @@ export const ElementWrapper = (props: EnhancedComponentProps) => {
             !material.isContainer &&
             insertPosition?.id === elementId &&
             insertPosition.position === 'after',
+          'border-t-4 border-yellow-500':
+            material.isContainer &&
+            insertPosition?.id === elementId &&
+            insertPosition.position === 'up',
+          'border-b-4 border-yellow-500':
+            material.isContainer &&
+            insertPosition?.id === elementId &&
+            insertPosition.position === 'down',
         }),
       })}
     </Popover>

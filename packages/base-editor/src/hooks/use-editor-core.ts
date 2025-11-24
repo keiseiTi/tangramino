@@ -12,7 +12,7 @@ export type ActiveElement = {
 
 export type InsertPosition = {
   id: string;
-  position: 'before' | 'after';
+  position: 'before' | 'after' | 'up' | 'down';
 };
 
 export interface EditorCore {

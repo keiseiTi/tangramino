@@ -16,7 +16,8 @@ interface EnhancedCompProps {
 
 export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps>(
   (props: EnhancedCompProps, ref) => {
-    const { material, elementProps, className, renderComponent, renderDropIndicator, onClick } = props;
+    const { material, elementProps, className, renderComponent, renderDropIndicator, onClick } =
+      props;
     const { activeElement, setActiveElement, engine, materials, insertPosition } = useEditorCore();
 
     const elementId = elementProps['data-element-id'] as string;
@@ -27,6 +28,7 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
         id: elementId,
         props: elementProps,
         position: insertPosition?.position,
+        material,
       },
     });
 
@@ -69,6 +71,7 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
               material={material}
               onSelected={selectElement}
               renderDropPlaceholder={renderDropIndicator}
+              insertPosition={insertPosition}
             />
           ),
           tg_mode: 'design',

@@ -143,12 +143,11 @@ const insertAdjacentElement = (
   schema: Schema,
   targetElementId: string,
   insertElement: InsertElement,
-  position: 'before' | 'after',
+  position: 'before' | 'after' | 'up' | 'down',
 ) => {
   const { elements, layout } = schema;
   const { structure } = layout;
 
-  // 不可变地注册新元素
   const newElements: Elements = {
     ...elements,
     [insertElement.id]: {
@@ -157,6 +156,22 @@ const insertAdjacentElement = (
       hidden: insertElement.hidden || false,
     },
   };
+
+  if (targetElementId === layout.root) {
+    const rootChildren = layout.structure[layout.root] || [];
+    const nextChildren = rootChildren.includes(insertElement.id)
+      ? rootChildren
+      : [...rootChildren, insertElement.id];
+    const newStructure = {
+      ...layout.structure,
+      [layout.root]: nextChildren,
+    };
+    return {
+      ...schema,
+      elements: newElements,
+      layout: { ...layout, structure: newStructure },
+    };
+  }
 
   // 找到目标的直接父元素
   const parents = getParents(schema, targetElementId);
@@ -187,7 +202,7 @@ const insertAdjacentElement = (
       layout,
     };
   }
-  const insertIndex = position === 'before' ? idx : idx + 1;
+  const insertIndex = position === 'before' || position === 'up' ? idx : idx + 1;
   const nextSiblings = [
     ...siblings.slice(0, insertIndex),
     insertElement.id,
@@ -215,7 +230,7 @@ const moveElement = (
   targetElementId: string,
   options?: {
     mode?: 'same-level' | 'cross-level';
-    position?: 'before' | 'after';
+    position?: 'before' | 'after' | 'up' | 'down';
   },
 ): Schema => {
   const { layout } = schema;
@@ -293,11 +308,15 @@ const moveElement = (
     }
   }
 
-  // 跨级移动（默认）：将 elementId 作为 targetElementId 的子节点追加到末尾
   removeFromParent(elementId);
   const list = newStructure[targetElementId] || [];
   if (!list.includes(elementId)) {
-    newStructure[targetElementId] = [...list, elementId];
+    const pos = options?.position;
+    if (pos === 'up') {
+      newStructure[targetElementId] = [elementId, ...list];
+    } else {
+      newStructure[targetElementId] = [...list, elementId];
+    }
   }
 
   return {
