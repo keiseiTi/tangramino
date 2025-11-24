@@ -93,7 +93,7 @@ export const AttributePanel = () => {
   };
 
   const renderFormItem = (config: AttributeConfig) => {
-    const { field, label, uiType } = config;
+    const { field, label, uiType, required } = config;
     const values = form.getFieldsValue(true) as Record<string, unknown>;
     if (!evaluateLinkageVisibility(config, values)) {
       return null;
@@ -142,7 +142,13 @@ export const AttributePanel = () => {
     }
 
     return (
-      <Form.Item label={renderLabel(label)} name={field} key={field} valuePropName={valuePropName}>
+      <Form.Item
+        label={renderLabel(label)}
+        required={required}
+        name={field}
+        key={field}
+        valuePropName={valuePropName}
+      >
         {children}
       </Form.Item>
     );

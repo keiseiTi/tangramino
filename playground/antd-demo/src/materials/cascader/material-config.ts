@@ -5,7 +5,7 @@ const CascaderMaterial: Material = {
   Component: Cascader,
   title: '级联选择',
   type: 'cascader',
-  dropType: ['container', 'form'],
+  dropTypes: ['container', 'form'],
   defaultProps: {
     options: [
       {

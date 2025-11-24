@@ -4,6 +4,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { useEditorCore, type ActiveElement } from '../hooks/use-editor-core';
 import { Placeholder, type DropPlaceholderProps } from './placeholder';
 import type { Material, MaterialComponentProps } from '../interface/material';
+import { usePluginCore } from 'src/hooks/use-plugin';
 
 interface EnhancedCompProps {
   material: Material;
@@ -18,7 +19,10 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
   (props: EnhancedCompProps, ref) => {
     const { material, elementProps, className, renderComponent, renderDropIndicator, onClick } =
       props;
-    const { activeElement, setActiveElement, engine, materials, insertPosition } = useEditorCore();
+    const { schema, activeElement, setActiveElement, engine, materials, insertPosition } =
+      useEditorCore();
+
+    const { activateElement } = usePluginCore();
 
     const elementId = elementProps['data-element-id'] as string;
 
@@ -32,9 +36,7 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
       },
     });
 
-    const schema = engine?.getSchema();
-
-    const selectElement = (e: React.MouseEvent) => {
+    const onSelectElement = (e: React.MouseEvent) => {
       e.stopPropagation();
       onClick?.(e);
       if (activeElement?.id !== elementId) {
@@ -53,6 +55,16 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
           });
         }
 
+        activateElement(
+          {
+            id: elementId,
+            type: material.type,
+            props: elementProps,
+            material,
+          },
+          parentElements,
+        );
+
         setActiveElement({
           id: elementId,
           type: material.type,
@@ -69,7 +81,7 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
             <Placeholder
               elementProps={elementProps}
               material={material}
-              onSelected={selectElement}
+              onSelected={onSelectElement}
               renderDropPlaceholder={renderDropIndicator}
               insertPosition={insertPosition}
             />
@@ -96,7 +108,7 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
       <div
         ref={setRef}
         data-element-id={elementId}
-        onClick={selectElement}
+        onClick={onSelectElement}
         className={className}
         style={
           !material.isContainer

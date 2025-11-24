@@ -5,7 +5,7 @@ const InputMaterial: Material = {
   Component: Input,
   title: '输入框',
   type: 'input',
-  dropType: ['container', 'form'],
+  dropTypes: ['container', 'form'],
   defaultProps: {
     placeholder: '请输入内容',
   },
@@ -46,6 +46,8 @@ const InputMaterial: Material = {
       {
         title: '属性',
         configs: [
+          // { label: '表单字段', field: 'name', uiType: 'input' },
+          // { label: '表单标签', field: 'label', uiType: 'input' },
           {
             label: '最大长度',
             field: 'maxLength',

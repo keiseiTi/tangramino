@@ -1,80 +1,86 @@
 import { create } from 'zustand';
-import type { Schema, InsertElement } from '@tangramino/engine';
 import type { Plugin } from '../interface/plugin';
-import type { Material } from '../interface/material';
 
-export interface PluginCore {
-  plugins: Plugin[];
-  addPlugin: (plugins: Plugin[]) => void;
-  beforeInsertElement: (schema: Schema, targetId: string, insertElement: InsertElement) => void;
-  afterInsertElement: (schema: Schema) => void;
-  beforeMoveElement: (schema: Schema, sourceId: string, targetId: string) => void;
-  afterMoveElement: (schema: Schema) => void;
-  beforeRemoveElement: (schema: Schema, targetId: string) => void;
-  afterRemoveElement: (schema: Schema) => void;
-  beforeSetElementProps: (schema: Schema, targetId: string, props: Record<string, unknown>) => void;
-  afterSetElementProps: (nextSchema: Schema) => void;
-  beforeInitMaterials: (materials: Material[]) => void;
-}
+type TransformSchemaForPlugin = Required<Plugin['transformSchema']>;
+
+type EditorContextForPlugin = Required<Plugin['editorContext']>;
+
+export type PluginCore = TransformSchemaForPlugin &
+  EditorContextForPlugin & {
+    plugins: Plugin[];
+    addPlugin: (plugins: Plugin[]) => void;
+  };
 
 export const usePluginCore = create<PluginCore>((set, get) => ({
   plugins: [],
-  addPlugin: (plugins: Plugin[]) =>
+  addPlugin: (plugins) =>
     set((state) => ({
       plugins: [...state.plugins, ...plugins],
     })),
-  beforeInsertElement: (schema: Schema, targetId: string, insertElement: InsertElement) => {
+  beforeInsertElement: (schema, targetId, insertElement) => {
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
       plugin.transformSchema?.beforeInsertElement?.(schema, targetId, insertElement);
     });
   },
-  afterInsertElement: (schema: Schema) => {
+  afterInsertElement: (schema) => {
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
       plugin.transformSchema?.afterInsertElement?.(schema);
     });
   },
-  beforeMoveElement: (schema: Schema, sourceId: string, targetId: string) => {
+  beforeMoveElement: (schema, sourceId, targetId) => {
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
       plugin.transformSchema?.beforeMoveElement?.(schema, sourceId, targetId);
     });
   },
-  afterMoveElement: (schema: Schema) => {
+  afterMoveElement: (schema) => {
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
       plugin.transformSchema?.afterMoveElement?.(schema);
     });
   },
-  beforeRemoveElement: (schema: Schema, targetId: string) => {
+  beforeRemoveElement: (schema, targetId) => {
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
       plugin.transformSchema?.beforeRemoveElement?.(schema, targetId);
     });
   },
-  afterRemoveElement: (schema: Schema) => {
+  afterRemoveElement: (schema) => {
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
       plugin.transformSchema?.afterRemoveElement?.(schema);
     });
   },
-  beforeSetElementProps: (schema: Schema, targetId: string, props: Record<string, unknown>) => {
+  beforeSetElementProps: (schema, targetId, props) => {
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
       plugin.transformSchema?.beforeSetElementProps?.(schema, targetId, props);
     });
   },
-  afterSetElementProps: (nextSchema: Schema) => {
+  afterSetElementProps: (nextSchema) => {
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
       plugin.transformSchema?.afterSetElementProps?.(nextSchema);
     });
   },
-  beforeInitMaterials: (materials: Material[]) => {
+  beforeInitMaterials: (materials) => {
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
       plugin.editorContext?.beforeInitMaterials?.(materials);
+    });
+  },
+  afterInsertMaterial: (sourceMaterial, targetElement) => {
+    const plugins = get().plugins;
+    plugins.forEach((plugin) => {
+      plugin.editorContext?.afterInsertMaterial?.(sourceMaterial, targetElement);
+    });
+  },
+  activateElement: (element, parentElements) => {
+    const plugins = get().plugins;
+    plugins.forEach((plugin) => {
+      plugin.editorContext?.activateElement?.(element, parentElements);
     });
   },
 }));

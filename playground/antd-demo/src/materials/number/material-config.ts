@@ -5,7 +5,7 @@ const NumberMaterial: Material = {
   Component: Number,
   title: '数字框',
   type: 'number',
-  dropType: ['container', 'form'],
+  dropTypes: ['container', 'form'],
   defaultProps: {
     placeholder: '请输入',
     size: 'middle',

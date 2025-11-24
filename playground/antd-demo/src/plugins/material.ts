@@ -20,6 +20,7 @@ export const materialPlugin = (): Plugin => ({
           attrPanel.configs?.unshift({
             label: '别名',
             field: 'alias',
+            required: true,
             uiType: 'input',
           });
         }

@@ -367,6 +367,21 @@ const getElementsByType = (schema: Schema, type: string) => {
 };
 
 /**
+ * 获取 schema 中所有指定 ID 的元素
+ * @param schema
+ * @param id
+ * @returns 获取元素
+ */
+const getElementById = (schema: Schema, id: string) => {
+  const { elements } = schema;
+  const element = elements[id];
+  return {
+    id,
+    ...element,
+  };
+};
+
+/**
  * 组合 schema
  * @param elements
  * @param layout
@@ -513,6 +528,7 @@ export const SchemaUtils = {
   getParents,
   setElementProps,
   getElementsByType,
+  getElementById,
   combineSchema,
   getFlowGraph,
   setFlowGraph,

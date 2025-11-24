@@ -6,7 +6,7 @@ const CheckboxMaterial: Material = {
   Component: Checkbox as React.ComponentType,
   title: '复选框',
   type: 'checkbox',
-  dropType: ['container', 'form'],
+  dropTypes: ['container', 'form'],
   defaultProps: {
     options: [
       {
@@ -54,7 +54,7 @@ const CheckboxMaterial: Material = {
           },
         ],
       },
-      
+
     ],
   },
 };

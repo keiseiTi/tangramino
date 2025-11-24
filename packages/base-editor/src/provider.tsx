@@ -56,6 +56,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
     beforeMoveElement,
     afterMoveElement,
     beforeInitMaterials,
+    afterInsertMaterial,
   } = usePluginCore();
 
   useEffect(() => {
@@ -134,7 +135,17 @@ export const EditorProvider = (props: EditorProviderProps) => {
           type: dragMaterial.type,
           props: dragMaterial.defaultProps || {},
         };
-        if (dragMaterial.dropType && !dragMaterial.dropType.includes(dropData.material.type)) {
+        let canDropElement = dropData.material;
+        if (!canDropElement.isContainer) {
+          const parentElementId = SchemaUtils.getParents(schema, dropData.id)[0];
+          const parentElement = SchemaUtils.getElementById(schema, parentElementId!);
+          canDropElement = materials.find((material) => material.type === parentElement.type)!;
+        }
+        if (
+          dragMaterial.dropTypes &&
+          canDropElement.isContainer &&
+          !dragMaterial.dropTypes.includes(canDropElement.type)
+        ) {
           console.warn('not allowed to drag in');
           return;
         }
@@ -150,6 +161,17 @@ export const EditorProvider = (props: EditorProviderProps) => {
           newSchema = SchemaUtils.insertElement(schema, dropData.id, newElement);
         }
         afterInsertElement(newSchema);
+        afterInsertMaterial(
+          {
+            ...newElement,
+            material: dragMaterial,
+          },
+          {
+            id: dropData.id,
+            type: dropData.material.type,
+            props: dropData.props,
+          },
+        );
       }
       // 移动元素
       if (String(active.id).endsWith('-move')) {

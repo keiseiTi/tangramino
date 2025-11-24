@@ -18,6 +18,10 @@ export type ContextValue = {
    * 描述
    */
   description?: string;
+  /**
+   * 是否为方法
+   */
+  isMethod?: boolean;
 };
 
 export type Method = {
@@ -53,17 +57,17 @@ export interface ContextConfig {
    */
   variables?: Variable[];
   /**
-   * 上下文值
-   *
-   * 在编辑器中消费上下文值
-   *
-   */
-  contextValues?: ContextValue[];
-  /**
    * 方法
    *
    * 在编辑器中配置方法逻辑流程
    *
    */
   methods?: Method[];
+  /**
+   * 上下文值
+   *
+   * 在编辑器配置上下文值
+   *
+   */
+  contextValues?: ContextValue[];
 }

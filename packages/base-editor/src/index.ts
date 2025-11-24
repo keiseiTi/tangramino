@@ -11,7 +11,8 @@ export { uniqueId } from './utils';
 export { validatePluginDependencies, applyPluginsWithValidation } from './utils/plugin-validator';
 
 export { historyPlugin } from './plugins/history';
-export { modePlugin } from './plugins/mode-plugin';
+export { modePlugin } from './plugins/mode';
+export { contextValuePlugin } from './plugins/context-value';
 
 export type { EditorConfig, AttributeConfig, PanelConfig } from './interface/editor-config';
 export type { Material, MaterialComponentProps } from './interface/material';

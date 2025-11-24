@@ -5,7 +5,7 @@ const TimePickerMaterial: Material = {
   Component: Slider,
   title: '滑动输入条',
   type: 'timePicker',
-  dropType: ['container', 'form'],
+  dropTypes: ['container', 'form'],
   contextConfig: {
     variables: [
       {

@@ -5,7 +5,7 @@ const TimePickerMaterial: Material = {
   Component: TimePicker,
   title: '时间选择器',
   type: 'timePicker',
-  dropType: ['container', 'form'],
+  dropTypes: ['container', 'form'],
   editorConfig: {
     panels: [
       {

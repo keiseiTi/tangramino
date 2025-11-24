@@ -18,6 +18,10 @@ export type AttributeConfig = {
    */
   defaultValue?: string | number | boolean;
   /**
+   * 必填
+   */
+  required?: boolean;
+  /**
    * 联动显示
    */
   linkageShow?: {

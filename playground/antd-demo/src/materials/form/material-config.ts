@@ -7,9 +7,35 @@ const FormMaterial: Material = {
   type: 'form',
   isContainer: true,
   defaultProps: {
-    layout: 'vertical',
-    size: 'middle',
-    preserve: false,
+    layout: 'horizontal',
+  },
+  contextConfig: {
+    variables: [
+      {
+        name: 'value',
+        description: '表单值',
+      },
+      {
+        name: 'disabled',
+        description: '是否禁用',
+      },
+    ],
+    contextValues: [
+      {
+        name: 'value',
+        description: '表单值'
+      },
+      {
+        name: 'validateFields',
+        description: '表单校验',
+        isMethod: true,
+      },
+      {
+        name: 'resetFields',
+        description: '表单重置',
+        isMethod: true,
+      },
+    ],
   },
   editorConfig: {
     panels: [
@@ -29,7 +55,7 @@ const FormMaterial: Material = {
             },
           },
           {
-            label: '大小',
+            label: '表单项大小',
             field: 'size',
             uiType: 'radio',
             props: {
@@ -40,65 +66,7 @@ const FormMaterial: Material = {
               ],
             },
           },
-          {
-            label: '禁用',
-            field: 'disabled',
-            uiType: 'checkbox',
-          },
-          {
-            label: '名称',
-            field: 'name',
-            uiType: 'input',
-            props: {
-              placeholder: '请输入表单名称',
-            },
-          },
-          {
-            label: '初始值',
-            field: 'initialValues',
-            uiType: 'input',
-            props: {
-              placeholder: '请输入初始值 JSON',
-            },
-          },
-          {
-            label: '校验触发',
-            field: 'validateTrigger',
-            uiType: 'select',
-            props: {
-              options: [
-                { label: 'onChange', value: 'onChange' },
-                { label: 'onBlur', value: 'onBlur' },
-                { label: 'onSubmit', value: 'onSubmit' },
-              ],
-            },
-          },
-          {
-            label: '校验消息',
-            field: 'validateMessages',
-            uiType: 'input',
-            props: {
-              placeholder: '请输入校验消息 JSON',
-            },
-          },
-          {
-            label: '滚动到第一个错误',
-            field: 'scrollToFirstError',
-            uiType: 'checkbox',
-          },
-          {
-            label: '必填星号',
-            field: 'requiredMark',
-            uiType: 'radio',
-            props: {
-              options: [
-                { label: '默认', value: undefined },
-                { label: '显示', value: true },
-                { label: '隐藏', value: false },
-                { label: '可选', value: 'optional' },
-              ],
-            },
-          },
+
           {
             label: '标签对齐',
             field: 'labelAlign',
@@ -111,40 +79,22 @@ const FormMaterial: Material = {
             },
           },
           {
-            label: '标签列(labelCol)',
-            field: 'labelCol',
-            uiType: 'input',
-            props: {
-              placeholder: '例如: { span: 6 }',
-            },
+            label: '标签布局占据空间',
+            field: 'labelColVal',
+            uiType: 'number',
           },
           {
-            label: '控件列(wrapperCol)',
-            field: 'wrapperCol',
-            uiType: 'input',
-            props: {
-              placeholder: '例如: { span: 18 }',
-            },
+            label: '控件布局占据空间',
+            field: 'wrapperColVal',
+            uiType: 'number',
           },
           {
-            label: '自动完成',
-            field: 'autoComplete',
-            uiType: 'select',
-            props: {
-              options: [
-                { label: 'on', value: 'on' },
-                { label: 'off', value: 'off' },
-              ],
-            },
-          },
-          {
-            label: '字段顺序',
-            field: 'preserve',
+            label: '滚动到第一个错误',
+            field: 'scrollToFirstError',
             uiType: 'checkbox',
           },
         ],
       },
-
     ],
   },
 };

@@ -1,4 +1,4 @@
-import type { Schema, InsertElement } from '@tangramino/engine';
+import type { Schema, InsertElement, Element } from '@tangramino/engine';
 import type { Material } from './material';
 
 /**
@@ -76,5 +76,30 @@ export interface Plugin {
      * @param materials - Array of materials to be initialized
      */
     beforeInitMaterials?: (materials: Material[]) => void;
+    /**
+     *
+     * @param sourceMaterial
+     * @param targetElement
+     */
+    /**
+     * Triggered after a material is successfully inserted into the editor
+     * Can be used for subsequent initialization, event binding, or linkage logic
+     * @param sourceMaterial - The original material definition being inserted
+     * @param targetElement - The generated element instance in the editor after insertion, including id, type, props, and its associated material
+     */
+    afterInsertMaterial?: (
+      sourceElement: Element & {
+        material: Material;
+      },
+      targetElement: Element,
+    ) => void;
+    activateElement?: (
+      element: Element & {
+        material: Material;
+      },
+      parentElements: (Element & {
+        material: Material;
+      })[],
+    ) => void;
   };
 }

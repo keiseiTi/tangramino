@@ -31,7 +31,7 @@ export interface Material {
    * Allowed drop target types (which materials can be dropped into this one)
    * 拖拽到的物料类型
    */
-  dropType?: string | string[];
+  dropTypes?: string[];
   /**
    * Default props to apply when the material is first added
    * 物料默认属性
@@ -73,4 +73,9 @@ export interface MaterialComponentProps {
    * 拖拽到组件上的占位符，物料设置了 isContainer，才有这个属性
    */
   tg_dropPlaceholder?: React.ReactNode;
+  /**
+   * Set context values
+   * 设置上下文值
+   */
+  tg_setContextValues?: (contextValues: Record<string, unknown>) => void;
 }
