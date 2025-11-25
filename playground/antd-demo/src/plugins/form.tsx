@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useEditorCore } from '@tangramino/base-editor';
 import { SchemaUtils } from '@tangramino/engine';
 import { Form } from 'antd';
+import { formConfigPanel } from '@/materials/form/config-panel';
 import type { Plugin } from '@tangramino/base-editor';
 
 const FormItem = Form.Item;
@@ -46,6 +47,16 @@ export const formPlugin = (): Plugin => ({
         const Component = material.Component;
         material.Component = withForm(Component);
       });
+    },
+    activateElement: (element, parentElements) => {
+      const parentElement = parentElements[parentElements.length - 1];
+      if (parentElement.type === 'form') {
+        const panels = element.material.editorConfig?.panels || [];
+        const isAble = panels.some((panel) => panel.title === '表单项');
+        if (!isAble) {
+          panels.splice(1, 0, formConfigPanel);
+        }
+      }
     },
   },
 });

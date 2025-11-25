@@ -7,7 +7,7 @@ const FormMaterial: Material = {
   type: 'form',
   isContainer: true,
   defaultProps: {
-    layout: 'horizontal',
+    layout: 'inline',
   },
   contextConfig: {
     variables: [
@@ -23,7 +23,7 @@ const FormMaterial: Material = {
     contextValues: [
       {
         name: 'value',
-        description: '表单值'
+        description: '表单值',
       },
       {
         name: 'validateFields',
@@ -48,9 +48,9 @@ const FormMaterial: Material = {
             uiType: 'radio',
             props: {
               options: [
+                { label: '内联', value: 'inline' },
                 { label: '水平', value: 'horizontal' },
                 { label: '垂直', value: 'vertical' },
-                { label: '内联', value: 'inline' },
               ],
             },
           },

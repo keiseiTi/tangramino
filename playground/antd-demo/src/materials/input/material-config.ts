@@ -46,8 +46,6 @@ const InputMaterial: Material = {
       {
         title: '属性',
         configs: [
-          // { label: '表单字段', field: 'name', uiType: 'input' },
-          // { label: '表单标签', field: 'label', uiType: 'input' },
           {
             label: '最大长度',
             field: 'maxLength',
