@@ -13,7 +13,7 @@ import { useEditorContext } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
 import { useLogicEvent } from '@/hooks/use-logic-event';
 
-export const ElementWrapper = (props: EnhancedComponentProps) => {
+export const renderCustomElement = (props: EnhancedComponentProps) => {
   const { material, elementProps, children } = props;
   const elementId = elementProps['data-element-id'] as string;
   const methods = material.contextConfig?.methods || [];
@@ -59,7 +59,9 @@ export const ElementWrapper = (props: EnhancedComponentProps) => {
     });
   };
 
-  const parentMenus = activeElement?.parents?.map((parent) => ({
+  const parents = activeElement?.parents || [];
+
+  const parentMenus = parents.map((parent) => ({
     key: parent.id,
     label: parent.material.title,
   }));
@@ -126,9 +128,6 @@ export const ElementWrapper = (props: EnhancedComponentProps) => {
       }
     >
       {React.cloneElement(children, {
-        onClick: (e: React.MouseEvent) => {
-          e.preventDefault();
-        },
         className: cn({
           'border-2 border-blue-600': activeElement?.id === elementId,
           'inline-block': !material.isContainer,

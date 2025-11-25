@@ -7,7 +7,7 @@ import {
 } from '@dnd-kit/core';
 import { SchemaUtils, type Schema } from '@tangramino/engine';
 import { useEditorCore } from './hooks/use-editor-core';
-import { usePluginCore } from './hooks/use-plugin';
+import { usePluginCore } from './hooks/use-plugin-core';
 import { uniqueId } from './utils';
 import type { Material } from './interface/material';
 import type { Plugin } from './interface/plugin';
@@ -50,7 +50,8 @@ export const EditorProvider = (props: EditorProviderProps) => {
     useEditorCore();
 
   const {
-    addPlugin,
+    addPlugins,
+    removePlugins,
     beforeInsertElement,
     afterInsertElement,
     beforeMoveElement,
@@ -66,7 +67,10 @@ export const EditorProvider = (props: EditorProviderProps) => {
   }, [outerSchema, setSchema]);
 
   useEffect(() => {
-    addPlugin([...(plugins || [])]);
+    addPlugins([...(plugins || [])]);
+    return () => {
+      removePlugins();
+    };
   }, []);
 
   useEffect(() => {

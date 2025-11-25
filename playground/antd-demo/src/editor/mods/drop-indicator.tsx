@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/utils';
 import { type DropPlaceholderProps } from '@tangramino/base-editor';
 
-export const DropIndicator = (props: DropPlaceholderProps) => {
+export const renderDropIndicator = (props: DropPlaceholderProps) => {
   const { material, isDragOver } = props;
 
   return (

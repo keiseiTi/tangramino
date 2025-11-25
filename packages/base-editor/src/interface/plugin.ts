@@ -93,6 +93,12 @@ export interface Plugin {
       },
       targetElement: Element,
     ) => void;
+    /**
+     * Called when an element is activated (e.g., clicked or focused)
+     * Provides the activated element and its parent chain for contextual operations
+     * @param element active element
+     * @param parentElements parent elements
+     */
     activateElement?: (
       element: Element & {
         material: Material;

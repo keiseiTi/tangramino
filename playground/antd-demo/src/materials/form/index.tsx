@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import { Form as AntdForm, type FormProps } from 'antd';
 import type { MaterialComponentProps } from '@tangramino/base-editor';
 
-const FormItem = AntdForm.Item;
-
 export interface IProps extends FormProps, MaterialComponentProps {
   children?: React.ReactNode;
   labelColVal?: number;
@@ -38,18 +36,6 @@ export const Form = (props: IProps) => {
     });
   }, [form]);
 
-  const formItems = React.Children.map(children, (child) => {
-    if (React.isValidElement(child)) {
-      const config = child.props.data;
-      const { name, label } = config;
-      return (
-        <FormItem name={name} label={label}>
-          {child}
-        </FormItem>
-      );
-    }
-  });
-
   const onValuesChange = (_: Record<string, unknown>, allValues: Record<string, unknown>) => {
     tg_setContextValues?.({
       value: allValues,
@@ -76,7 +62,7 @@ export const Form = (props: IProps) => {
       }
       {...restProps}
     >
-      {formItems || tg_dropPlaceholder}
+      {children || tg_dropPlaceholder}
     </AntdForm>
   );
 };

@@ -131,7 +131,7 @@ export const DataSourcePanel: React.FC<DataSourcePanelProps> = (props) => {
           onCancel={() => setAddOpen(false)}
           okText='确定'
           cancelText='取消'
-          destroyOnClose
+          destroyOnHidden
         >
           <Form form={addForm} layout='vertical'>
             <Form.Item
@@ -163,7 +163,7 @@ export const DataSourcePanel: React.FC<DataSourcePanelProps> = (props) => {
           }}
           okText='确定'
           cancelText='取消'
-          destroyOnClose
+          destroyOnHidden
         >
           <Form form={editForm} layout='vertical'>
             <Form.Item label='接口名'>

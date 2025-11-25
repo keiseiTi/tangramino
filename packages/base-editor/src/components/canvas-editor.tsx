@@ -15,12 +15,12 @@ export interface EnhancedComponentProps {
 
 interface CanvasEditorProps {
   className?: string;
-  renderComponent?: (props: EnhancedComponentProps) => React.ReactNode;
+  renderElement?: (props: EnhancedComponentProps) => React.ReactNode;
   renderDropIndicator?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
 }
 
 export const CanvasEditor = (props: CanvasEditorProps) => {
-  const { className, renderComponent, renderDropIndicator } = props;
+  const { className, renderElement, renderDropIndicator } = props;
   const { schema, materials, engine } = useEditorCore();
 
   useEffect(() => {
@@ -37,14 +37,14 @@ export const CanvasEditor = (props: CanvasEditorProps) => {
               <ElementWrapper
                 elementProps={props}
                 material={cur}
-                renderComponent={(extraProps: MaterialComponentProps) => (
-                  <Comp {...props} {...extraProps} />
-                )}
+                renderComponent={(extraProps: MaterialComponentProps) => {
+                  return <Comp {...props} {...extraProps} />;
+                }}
                 renderDropIndicator={renderDropIndicator}
               />
             );
-            if (renderComponent) {
-              return renderComponent({
+            if (renderElement) {
+              return renderElement({
                 children: element,
                 elementProps: props,
                 material: cur,

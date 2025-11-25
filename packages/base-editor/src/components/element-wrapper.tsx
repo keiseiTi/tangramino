@@ -4,7 +4,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { useEditorCore, type ActiveElement } from '../hooks/use-editor-core';
 import { Placeholder, type DropPlaceholderProps } from './placeholder';
 import type { Material, MaterialComponentProps } from '../interface/material';
-import { usePluginCore } from 'src/hooks/use-plugin';
+import { usePluginCore } from 'src/hooks/use-plugin-core';
 
 interface EnhancedCompProps {
   material: Material;

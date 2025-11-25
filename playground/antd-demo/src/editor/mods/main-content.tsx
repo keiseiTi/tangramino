@@ -7,8 +7,8 @@ import { GlobalVariablesPanel } from './global-variables';
 import { DataSourcePanel } from './data-source-panel';
 import { RightPanel } from './right-panel';
 import { AttributePanel } from './attribute-panel';
-import { DropIndicator } from './drop-indicator';
-import { ElementWrapper } from './element-wrapper';
+import { renderDropIndicator } from './drop-indicator';
+import { renderCustomElement } from './custom-element';
 
 interface IProps {
   materialGroups: {
@@ -67,8 +67,8 @@ export const MainContent = ({ materialGroups }: IProps) => {
           >
             <CanvasEditor
               className='size-full'
-              renderComponent={ElementWrapper}
-              renderDropIndicator={DropIndicator}
+              renderElement={renderCustomElement}
+              renderDropIndicator={renderDropIndicator}
             />
           </div>
         </div>

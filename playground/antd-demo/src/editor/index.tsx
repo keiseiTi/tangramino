@@ -2,10 +2,11 @@ import React from 'react';
 import { EditorProvider, DragOverlay, useEditorCore, historyPlugin } from '@tangramino/base-editor';
 import { materialGroups } from '@/materials/group';
 import { materialPlugin } from '@/plugins/material';
+import { formPlugin } from '@/plugins/form';
 import { Operation } from './mods/operation';
-import { defaultSchema } from '../constant';
 import { Sidebar } from './mods/sidebar';
 import { MainContent } from './mods/main-content';
+import { defaultSchema } from '../constant';
 import type { Schema } from '@tangramino/engine';
 
 const materials = materialGroups.flatMap((group) => group.children);
@@ -26,7 +27,7 @@ const EditorPage = (props: EditorPageProps) => {
     <EditorProvider
       materials={materials}
       schema={schema || defaultSchema}
-      plugins={[historyPlugin(), materialPlugin()]}
+      plugins={[historyPlugin(), materialPlugin(), formPlugin()]}
     >
       <div className='flex flex-col w-full h-screen min-w-[1080px] bg-gray-50'>
         <div className='sticky top-0 z-10 bg-white border-b border-gray-200'>

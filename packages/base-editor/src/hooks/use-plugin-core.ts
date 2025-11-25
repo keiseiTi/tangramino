@@ -8,15 +8,21 @@ type EditorContextForPlugin = Required<Plugin['editorContext']>;
 export type PluginCore = TransformSchemaForPlugin &
   EditorContextForPlugin & {
     plugins: Plugin[];
-    addPlugin: (plugins: Plugin[]) => void;
+    addPlugins: (plugins: Plugin[]) => void;
+    removePlugins: () => void;
   };
 
 export const usePluginCore = create<PluginCore>((set, get) => ({
   plugins: [],
-  addPlugin: (plugins) =>
+  addPlugins: (plugins) =>
     set((state) => ({
       plugins: [...state.plugins, ...plugins],
     })),
+  removePlugins: () => {
+    set(() => ({
+      plugins: [],
+    }));
+  },
   beforeInsertElement: (schema, targetId, insertElement) => {
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
