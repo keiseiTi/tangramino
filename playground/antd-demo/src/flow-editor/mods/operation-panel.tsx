@@ -55,8 +55,8 @@ export const OperationPanel = (props: OperationTreeProps): JSX.Element => {
   const defaultSelectedKeys = useMemo(() => {
     return activeElementEvent?.elementId
       ? [activeElementEvent?.elementId + '::' + activeElementEvent?.method?.name]
-      : treeData?.[0].children?.[0]?.key
-        ? [treeData?.[0].children?.[0]?.key]
+      : treeData?.[0]?.children?.[0]?.key
+        ? [treeData?.[0]?.children?.[0]?.key]
         : [];
   }, [treeData, activeElementEvent]);
 
