@@ -45,7 +45,7 @@ export const FormConfig = () => {
                 </Form.Item>
                 <Form.Item
                   name={[filed.name, 'methodName']}
-                  label={<span className='text-xs'>选择属性</span>}
+                  label={<span className='text-xs'>选择方法</span>}
                 >
                   <Select
                     options={methodList.map((item) => ({
@@ -56,7 +56,7 @@ export const FormConfig = () => {
                 </Form.Item>
                 <Form.Item
                   name={[filed.name, 'value']}
-                  label={<span className='text-xs'>设置值</span>}
+                  label={<span className='text-xs'>设置参数</span>}
                 >
                   <HyperInput />
                 </Form.Item>
