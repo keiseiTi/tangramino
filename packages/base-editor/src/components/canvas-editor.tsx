@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { ReactView } from '@tangramino/react';
 import { ElementWrapper } from './element-wrapper';
 import { useEditorCore } from '../hooks/use-editor-core';
@@ -21,11 +21,7 @@ interface CanvasEditorProps {
 
 export const CanvasEditor = (props: CanvasEditorProps) => {
   const { className, renderElement, renderDropIndicator } = props;
-  const { schema, materials, engine } = useEditorCore();
-
-  useEffect(() => {
-    engine.changeSchema(schema);
-  }, [schema]);
+  const { materials, engine } = useEditorCore();
 
   const components = useMemo(() => {
     return (materials || []).reduce(

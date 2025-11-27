@@ -21,7 +21,7 @@ export const NodePanel = (props: NodePanelProps) => {
   };
 
   return (
-    <div className='p-3 flex-1 overflow-auto h-full text-xs'>
+    <div className='p-3 flex-1 overflow-auto h-full text-xs select-none'>
       {nodes
         .filter((node) => node.type !== 'start')
         .map((node) => (

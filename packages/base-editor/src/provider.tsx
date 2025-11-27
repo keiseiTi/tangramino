@@ -46,8 +46,15 @@ export interface EditorProviderProps {
  */
 export const EditorProvider = (props: EditorProviderProps) => {
   const { schema: outerSchema, materials, plugins, children, onChange } = props;
-  const { schema, setSchema, setMaterials, setActiveElement, setInsertPosition, setDragElement } =
-    useEditorCore();
+  const {
+    schema,
+    engine,
+    setSchema,
+    setMaterials,
+    setActiveElement,
+    setInsertPosition,
+    setDragElement,
+  } = useEditorCore();
 
   const {
     addPlugins,
@@ -83,6 +90,10 @@ export const EditorProvider = (props: EditorProviderProps) => {
   useEffect(() => {
     onChange?.(schema);
   }, [schema, onChange]);
+
+  useEffect(() => {
+    engine.changeSchema(schema);
+  }, [schema]);
 
   const onDragStart = (event: DragStartEvent) => {
     const { active } = event;

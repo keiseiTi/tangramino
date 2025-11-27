@@ -37,8 +37,8 @@ export const AttributePanel = () => {
           </Form>
         </div>
       ) : (
-        <div className='flex-1 flex justify-center items-center text-xs'>
-          <span>请选择节点</span>
+        <div className='flex-1 flex justify-center items-center'>
+          <span>请从左侧画布中选中节点</span>
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Select } from 'antd';
 import { useEditorCore } from '@tangramino/base-editor';
 
@@ -9,9 +9,15 @@ interface IProps {
 }
 
 export const ElementSelect = (props: IProps) => {
-  const { engine, materials } = useEditorCore();
+  const { engine, materials, activeElement } = useEditorCore();
 
   const elements = engine.getElements();
+
+  const filterSelfElements = useMemo(() => {
+    return elements.filter(
+      (element) => element.id !== activeElement?.id && element.type !== 'basicPage',
+    );
+  }, [elements, activeElement]);
 
   return (
     <>
@@ -19,7 +25,7 @@ export const ElementSelect = (props: IProps) => {
         mode={props.mode}
         value={props.value}
         onChange={props.onChange}
-        options={elements.map((element) => ({
+        options={filterSelfElements.map((element) => ({
           label: `${materials.find((material) => material.type === element.type)?.title} (${element.id})`,
           value: element.id,
         }))}

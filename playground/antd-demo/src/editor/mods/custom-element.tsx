@@ -18,9 +18,9 @@ export const renderCustomElement = (props: EnhancedComponentProps) => {
   const elementId = elementProps['data-element-id'] as string;
   const methods = material.contextConfig?.methods || [];
 
-  const { mode } = useEditorContext();
   const { activeElement, setActiveElement, schema, setSchema, insertPosition } = useEditorCore();
   const { beforeRemoveElement, afterRemoveElement } = usePluginCore();
+  const { mode, setActiveElementEvent } = useEditorContext();
   const { openFlow } = useLogicEvent();
   const MoveElement = useMove({ elementId, elementProps, material });
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -56,6 +56,15 @@ export const renderCustomElement = (props: EnhancedComponentProps) => {
       elementId,
       method,
       material,
+    });
+  };
+
+  const onselectElement = () => {
+    const methods = material.contextConfig?.methods || [];
+    setActiveElementEvent({
+      elementId,
+      material,
+      method: methods?.[0],
     });
   };
 
@@ -128,6 +137,9 @@ export const renderCustomElement = (props: EnhancedComponentProps) => {
       }
     >
       {React.cloneElement(children, {
+        onClick: () => {
+          onselectElement();
+        },
         className: cn({
           'border-2 border-blue-600': activeElement?.id === elementId,
           'inline-block': !material.isContainer,

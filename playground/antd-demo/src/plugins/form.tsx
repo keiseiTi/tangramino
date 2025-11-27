@@ -12,25 +12,26 @@ type FormItemElementProps = {
   label?: string;
   name?: string;
   required?: boolean;
+  tooltip?: string;
 };
 
 const withForm = (Component: React.ComponentType<any>) => {
   return (props: FormItemElementProps) => {
-    const { label, name, required } = props;
+    const { label, name, required, tooltip } = props;
     const elementId = props['data-element-id'];
 
     const { schema } = useEditorCore();
 
-    const isFormInline = useMemo(() => {
+    const isForm = useMemo(() => {
       const parents = SchemaUtils.getParents(schema, elementId as string);
       const preParent = parents[0];
       const type = schema.elements[preParent]?.type;
       return type === 'form';
     }, [schema]);
 
-    if (isFormInline) {
+    if (isForm) {
       return (
-        <FormItem label={label} name={name} required={required}>
+        <FormItem label={label} name={name} required={required} tooltip={tooltip}>
           <Component {...props} />
         </FormItem>
       );

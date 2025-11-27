@@ -31,9 +31,8 @@ const defaultDeviceWidths: Record<ViewportDevice, number> = {
   MOBILE: 375,
 };
 const initialViewportWidth: number =
-  (typeof window !== 'undefined'
-    ? Number(sessionStorage.getItem('tg_viewportWidth'))
-    : NaN) || defaultDeviceWidths[initialViewportDevice];
+  (typeof window !== 'undefined' ? Number(sessionStorage.getItem('tg_viewportWidth')) : NaN) ||
+  defaultDeviceWidths[initialViewportDevice];
 
 export const useEditorContext = create<{
   leftPanel: LeftPanel;

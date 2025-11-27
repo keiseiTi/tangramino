@@ -17,7 +17,7 @@ export const FormConfig = () => {
   const onSelectedElement = (elementId?: string | string[]) => {
     const element = engine.elements[elementId as string];
     const material = materials.find((material) => material.type === element.type);
-    setMethodList((material?.contextConfig?.contextValues || []).filter(_ => _.isMethod));
+    setMethodList((material?.contextConfig?.contextValues || []).filter((_) => _.isMethod));
   };
   return (
     <>
