@@ -6,6 +6,7 @@ const TabsMaterial: Material = {
   title: '标签选型卡',
   type: 'tabs',
   isContainer: true,
+  dropTypes: ['basicPage'],
   editorConfig: {
     panels: [
       {
@@ -75,7 +76,6 @@ const TabsMaterial: Material = {
           },
         ],
       },
-      
     ],
   },
 };

@@ -111,17 +111,35 @@ export const EditorProvider = (props: EditorProviderProps) => {
     const overId = over.data.current!.id as string;
     const activeMaterial = active.data.current as Material;
     const overMaterial = over.data.current!.material as Material;
+    const threshold = 10;
     if (activeMaterial.isContainer && overMaterial.isContainer) {
-      const midY = over.rect.top + over.rect.height / 2;
-      const pointY = active.rect.current.translated?.top || 0;
-      const pos = pointY < midY ? 'up' : 'down';
-      setInsertPosition({ id: overId, position: pos });
+      const pointTop = active.rect.current.translated?.top || 0;
+      const pointBottom = active.rect.current.translated?.bottom || 0;
+      const top = over.rect.top;
+      const bottom = over.rect.bottom ?? over.rect.top + over.rect.height;
+      const distTop = Math.abs(pointTop - top);
+      const distBottom = Math.abs(bottom - pointBottom);
+      if (distTop > threshold && distBottom > threshold) {
+        setInsertPosition(null);
+      } else {
+        const pos = distTop <= distBottom ? 'up' : 'down';
+        setInsertPosition({ id: overId, position: pos });
+      }
+    } else {
+      if (String(over.id).endsWith('-placeholder')) return;
+      const pointLeft = active.rect.current.translated?.left || 0;
+      const pointRight = active.rect.current.translated?.right || 0;
+      const left = over.rect.left;
+      const right = over.rect.right;
+      const distLeft = Math.abs(pointLeft - left);
+      const distRight = Math.abs(right - pointRight);
+      if (distLeft > threshold && distRight > threshold) {
+        setInsertPosition(null);
+      } else {
+        const pos = distLeft <= distRight ? 'before' : 'after';
+        setInsertPosition({ id: overId, position: pos });
+      }
     }
-    if (String(over.id).endsWith('-placeholder')) return;
-    const midX = over.rect.left + over.rect.width / 2;
-    const pointX = active.rect.current.translated?.left || 0;
-    const pos = pointX < midX ? 'before' : 'after';
-    setInsertPosition({ id: overId, position: pos });
   };
 
   const onDragEnd = (event: DragEndEvent) => {
@@ -142,8 +160,24 @@ export const EditorProvider = (props: EditorProviderProps) => {
 
     if (dragData && dropData) {
       let newSchema: Schema = schema;
-      // 插入元素
-      if (!String(active.id).endsWith('-move')) {
+      // 移动元素
+      if (String(active.id).endsWith('-move')) {
+        const dragElement = dragData as { id: string; material: Material };
+        beforeMoveElement(schema, dragElement.id, dropData.id);
+        if (dropData.position === 'up' || dropData.position === 'down') {
+          newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
+            mode: 'cross-level',
+            position: dropData.position,
+          });
+        } else {
+          newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
+            mode: 'same-level',
+            position: (dropData.position as 'before' | 'after') || 'after',
+          });
+        }
+        afterMoveElement(newSchema);
+      } else {
+        // 插入元素
         const dragMaterial = dragData as Material;
         const newElement = {
           id: uniqueId(dragMaterial.type),
@@ -155,14 +189,15 @@ export const EditorProvider = (props: EditorProviderProps) => {
           const parentElementId = SchemaUtils.getParents(schema, dropData.id)[0];
           const parentElement = SchemaUtils.getElementById(schema, parentElementId!);
           canDropElement = materials.find((material) => material.type === parentElement.type)!;
-        }
-        if (
-          dragMaterial.dropTypes &&
-          canDropElement.isContainer &&
-          !dragMaterial.dropTypes.includes(canDropElement.type)
-        ) {
-          console.warn('not allowed to drag in');
-          return;
+          if (
+            dragMaterial.dropTypes &&
+            canDropElement.isContainer &&
+            !dragMaterial.dropTypes.includes(canDropElement.type)
+          ) {
+            console.warn('not allowed to drag in');
+            onDragCancel();
+            return;
+          }
         }
         beforeInsertElement(schema, dropData.id, newElement);
         if (dropData.position) {
@@ -187,23 +222,6 @@ export const EditorProvider = (props: EditorProviderProps) => {
             props: dropData.props,
           },
         );
-      }
-      // 移动元素
-      if (String(active.id).endsWith('-move')) {
-        const dragElement = dragData as { id: string; material: Material };
-        beforeMoveElement(schema, dragElement.id, dropData.id);
-        if (dropData.position === 'up' || dropData.position === 'down') {
-          newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
-            mode: 'cross-level',
-            position: dropData.position,
-          });
-        } else {
-          newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
-            mode: 'same-level',
-            position: (dropData.position as 'before' | 'after') || 'after',
-          });
-        }
-        afterMoveElement(newSchema);
       }
 
       setSchema(newSchema);

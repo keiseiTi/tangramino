@@ -50,12 +50,14 @@ export const formPlugin = (): Plugin => ({
       });
     },
     activateElement: (element, parentElements) => {
-      const parentElement = parentElements[parentElements.length - 1];
-      if (parentElement.type === 'form') {
-        const panels = element.material.editorConfig?.panels || [];
-        const isAble = panels.some((panel) => panel.title === '表单项');
-        if (!isAble) {
-          panels.splice(1, 0, formConfigPanel);
+      if (parentElements.length) {
+        const parentElement = parentElements[parentElements.length - 1];
+        if (parentElement.type === 'form') {
+          const panels = element.material.editorConfig?.panels || [];
+          const isAble = panels.some((panel) => panel.title === '表单项');
+          if (!isAble) {
+            panels.splice(1, 0, formConfigPanel);
+          }
         }
       }
     },

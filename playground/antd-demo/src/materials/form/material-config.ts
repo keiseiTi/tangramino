@@ -6,6 +6,7 @@ const FormMaterial: Material = {
   title: '表单容器',
   type: 'form',
   isContainer: true,
+  dropTypes: ['basicPage', 'container'],
   defaultProps: {
     layout: 'horizontal',
   },

@@ -5,7 +5,7 @@ const ContainerMaterial: Material = {
   Component: Container,
   title: '容器',
   type: 'container',
-  dropTypes: ['basicPage'],
+  dropTypes: ['basicPage', 'container'],
   isContainer: true,
   editorConfig: {
     panels: [
