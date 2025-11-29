@@ -1,3 +1,4 @@
+import BasicPage from './basic-page/material-config';
 import Button from './button/material-config';
 import Input from './input/material-config';
 import Select from './select/material-config';
@@ -16,7 +17,6 @@ import Tree from './tree/material-config';
 import TreeSelect from './tree-select/material-config';
 import Cascader from './cascader/material-config';
 import Number from './number/material-config';
-import BasicPage from './basic-page/material-config';
 import Container from './container/material-config';
 import Text from './text/material-config';
 import Textarea from './textarea/material-config';
@@ -26,7 +26,7 @@ import Slider from './slider/material-config';
 export const materialGroups = [
   {
     title: '布局容器',
-    children: [BasicPage, Container, Form, Tabs, Modal, Drawer],
+    children: [Container, Form, Tabs, Modal, Drawer],
   },
   {
     title: '原子物料',

@@ -9,10 +9,5 @@ export interface IProps extends MaterialComponentProps {
 
 export const Container = (props: IProps) => {
   const { children, margin, padding, tg_dropPlaceholder } = props;
-  return (
-    <div style={{ margin, padding }}>
-      {children}
-      {tg_dropPlaceholder}
-    </div>
-  );
+  return <div style={{ margin, padding }}>{children || tg_dropPlaceholder}</div>;
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { EditorProvider, DragOverlay, useEditorCore, historyPlugin } from '@tangramino/base-editor';
 import { materialGroups } from '@/materials/group';
+import BasicPage from '@/materials/basic-page/material-config';
 import { materialPlugin } from '@/plugins/material';
 import { formPlugin } from '@/plugins/form';
 import { Operation } from './mods/operation';
@@ -9,7 +10,7 @@ import { MainContent } from './mods/main-content';
 import { defaultSchema } from '../constant';
 import type { Schema } from '@tangramino/engine';
 
-const materials = materialGroups.flatMap((group) => group.children);
+const materials = materialGroups.flatMap((group) => group.children).concat(BasicPage);
 
 export interface EditorPageProps {
   schema?: Schema;

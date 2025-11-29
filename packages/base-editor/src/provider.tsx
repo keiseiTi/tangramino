@@ -189,15 +189,16 @@ export const EditorProvider = (props: EditorProviderProps) => {
           const parentElementId = SchemaUtils.getParents(schema, dropData.id)[0];
           const parentElement = SchemaUtils.getElementById(schema, parentElementId!);
           canDropElement = materials.find((material) => material.type === parentElement.type)!;
-          if (
-            dragMaterial.dropTypes &&
-            canDropElement.isContainer &&
-            !dragMaterial.dropTypes.includes(canDropElement.type)
-          ) {
-            console.warn('not allowed to drag in');
-            onDragCancel();
-            return;
-          }
+        }
+        if (
+          dragMaterial.dropTypes &&
+          canDropElement.isContainer &&
+          !dragMaterial.dropTypes.includes(canDropElement.type) &&
+          !dropData.position
+        ) {
+          console.warn('not allowed to drag in');
+          onDragCancel();
+          return;
         }
         beforeInsertElement(schema, dropData.id, newElement);
         if (dropData.position) {
