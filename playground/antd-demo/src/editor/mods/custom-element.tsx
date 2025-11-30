@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {
   useEditorCore,
   usePluginCore,
-  useMove,
   type EnhancedComponentProps,
   type Method,
+  Movable,
 } from '@tangramino/base-editor';
 import { SchemaUtils } from '@tangramino/engine';
 import { Dropdown, Popover, Tooltip } from 'antd';
@@ -22,7 +22,6 @@ export const renderCustomElement = (props: EnhancedComponentProps) => {
   const { beforeRemoveElement, afterRemoveElement } = usePluginCore();
   const { mode, setActiveElementEvent } = useEditorContext();
   const { openFlow } = useLogicEvent();
-  const MoveElement = useMove({ elementId, elementProps, material });
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const rootId = schema?.layout?.root;
@@ -118,13 +117,16 @@ export const renderCustomElement = (props: EnhancedComponentProps) => {
               })}
             />
           </Tooltip>
-          <MoveElement
+          <Movable
+            elementId={elementId}
+            elementProps={elementProps}
+            material={material}
             className={cn('ml-2 pl-2 cursor-move border-l border-gray-400', {
               hidden: activeElement?.id === rootId,
             })}
           >
             <DragOutlined />
-          </MoveElement>
+          </Movable>
           <span
             className={cn('ml-2 pl-2 cursor-pointer border-l border-gray-400', {
               hidden: activeElement?.id === rootId,

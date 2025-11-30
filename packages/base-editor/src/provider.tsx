@@ -109,10 +109,10 @@ export const EditorProvider = (props: EditorProviderProps) => {
     const { over, active } = event;
     if (!over) return;
     const overId = over.data.current!.id as string;
-    const activeMaterial = active.data.current as Material;
+    // const activeMaterial = active.data.current as Material;
     const overMaterial = over.data.current!.material as Material;
     const threshold = 10;
-    if (activeMaterial.isContainer && overMaterial.isContainer) {
+    if (overMaterial.isContainer) {
       const pointTop = active.rect.current.translated?.top || 0;
       const pointBottom = active.rect.current.translated?.bottom || 0;
       const top = over.rect.top;
