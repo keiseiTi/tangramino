@@ -6,12 +6,12 @@ Tangramino is a powerful, modular, and schema-driven visual editor framework. It
 
 ## 📦 Packages
 
-| Package | Description | Version |
-| --- | --- | --- |
-| **[`@tangramino/engine`](./packages/engine)** | The core schema engine handling data, events, and logic. Framework-agnostic. | [![npm](https://img.shields.io/npm/v/@tangramino/engine)](https://www.npmjs.com/package/@tangramino/engine) |
-| **[`@tangramino/react`](./packages/react)** | React bindings and view layer for the engine. | [![npm](https://img.shields.io/npm/v/@tangramino/react)](https://www.npmjs.com/package/@tangramino/react) |
-| **[`@tangramino/base-editor`](./packages/base-editor)** | A visual drag-and-drop editor component built on top of the engine. | [![npm](https://img.shields.io/npm/v/@tangramino/base-editor)](https://www.npmjs.com/package/@tangramino/base-editor) |
-| **[`@tangramino/flow-editor`](./packages/flow-editor)** | A specialized visual flow editor component. | [![npm](https://img.shields.io/npm/v/@tangramino/flow-editor)](https://www.npmjs.com/package/@tangramino/flow-editor) |
+| Package                                                 | Description                                                                  | Version                                                                                                               |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **[`@tangramino/engine`](./packages/engine)**           | The core schema engine handling data, events, and logic. Framework-agnostic. | [![npm](https://img.shields.io/npm/v/@tangramino/engine)](https://www.npmjs.com/package/@tangramino/engine)           |
+| **[`@tangramino/react`](./packages/react)**             | React bindings and view layer for the engine.                                | [![npm](https://img.shields.io/npm/v/@tangramino/react)](https://www.npmjs.com/package/@tangramino/react)             |
+| **[`@tangramino/base-editor`](./packages/base-editor)** | A visual drag-and-drop editor component built on top of the engine.          | [![npm](https://img.shields.io/npm/v/@tangramino/base-editor)](https://www.npmjs.com/package/@tangramino/base-editor) |
+| **[`@tangramino/flow-editor`](./packages/flow-editor)** | A specialized visual flow editor component.                                  | [![npm](https://img.shields.io/npm/v/@tangramino/flow-editor)](https://www.npmjs.com/package/@tangramino/flow-editor) |
 
 ## ✨ Features
 
@@ -24,11 +24,11 @@ Tangramino is a powerful, modular, and schema-driven visual editor framework. It
 
 ## 📖 Documentation
 
-If you are new to Tangramino, please check out the Getting Started guide to familiarize yourself with Tangramino's architecture and usage.
+If you are new to Tangramino, please check out the [Getting Started](https://keiseiti.github.io/tangramino/guide/start/introduce.html) guide to familiarize yourself with Tangramino's architecture and usage.
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guide](https://keiseiti.github.io/tangramino/guide/contribution.html) for details.
 
 1.  Fork the repository.
 2.  Create a new branch (`git checkout -b feature/my-feature`).
