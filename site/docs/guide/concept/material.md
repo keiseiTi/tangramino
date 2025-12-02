@@ -34,7 +34,7 @@ export interface Material {
    * 拖拽到的物料类型
    * 如果是容器，可以限制哪些类型的物料可以放入
    */
-  dropType?: string | string[];
+  dropTypes?: string[];
   /**
    * 物料默认属性
    */
@@ -68,10 +68,19 @@ export interface MaterialComponentProps {
   tg_readonly?: boolean;
   /**
    * 状态
-   * edit: 编辑态
+   * design: 设计态
    * render: 渲染态
    */
-  tg_mode?: 'edit' | 'render';
+  tg_mode?: 'design' | 'render';
+  /**
+   * 拖拽到组件上的占位符
+   * 物料设置了 isContainer，才有这个属性
+   */
+  tg_dropPlaceholder?: React.ReactNode;
+  /**
+   * 设置上下文值
+   */
+  tg_setContextValues?: (contextValues: Record<string, unknown>) => void;
 }
 ```
 

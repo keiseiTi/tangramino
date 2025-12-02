@@ -50,6 +50,28 @@ export interface Plugin {
      * 可用于动态修改或过滤物料列表
      */
     beforeInitMaterials?: (materials: Material[]) => void;
+    /**
+     * 物料插入后钩子
+     * 可用于后续初始化、事件绑定或联动逻辑
+     */
+    afterInsertMaterial?: (
+      sourceElement: Element & {
+        material: Material;
+      },
+      targetElement: Element,
+    ) => void;
+    /**
+     * 元素激活钩子
+     * 当元素被点击或聚焦时触发
+     */
+    activateElement?: (
+      element: Element & {
+        material: Material;
+      },
+      parentElements: (Element & {
+        material: Material;
+      })[],
+    ) => void;
   };
 }
 ```
@@ -66,6 +88,8 @@ export interface Plugin {
 ### editorContext
 
 - **beforeInitMaterials**: 在编辑器加载物料列表之前触发。你可以利用这个钩子来动态添加、删除或修改物料配置。
+- **afterInsertMaterial**: 物料成功插入编辑器后触发。可用于后续初始化、事件绑定或联动逻辑。
+- **activateElement**: 当元素被激活（如点击或聚焦）时触发。提供当前激活元素及其父级链，用于上下文操作。
 
 ## 示例：日志插件
 
