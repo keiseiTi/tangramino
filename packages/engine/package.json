@@ -12,7 +12,8 @@
   ],
   "scripts": {
     "build": "rm -rf dist types && rollup -c && tsc -p tsconfig.json",
-    "watch": "rollup --watch -c & tsc -w -p tsconfig.json"
+    "watch": "rollup --watch -c & tsc -w -p tsconfig.json",
+    "test": "vitest"
   },
   "keywords": [
     "schema",
@@ -27,6 +28,7 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.4",
     "rollup": "^4.46.0",
-    "typescript": "^5.9.0"
+    "typescript": "^5.9.0",
+    "vitest": "^4.0.15"
   }
 }
