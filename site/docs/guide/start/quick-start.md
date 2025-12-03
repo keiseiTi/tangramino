@@ -1,226 +1,106 @@
-# 快速上手
+# 快速开始
 
-本指南将帮助你快速集成 Tangramino 到你的 React 项目中。我们将构建一个简单的可视化编辑器，包含拖拽画布、属性配置和渲染器。
+本指南将帮助你快速集成 Tangramino 并搭建一个最简单的编辑器。
 
-## 安装
+## 1. 安装依赖
 
-使用你喜欢的包管理器安装核心依赖：
+首先，你需要安装 React 环境。如果你还没有项目，可以使用 Vite 创建一个：
 
 ```bash
-# 使用 npm
-npm install @tangramino/base-editor
-
-# 使用 pnpm
-pnpm add @tangramino/base-editor
-
-# 使用 yarn
-yarn add @tangramino/base-editor
+npm create vite@latest my-editor -- --template react-ts
+cd my-editor
+npm install
 ```
 
-## 核心概念
+然后安装 Tangramino 的核心包：
 
-在开始之前，我们需要了解 Tangramino 的三个核心部分：
+```bash
+npm install @tangramino/base-editor @tangramino/engine
+```
 
-- **Engine**: 核心逻辑层，负责管理 Schema、状态和事件。
-- **Schema**: 描述页面结构、布局和逻辑的 JSON 数据。
-- **Material**: 物料（组件）定义，包含 React 组件本身及其在编辑器中的配置（如属性面板、拖拽规则等）。
+## 2. 定义物料
 
-## 基础示例
-
-### 1. 定义物料 (Material)
-
-首先，我们需要定义一些可拖拽的组件。每个物料包含组件实现和配置信息。
+在 `src` 目录下创建一个简单的物料。
 
 ```tsx
-// materials/button.tsx
-import React from 'react';
-import { Material } from '@tangramino/base-editor';
+// src/materials/Button.tsx
+import { Button } from 'antd'; // 假设你使用了 Ant Design
+import type { Material } from '@tangramino/base-editor';
 
-// 1. 组件实现
-export const ButtonComponent = ({ text = 'Button', style, onClick }) => (
-  <button
-    style={style}
-    onClick={onClick}
-    className="px-4 py-2 bg-blue-500 text-white rounded"
-  >
-    {text}
-  </button>
-);
-
-// 2. 物料配置
 export const ButtonMaterial: Material = {
-  type: 'button', // 唯一标识
+  type: 'button',
   title: '按钮',
-  component: ButtonComponent,
-  // 编辑器配置
-  editorConfig: {
-    panels: [
-      {
-        title: '基础属性',
-        configs: [
-          {
-            field: 'text',
-            label: '按钮文字',
-            uiType: 'input',
-            defaultValue: '点击我',
-          },
-        ],
-      },
-    ],
+  Component: Button,
+  props: {
+    children: '点击我',
+    type: 'primary',
+  },
+};
+```
+
+> 提示：记得安装 `antd`：`npm install antd`
+
+## 3. 创建编辑器
+
+修改 `src/App.tsx`：
+
+```tsx
+import React from 'react';
+import { EditorProvider, CanvasEditor, DragOverlay, useEditorCore } from '@tangramino/base-editor';
+import { ButtonMaterial } from './materials/Button';
+import 'antd/dist/reset.css'; // 引入 Antd 样式
+
+// 初始 Schema
+const initialSchema = {
+  elements: {},
+  layout: {
+    root: 'root',
+    structure: { root: [] },
   },
 };
 
-// materials/container.tsx
-import { Material } from '@tangramino/base-editor';
+// 注册物料
+const materials = [ButtonMaterial];
 
-export const ContainerComponent = ({ children, style }) => (
-  <div
-    style={{ minHeight: 100, padding: 20, border: '1px dashed #ccc', ...style }}
-  >
-    {children}
-  </div>
-);
-
-export const ContainerMaterial: Material = {
-  type: 'container',
-  title: '容器',
-  component: ContainerComponent,
-  isContainer: true, // 标记为容器，允许拖入其他组件
-};
-```
-
-### 2. 构建编辑器
-
-使用 `EditorProvider` 和核心 Hook 构建编辑器界面。
-
-```tsx
-import React from 'react';
-import {
-  EditorProvider,
-  CanvasEditor,
-  useEditorCore,
-  DragOverlay,
-  historyPlugin, // 撤销重做插件
-  modePlugin, // 预览/编辑模式插件
-} from '@tangramino/base-editor';
-import { ButtonMaterial, ContainerMaterial } from './materials';
-
-const materials = [ButtonMaterial, ContainerMaterial];
-
-// 左侧物料面板
-const MaterialPanel = () => {
-  const { dragElement } = useEditorCore(); // 获取拖拽方法
-
-  return (
-    <div className="w-64 border-r p-4">
-      <h3>组件库</h3>
-      <div className="grid grid-cols-2 gap-2">
-        {materials.map((m) => (
-          <div
-            key={m.type}
-            // 调用 dragElement 开始拖拽
-            onDragStart={(e) => dragElement(e, m)}
-            draggable
-            className="p-2 border rounded cursor-move hover:bg-gray-50"
-          >
-            {m.title}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+// 侧边栏组件：展示物料
+const Sidebar = () => {
+  const { dragElement } = useEditorCore();
+  // 这里可以使用 Draggable 组件来实现拖拽源，具体参考 base-editor 文档
+  return <div style={{ width: 200, borderRight: '1px solid #ddd' }}>物料区</div>;
 };
 
-// 右侧属性面板（需自行实现表单逻辑，Tangramino 提供配置数据）
-const SettingPanel = () => {
-  const { activeElement } = useEditorCore();
-
-  if (!activeElement)
-    return <div className="w-64 border-l p-4">请选择组件</div>;
-
+const App = () => {
   return (
-    <div className="w-64 border-l p-4">
-      <h3>属性配置</h3>
-      {/* 根据 activeElement.material.editorConfig 渲染表单 */}
-      <pre>{JSON.stringify(activeElement.props, null, 2)}</pre>
-    </div>
-  );
-};
-
-export const App = () => {
-  return (
-    <EditorProvider
-      materials={materials}
-      plugins={[historyPlugin(), modePlugin()]} // 注册插件
-    >
-      <div className="flex h-screen">
-        <MaterialPanel />
-
-        {/* 中间画布区域 */}
-        <div className="flex-1 bg-gray-100 p-8 overflow-auto">
-          <div className="bg-white min-h-[800px] shadow-lg">
-            <CanvasEditor />
+    <EditorProvider schema={initialSchema} materials={materials}>
+      <div style={{ display: 'flex', height: '100vh' }}>
+        <Sidebar />
+        <div style={{ flex: 1, padding: 20, background: '#f0f2f5' }}>
+          <div style={{ background: '#fff', minHeight: '100%' }}>
+            <CanvasEditor 
+               renderElement={(el) => {
+                 const Comp = el.material.Component;
+                 return <Comp {...el.props} />;
+               }}
+            />
           </div>
         </div>
-
-        <SettingPanel />
       </div>
-
-      {/* 拖拽时的跟随效果 */}
       <DragOverlay />
     </EditorProvider>
   );
 };
+
+export default App;
 ```
 
-### 3. 渲染页面 (Runtime)
-
-在最终的页面中，我们只需要 `@tangramino/engine` 和 `@tangramino/react` 来渲染 Schema。
-
-```tsx
-import React, { useMemo } from 'react';
-import { createEngine } from '@tangramino/engine';
-import { ReactView } from '@tangramino/react';
-import { ButtonComponent, ContainerComponent } from './materials';
-
-// 组件映射表
-const components = {
-  button: ButtonComponent,
-  container: ContainerComponent,
-};
-
-const PageRenderer = ({ schema }) => {
-  // 创建引擎实例
-  const engine = useMemo(() => createEngine(schema), [schema]);
-
-  return <ReactView engine={engine} components={components} />;
-};
-```
-
-## 进阶：流程编排 (Flow Editor)
-
-Tangramino 还提供了强大的逻辑编排能力。
+## 4. 运行
 
 ```bash
-npm install @tangramino/flow-editor
+npm run dev
 ```
 
-```tsx
-import { FlowEditor } from '@tangramino/flow-editor';
+打开浏览器，你应该能看到一个简单的编辑器界面。虽然现在还比较简陋（比如侧边栏还没实现具体的拖拽源），但编辑器的核心骨架已经搭建完毕。
 
-const LogicEditor = () => {
-  return (
-    <div style={{ height: 600 }}>
-      <FlowEditor />
-    </div>
-  );
-};
-```
-
-更多关于逻辑编排的用法，请参考 [流程编辑器文档](../advanced/custom-editor.md)。
-
-## 下一步
-
-- 深入了解 [Schema 结构](../concept/editor/view.md)
-- 学习如何开发 [自定义插件](../plugin/intro.md)
-- 探索 [逻辑引擎](../concept/renderer/flow.md) 的工作原理
+下一步：
+- 学习如何 [自定义编辑器](../advanced/custom-editor.md) 以实现侧边栏和属性面板。
+- 了解 [物料体系](../concept/material.md) 以开发更复杂的组件。

@@ -6,12 +6,12 @@ Tangramino 是一个强大、模块化且基于 Schema 驱动的可视化编辑�
 
 ## 📦 核心包
 
-| 包名                                                    | 描述                                                     | 版本                                                                                                                  |
-| ------------------------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **[`@tangramino/engine`](./packages/engine)**           | 核心 Schema 引擎，负责处理数据、事件和逻辑。与框架无关。 | [![npm](https://img.shields.io/npm/v/@tangramino/engine)](https://www.npmjs.com/package/@tangramino/engine)           |
-| **[`@tangramino/react`](./packages/react)**             | 引擎的 React 绑定和视图层。                              | [![npm](https://img.shields.io/npm/v/@tangramino/react)](https://www.npmjs.com/package/@tangramino/react)             |
-| **[`@tangramino/base-editor`](./packages/base-editor)** | 基于引擎构建的可视化拖拽编辑器组件。                     | [![npm](https://img.shields.io/npm/v/@tangramino/base-editor)](https://www.npmjs.com/package/@tangramino/base-editor) |
-| **[`@tangramino/flow-editor`](./packages/flow-editor)** | 专业的流程图可视化编辑器组件。                           | [![npm](https://img.shields.io/npm/v/@tangramino/flow-editor)](https://www.npmjs.com/package/@tangramino/flow-editor) |
+| 包名 | 描述 | 版本 |
+| --- | --- | --- |
+| **[`@tangramino/engine`](./packages/engine)** | 核心 Schema 引擎，负责处理数据、事件和逻辑。与框架无关。 | [![npm](https://img.shields.io/npm/v/@tangramino/engine)](https://www.npmjs.com/package/@tangramino/engine) |
+| **[`@tangramino/react`](./packages/react)** | 引擎的 React 绑定和视图层。 | [![npm](https://img.shields.io/npm/v/@tangramino/react)](https://www.npmjs.com/package/@tangramino/react) |
+| **[`@tangramino/base-editor`](./packages/base-editor)** | 基于引擎构建的可视化拖拽编辑器组件。 | [![npm](https://img.shields.io/npm/v/@tangramino/base-editor)](https://www.npmjs.com/package/@tangramino/base-editor) |
+| **[`@tangramino/flow-editor`](./packages/flow-editor)** | 专业的流程图可视化编辑器组件。 | [![npm](https://img.shields.io/npm/v/@tangramino/flow-editor)](https://www.npmjs.com/package/@tangramino/flow-editor) |
 
 ## ✨ 特性
 
@@ -22,13 +22,43 @@ Tangramino 是一个强大、模块化且基于 Schema 驱动的可视化编辑�
 - **可扩展性**：设计之初就考虑了插件和自定义组件的扩展。
 - **TypeScript**：完全使用 TypeScript 编写，提供类型安全和卓越的开发体验。
 
+## 🚀 快速开始
+
+### 环境要求
+
+- Node.js >= 16
+- npm 或 yarn 或 pnpm
+
+### 安装
+
+你可以根据需要单独安装核心包：
+
+```bash
+npm install @tangramino/engine @tangramino/react
+```
+
+如果你要构建可视化编辑器：
+
+```bash
+npm install @tangramino/base-editor
+```
+
+### 使用示例
+
+查看 [playground/antd-demo](./playground/antd-demo) 获取如何使用 Tangramino 构建低代码编辑器的完整示例。
+
 ## 📖 文档
 
-如果您是第一次使用 Tangramino，请查看[入门指南](https://keiseiti.github.io/tangramino/guide/start/introduce.html)，以熟悉Tangramino的架构和使用。
+访问我们的 [文档站点](https://keiseiti.github.io/tangramino/) 获取详细指南和 API 参考。
+
+- [介绍](https://keiseiti.github.io/tangramino/guide/start/introduce.html)
+- [自定义编辑器指南](./site/docs/guide/advanced/custom-editor.md)
+- [流程编辑器指南](./site/docs/guide/advanced/custom-flow-editor.md)
+- [插件开发](./site/docs/guide/plugin.md)
 
 ## 🤝 贡献指南
 
-我们需要你的帮助！详情请参阅我们的 [贡献指南](https://keiseiti.github.io/tangramino/guide/contribution.html)。
+我们需要你的帮助！详情请参阅我们的 [贡献指南](./site/docs/contribution.md)。
 
 1.  Fork 本仓库。
 2.  创建一个新分支 (`git checkout -b feature/my-feature`)。
