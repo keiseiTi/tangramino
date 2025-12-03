@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { EditorProvider, DragOverlay, useEditorCore, historyPlugin } from '@tangramino/base-editor';
 import { materialGroups } from '@/materials/group';
 import BasicPage from '@/materials/basic-page/material-config';
@@ -16,20 +16,22 @@ export interface EditorPageProps {
   schema?: Schema;
 }
 
-const localSchema = sessionStorage.getItem('tg_schema')
-  ? JSON.parse(sessionStorage.getItem('tg_schema')!)
-  : undefined;
+const getLocalSchema = () => {
+  try {
+    return sessionStorage.getItem('tg_schema')
+      ? JSON.parse(sessionStorage.getItem('tg_schema')!)
+      : undefined;
+  } catch (e) {
+    console.error('Failed to parse schema from sessionStorage', e);
+    return undefined;
+  }
+};
 
-const EditorPage = (props: EditorPageProps) => {
-  const { schema = localSchema } = props;
+const EditorLayout = () => {
   const { dragElement } = useEditorCore();
 
   return (
-    <EditorProvider
-      materials={materials}
-      schema={schema || defaultSchema}
-      plugins={[historyPlugin(), materialPlugin(), formPlugin()]}
-    >
+    <>
       <div className='flex flex-col w-full h-screen min-w-[1080px] bg-gray-50'>
         <div className='sticky top-0 z-10 bg-white border-b border-gray-200'>
           <Operation />
@@ -48,6 +50,26 @@ const EditorPage = (props: EditorPageProps) => {
           <span className='text-store-600'>{dragElement?.title}</span>
         </div>
       </DragOverlay>
+    </>
+  );
+};
+
+const EditorPage = (props: EditorPageProps) => {
+  const { schema } = props;
+
+  const initialSchema = useMemo(() => {
+    return schema || getLocalSchema() || defaultSchema;
+  }, [schema]);
+
+  const plugins = useMemo(() => [historyPlugin(), materialPlugin(), formPlugin()], []);
+
+  return (
+    <EditorProvider
+      materials={materials}
+      schema={initialSchema}
+      plugins={plugins}
+    >
+      <EditorLayout />
     </EditorProvider>
   );
 };

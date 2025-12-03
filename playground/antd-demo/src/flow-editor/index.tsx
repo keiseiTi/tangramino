@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useCallback } from 'react';
 import { uniqueId, useEditorCore } from '@tangramino/base-editor';
 import { createFreeLinesPlugin } from '@flowgram.ai/free-lines-plugin';
 import {
@@ -38,7 +38,7 @@ export const FlowEditor = (props: FlowEditorProps) => {
     schemaRef.current = schema;
   }, [schema]);
 
-  const changeFlowGraphData = (data: FlowGraphData) => {
+  const changeFlowGraphData = useCallback((data: FlowGraphData) => {
     if (activeElementEventRef.current && activeElementEventRef.current?.method) {
       const { elementId, method } = activeElementEventRef.current;
       const bindElementKey = elementId + '::' + method?.name;
@@ -57,9 +57,9 @@ export const FlowEditor = (props: FlowEditorProps) => {
     } else {
       message.info('请先选择元素');
     }
-  };
+  }, [setSchema]); // Use ref values so this doesn't need other deps
 
-  const canAddLine: BaseFlowEditorProps['canAddLine'] = (_, fromPort) => {
+  const canAddLine: BaseFlowEditorProps['canAddLine'] = useCallback((_, fromPort) => {
     if (fromPort.node.flowNodeType === 'condition') {
       if (fromPort.availableLines.length >= 2) {
         return false;
@@ -68,7 +68,13 @@ export const FlowEditor = (props: FlowEditorProps) => {
       return false;
     }
     return true;
-  };
+  }, []);
+
+  const plugins = useMemo(() => [
+    createFreeLinesPlugin({
+      renderInsideLine: CustomLineLabel,
+    }),
+  ], []);
 
   return (
     <div className={className}>
@@ -78,11 +84,7 @@ export const FlowEditor = (props: FlowEditorProps) => {
         value={flowGraphData}
         onChange={changeFlowGraphData}
         canAddLine={canAddLine}
-        plugins={[
-          createFreeLinesPlugin({
-            renderInsideLine: CustomLineLabel,
-          }),
-        ]}
+        plugins={plugins}
       >
         <div className='flex h-full'>
           <div className='flex flex-col h-full'>

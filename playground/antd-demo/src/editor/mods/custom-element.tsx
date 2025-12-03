@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import {
   useEditorCore,
   usePluginCore,
@@ -22,26 +22,14 @@ export const renderCustomElement = (props: EnhancedComponentProps) => {
   const { beforeRemoveElement, afterRemoveElement } = usePluginCore();
   const { mode, setActiveElementEvent } = useEditorContext();
   const { openFlow } = useLogicEvent();
-  const [popoverOpen, setPopoverOpen] = useState(false);
 
   const rootId = schema?.layout?.root;
 
-  useEffect(() => {
-    if (activeElement?.id === elementId) {
-      setPopoverOpen(true);
-    } else {
-      setPopoverOpen(false);
-    }
-  }, [activeElement, elementId]);
-
-  useEffect(() => {
-    if (mode === 'logic') {
-      setPopoverOpen(false);
-    }
-  }, [mode]);
+  // Derive open state directly from activeElement and mode
+  const isSelected = activeElement?.id === elementId;
+  const popoverOpen = isSelected && mode !== 'logic';
 
   const deleteElement = () => {
-    setPopoverOpen(false);
     beforeRemoveElement(schema!, elementId);
     const nextSchema = SchemaUtils.removeElement(schema!, elementId);
     afterRemoveElement(nextSchema);
@@ -58,7 +46,7 @@ export const renderCustomElement = (props: EnhancedComponentProps) => {
     });
   };
 
-  const onselectElement = () => {
+  const onSelectElement = () => {
     const methods = material.contextConfig?.methods || [];
     setActiveElementEvent({
       elementId,
@@ -67,12 +55,12 @@ export const renderCustomElement = (props: EnhancedComponentProps) => {
     });
   };
 
-  const parents = activeElement?.parents || [];
+  const parents = useMemo(() => activeElement?.parents || [], [activeElement]);
 
-  const parentMenus = parents.map((parent) => ({
+  const parentMenus = useMemo(() => parents.map((parent) => ({
     key: parent.id,
     label: parent.material.title,
-  }));
+  })), [parents]);
 
   return (
     <Popover
@@ -140,10 +128,10 @@ export const renderCustomElement = (props: EnhancedComponentProps) => {
     >
       {React.cloneElement(children, {
         onClick: () => {
-          onselectElement();
+          onSelectElement();
         },
         className: cn({
-          'border-2 border-blue-600': activeElement?.id === elementId,
+          'border-2 border-blue-600': isSelected,
           'inline-block': !material.isContainer,
           'border-l-4 border-yellow-500':
             !material.isContainer &&
