@@ -19,12 +19,11 @@ describe('createEngine', () => {
   });
 
   it('should update state', () => {
-    const engine = createEngine(defaultSchema);
-    // Assuming we have an element or can set state arbitrarily for now, 
+    // Assuming we have an element or can set state arbitrarily for now,
     // but based on implementation we might need an element to exist first.
     // Let's check if we can add an element via schema first or if setState works loosely.
     // Checking createEngine implementation might be useful, but for now let's assume standard behavior.
-    
+
     const schema = {
       ...defaultSchema,
       elements: {
@@ -36,9 +35,9 @@ describe('createEngine', () => {
       }
     };
     const engineWithElements = createEngine(schema);
-    
+
     expect(engineWithElements.getState('test-id')).toEqual({ foo: 'bar' });
-    
+
     engineWithElements.setState({ 'test-id': { foo: 'baz' } });
     expect(engineWithElements.getState('test-id')).toEqual({ foo: 'baz' });
   });

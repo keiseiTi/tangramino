@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import type { Material } from '../interface/material';
-import type { InsertPosition } from '../hooks/use-editor-core';
 
 export interface DropPlaceholderProps {
   /**
@@ -19,11 +18,10 @@ export interface PlaceholderProps {
   elementProps: Record<string, unknown>;
   onSelected?: (e: React.MouseEvent) => void;
   renderDropPlaceholder?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
-  insertPosition?: InsertPosition | null;
 }
 
 export const Placeholder = (props: PlaceholderProps) => {
-  const { material, elementProps, onSelected, insertPosition, renderDropPlaceholder } = props;
+  const { material, elementProps, onSelected, renderDropPlaceholder } = props;
   const { 'data-element-id': elementId, children, ...rest } = elementProps;
   void children;
 
@@ -32,7 +30,6 @@ export const Placeholder = (props: PlaceholderProps) => {
     data: {
       id: elementId,
       props: rest,
-      position: insertPosition?.position,
       material,
     },
   });

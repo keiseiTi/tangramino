@@ -1,10 +1,11 @@
 import React from 'react';
 import { SchemaUtils } from '@tangramino/engine';
 import { useDroppable } from '@dnd-kit/core';
+import { useShallow } from 'zustand/react/shallow';
 import { useEditorCore, type ActiveElement } from '../hooks/use-editor-core';
 import { Placeholder, type DropPlaceholderProps } from './placeholder';
 import type { Material, MaterialComponentProps } from '../interface/material';
-import { usePluginCore } from 'src/hooks/use-plugin-core';
+import { usePluginCore } from '../hooks/use-plugin-core';
 
 interface EnhancedCompProps {
   material: Material;
@@ -19,8 +20,15 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
   (props: EnhancedCompProps, ref) => {
     const { material, elementProps, className, renderComponent, renderDropIndicator, onClick } =
       props;
-    const { schema, activeElement, setActiveElement, engine, materials, insertPosition } =
-      useEditorCore();
+    const { schema, activeElement, setActiveElement, engine, materials } = useEditorCore(
+      useShallow((state) => ({
+        schema: state.schema,
+        activeElement: state.activeElement,
+        setActiveElement: state.setActiveElement,
+        engine: state.engine,
+        materials: state.materials,
+      })),
+    );
 
     const { activateElement } = usePluginCore();
 
@@ -31,7 +39,6 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
       data: {
         id: elementId,
         props: elementProps,
-        position: insertPosition?.position,
         material,
       },
     });
@@ -43,13 +50,14 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
         const parents = SchemaUtils.getParents(schema!, elementId);
         const parentElements: ActiveElement[] = [];
         if (engine?.elements) {
-          Object.keys(engine.elements || {}).forEach((id) => {
-            if (parents.includes(id)) {
+          parents.forEach((id) => {
+            const element = engine.elements[id];
+            if (element) {
               parentElements.push({
                 id,
-                type: engine.elements[id]!.type,
-                props: engine.elements[id]!.props,
-                material: materials.find((m) => m.type === engine.elements[id]!.type)!,
+                type: element.type,
+                props: element.props,
+                material: materials.find((m) => m.type === element.type)!,
               });
             }
           });
@@ -83,7 +91,6 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
               material={material}
               onSelected={onSelectElement}
               renderDropPlaceholder={renderDropIndicator}
-              insertPosition={insertPosition}
             />
           ),
           tg_mode: 'design',

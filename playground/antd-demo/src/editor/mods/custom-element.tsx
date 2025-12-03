@@ -9,16 +9,29 @@ import {
 import { SchemaUtils } from '@tangramino/engine';
 import { Dropdown, Popover, Tooltip } from 'antd';
 import { DeleteOutlined, DragOutlined, PartitionOutlined } from '@ant-design/icons';
+import { useShallow } from 'zustand/react/shallow';
 import { useEditorContext } from '@/hooks/use-editor-context';
 import { cn } from '@/utils';
 import { useLogicEvent } from '@/hooks/use-logic-event';
 
-export const renderCustomElement = (props: EnhancedComponentProps) => {
+export const CustomElement = (props: EnhancedComponentProps) => {
   const { material, elementProps, children } = props;
   const elementId = elementProps['data-element-id'] as string;
   const methods = material.contextConfig?.methods || [];
 
-  const { activeElement, setActiveElement, schema, setSchema, insertPosition } = useEditorCore();
+  const { activeElement, setActiveElement, schema, setSchema } = useEditorCore(
+    useShallow((state) => ({
+      activeElement: state.activeElement,
+      setActiveElement: state.setActiveElement,
+      schema: state.schema,
+      setSchema: state.setSchema,
+    })),
+  );
+
+  const insertPosition = useEditorCore((state) =>
+    state.insertPosition?.id === elementId ? state.insertPosition : null,
+  );
+
   const { beforeRemoveElement, afterRemoveElement } = usePluginCore();
   const { mode, setActiveElementEvent } = useEditorContext();
   const { openFlow } = useLogicEvent();
@@ -57,10 +70,14 @@ export const renderCustomElement = (props: EnhancedComponentProps) => {
 
   const parents = useMemo(() => activeElement?.parents || [], [activeElement]);
 
-  const parentMenus = useMemo(() => parents.map((parent) => ({
-    key: parent.id,
-    label: parent.material.title,
-  })), [parents]);
+  const parentMenus = useMemo(
+    () =>
+      parents.map((parent) => ({
+        key: parent.id,
+        label: parent.material.title,
+      })),
+    [parents],
+  );
 
   return (
     <Popover

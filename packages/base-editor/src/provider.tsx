@@ -49,6 +49,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
   const {
     schema,
     engine,
+    insertPosition,
     setSchema,
     setMaterials,
     setActiveElement,
@@ -112,6 +113,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
     // const activeMaterial = active.data.current as Material;
     const overMaterial = over.data.current!.material as Material;
     const threshold = 10;
+
     if (overMaterial.isContainer) {
       const pointTop = active.rect.current.translated?.top || 0;
       const pointBottom = active.rect.current.translated?.bottom || 0;
@@ -120,10 +122,14 @@ export const EditorProvider = (props: EditorProviderProps) => {
       const distTop = Math.abs(pointTop - top);
       const distBottom = Math.abs(bottom - pointBottom);
       if (distTop > threshold && distBottom > threshold) {
-        setInsertPosition(null);
+        if (insertPosition !== null) {
+          setInsertPosition(null);
+        }
       } else {
         const pos = distTop <= distBottom ? 'up' : 'down';
-        setInsertPosition({ id: overId, position: pos });
+        if (insertPosition?.id !== overId || insertPosition?.position !== pos) {
+          setInsertPosition({ id: overId, position: pos });
+        }
       }
     } else {
       if (String(over.id).endsWith('-placeholder')) return;
@@ -134,10 +140,14 @@ export const EditorProvider = (props: EditorProviderProps) => {
       const distLeft = Math.abs(pointLeft - left);
       const distRight = Math.abs(right - pointRight);
       if (distLeft > threshold && distRight > threshold) {
-        setInsertPosition(null);
+        if (insertPosition !== null) {
+          setInsertPosition(null);
+        }
       } else {
         const pos = distLeft <= distRight ? 'before' : 'after';
-        setInsertPosition({ id: overId, position: pos });
+        if (insertPosition?.id !== overId || insertPosition?.position !== pos) {
+          setInsertPosition({ id: overId, position: pos });
+        }
       }
     }
   };
@@ -155,8 +165,8 @@ export const EditorProvider = (props: EditorProviderProps) => {
       id: string;
       props: Record<string, unknown>;
       material: Material;
-      position?: 'before' | 'after' | 'up' | 'down';
     };
+    const position = insertPosition?.id === dropData.id ? insertPosition.position : undefined;
 
     if (dragData && dropData) {
       let newSchema: Schema = schema;
@@ -164,15 +174,15 @@ export const EditorProvider = (props: EditorProviderProps) => {
       if (String(active.id).endsWith('-move')) {
         const dragElement = dragData as { id: string; material: Material };
         beforeMoveElement(schema, dragElement.id, dropData.id);
-        if (dropData.position === 'up' || dropData.position === 'down') {
+        if (position === 'up' || position === 'down') {
           newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
             mode: 'cross-level',
-            position: dropData.position,
+            position: position,
           });
         } else {
           newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
             mode: 'same-level',
-            position: (dropData.position as 'before' | 'after') || 'after',
+            position: (position as 'before' | 'after') || 'after',
           });
         }
         afterMoveElement(newSchema);
@@ -194,19 +204,19 @@ export const EditorProvider = (props: EditorProviderProps) => {
           dragMaterial.dropTypes &&
           canDropElement.isContainer &&
           !dragMaterial.dropTypes.includes(canDropElement.type) &&
-          !dropData.position
+          !position
         ) {
           console.warn('not allowed to drag in');
           onDragCancel();
           return;
         }
         beforeInsertElement(schema, dropData.id, newElement);
-        if (dropData.position) {
+        if (position) {
           newSchema = SchemaUtils.insertAdjacentElement(
             schema,
             dropData.id,
             newElement,
-            dropData.position as 'before' | 'after' | 'up' | 'down',
+            position as 'before' | 'after' | 'up' | 'down',
           );
         } else {
           newSchema = SchemaUtils.insertElement(schema, dropData.id, newElement);

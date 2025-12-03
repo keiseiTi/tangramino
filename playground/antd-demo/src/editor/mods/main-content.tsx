@@ -8,7 +8,7 @@ import { DataSourcePanel } from './data-source-panel';
 import { RightPanel } from './right-panel';
 import { AttributePanel } from './attribute-panel';
 import { renderDropIndicator } from './drop-indicator';
-import { renderCustomElement } from './custom-element';
+import { CustomElement } from './custom-element';
 
 interface IProps {
   materialGroups: {
@@ -67,7 +67,7 @@ export const MainContent = ({ materialGroups }: IProps) => {
           >
             <CanvasEditor
               className='size-full'
-              renderElement={renderCustomElement}
+              renderElement={CustomElement}
               renderDropIndicator={renderDropIndicator}
             />
           </div>
