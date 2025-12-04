@@ -94,6 +94,17 @@ export const useEditorProps = (props: UseEditorPropsProps) => {
       onDispose() {},
       plugins: () => plugins || [],
     }),
-    [],
+    [
+      value,
+      nodes,
+      readonly,
+      onChange,
+      canAddLine,
+      canDeleteNode,
+      canDeleteLine,
+      canResetLine,
+      canDropToNode,
+      plugins,
+    ],
   );
 };

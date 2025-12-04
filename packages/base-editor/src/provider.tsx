@@ -6,6 +6,7 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core';
 import { SchemaUtils, type Schema } from '@tangramino/engine';
+import { useShallow } from 'zustand/react/shallow';
 import { useEditorCore } from './hooks/use-editor-core';
 import { usePluginCore } from './hooks/use-plugin-core';
 import { uniqueId } from './utils';
@@ -55,7 +56,18 @@ export const EditorProvider = (props: EditorProviderProps) => {
     setActiveElement,
     setInsertPosition,
     setDragElement,
-  } = useEditorCore();
+  } = useEditorCore(
+    useShallow((state) => ({
+      schema: state.schema,
+      engine: state.engine,
+      insertPosition: state.insertPosition,
+      setSchema: state.setSchema,
+      setMaterials: state.setMaterials,
+      setActiveElement: state.setActiveElement,
+      setInsertPosition: state.setInsertPosition,
+      setDragElement: state.setDragElement,
+    }))
+  );
 
   const {
     addPlugins,
@@ -69,10 +81,10 @@ export const EditorProvider = (props: EditorProviderProps) => {
   } = usePluginCore();
 
   useEffect(() => {
-    if (outerSchema) {
+    if (outerSchema && JSON.stringify(outerSchema) !== JSON.stringify(schema)) {
       setSchema(outerSchema);
     }
-  }, [outerSchema, setSchema]);
+  }, [outerSchema, setSchema, schema]);
 
   useEffect(() => {
     addPlugins([...(plugins || [])]);
@@ -86,7 +98,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
       beforeInitMaterials(materials);
       setMaterials(materials);
     }
-  }, [materials, beforeInitMaterials]);
+  }, [materials, beforeInitMaterials, setMaterials]);
 
   useEffect(() => {
     onChange?.(schema);
@@ -94,7 +106,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
 
   useEffect(() => {
     engine.changeSchema(schema);
-  }, [schema]);
+  }, [schema, engine]);
 
   const onDragStart = (event: DragStartEvent) => {
     const { active } = event;
