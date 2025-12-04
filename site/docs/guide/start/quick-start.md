@@ -76,12 +76,7 @@ const App = () => {
         <Sidebar />
         <div style={{ flex: 1, padding: 20, background: '#f0f2f5' }}>
           <div style={{ background: '#fff', minHeight: '100%' }}>
-            <CanvasEditor 
-               renderElement={(el) => {
-                 const Comp = el.material.Component;
-                 return <Comp {...el.props} />;
-               }}
-            />
+            <CanvasEditor />
           </div>
         </div>
       </div>

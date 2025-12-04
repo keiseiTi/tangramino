@@ -97,15 +97,16 @@ export const MainContent = () => {
 你可以完全控制画布中元素的渲染方式。通常会包裹一个 `ElementWrapper` 来处理选中、拖拽等交互。
 
 ```tsx
-import { ElementWrapper } from '@tangramino/base-editor';
+import { EnhancedComponentProps } from '@tangramino/base-editor';
 
-export const renderCustomElement = (element: Element) => {
-  const Component = element.material.Component;
+export const renderCustomElement = (props: EnhancedComponentProps) => {
+  const { children, elementProps } = props;
   
+  // 可以在这里包裹一层自定义容器，例如选中框、操作按钮等
   return (
-    <ElementWrapper element={element}>
-       <Component {...element.props} />
-    </ElementWrapper>
+    <div className="custom-wrapper" {...elementProps}>
+       {children}
+    </div>
   );
 };
 ```
