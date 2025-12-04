@@ -15,11 +15,13 @@ const ComponentMap = {
 
 const App = () => {
   const engine = useMemo(() => createEngine(schema), []);
+  const plugins = useMemo(() => [plugin()], []);
+
   return (
     <div>
       <ReactView
         engine={engine}
-        plugins={[plugin()]}
+        plugins={plugins}
         components={ComponentMap}
       />
     </div>

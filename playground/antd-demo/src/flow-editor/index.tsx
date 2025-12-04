@@ -59,7 +59,8 @@ export const FlowEditor = (props: FlowEditorProps) => {
     }
   }, [setSchema]); // Use ref values so this doesn't need other deps
 
-  const canAddLine: BaseFlowEditorProps['canAddLine'] = useCallback((_, fromPort) => {
+  // Explicitly type parameters to avoid implicit any errors
+  const canAddLine = useCallback((_: any, fromPort: any) => {
     if (fromPort.node.flowNodeType === 'condition') {
       if (fromPort.availableLines.length >= 2) {
         return false;

@@ -16,11 +16,10 @@ export interface EditorPageProps {
   schema?: Schema;
 }
 
-const getLocalSchema = () => {
+const getLocalSchema = (): Schema | undefined => {
   try {
-    return sessionStorage.getItem('tg_schema')
-      ? JSON.parse(sessionStorage.getItem('tg_schema')!)
-      : undefined;
+    const storedSchema = sessionStorage.getItem('tg_schema');
+    return storedSchema ? JSON.parse(storedSchema) : undefined;
   } catch (e) {
     console.error('Failed to parse schema from sessionStorage', e);
     return undefined;
