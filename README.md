@@ -22,30 +22,63 @@ Tangramino is a powerful, modular, and schema-driven visual editor framework. It
 - **Extensible**: Designed with plugins and custom components in mind.
 - **TypeScript**: Written in TypeScript for type safety and great developer experience.
 
+## 🏗 Architecture
+
+Tangramino is built with a layered architecture:
+
+1.  **Engine Layer (`@tangramino/engine`)**: Manages the JSONSchema, handles events, and provides APIs for manipulating the document structure. It knows nothing about the UI.
+2.  **View Layer (`@tangramino/react`)**: Binds the Engine to React. It listens to Engine events and renders the React component tree based on the Schema.
+3.  **Editor Layer (`@tangramino/base-editor`, `@tangramino/flow-editor`)**: Provides the UI components for editing, such as drag-and-drop handlers, selection tools, and canvas management.
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 
 - Node.js >= 16
-- npm or yarn or pnpm
+- npm, yarn, or pnpm
 
 ### Installation
 
-You can install the core packages individually based on your needs:
-
-```bash
-npm install @tangramino/engine @tangramino/react
-```
-
-If you are building a visual editor:
+To build a drag-and-drop editor, install the base editor package (which includes engine and react bindings):
 
 ```bash
 npm install @tangramino/base-editor
 ```
 
-### Usage Example
+### Basic Usage
 
-Check out the [playground/antd-demo](./playground/antd-demo) for a complete example of how to build a low-code editor using Tangramino.
+Here is a minimal example of how to set up an editor:
+
+```tsx
+import React from 'react';
+import { EditorProvider, CanvasEditor } from '@tangramino/base-editor';
+
+// 1. Define your materials (components available in the editor)
+const materials = [
+  {
+    type: 'button',
+    title: 'Button',
+    Component: ({ children }) => <button>{children}</button>,
+    props: { children: 'Click Me' }
+  }
+];
+
+// 2. Create the Editor
+const App = () => {
+  return (
+    <EditorProvider materials={materials}>
+      <div style={{ height: '100vh', padding: 20 }}>
+        <h1>My Editor</h1>
+        <CanvasEditor />
+      </div>
+    </EditorProvider>
+  );
+};
+
+export default App;
+```
+
+For a complete example with drag-and-drop sidebar, property panels, and more, check out the [playground/antd-demo](./playground/antd-demo).
 
 ## 📖 Documentation
 
@@ -58,13 +91,7 @@ Visit our [documentation site](https://keiseiti.github.io/tangramino/) for detai
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](./site/docs/contribution.md) for details.
-
-1.  Fork the repository.
-2.  Create a new branch (`git checkout -b feature/my-feature`).
-3.  Commit your changes (`git commit -am 'Add some feature'`).
-4.  Push to the branch (`git push origin feature/my-feature`).
-5.  Open a Pull Request.
+We welcome contributions! Please see our [Contributing Guide](./site/docs/contribution.md) for details on how to set up the development environment and submit Pull Requests.
 
 ## 📄 License
 

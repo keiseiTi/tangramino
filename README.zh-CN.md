@@ -22,6 +22,14 @@ Tangramino 是一个强大、模块化且基于 Schema 驱动的可视化编辑�
 - **可扩展性**：设计之初就考虑了插件和自定义组件的扩展。
 - **TypeScript**：完全使用 TypeScript 编写，提供类型安全和卓越的开发体验。
 
+## 🏗 架构
+
+Tangramino 采用分层架构设计：
+
+1.  **引擎层 (`@tangramino/engine`)**: 管理 JSONSchema，处理事件，并提供操作文档结构的 API。它完全不感知 UI。
+2.  **视图层 (`@tangramino/react`)**: 将引擎绑定到 React。它监听引擎事件并根据 Schema 渲染 React 组件树。
+3.  **编辑器层 (`@tangramino/base-editor`, `@tangramino/flow-editor`)**: 提供用于编辑的 UI 组件，例如拖拽处理、选择工具和画布管理。
+
 ## 🚀 快速开始
 
 ### 环境要求
@@ -31,21 +39,46 @@ Tangramino 是一个强大、模块化且基于 Schema 驱动的可视化编辑�
 
 ### 安装
 
-你可以根据需要单独安装核心包：
-
-```bash
-npm install @tangramino/engine @tangramino/react
-```
-
-如果你要构建可视化编辑器：
+如果你要构建可视化拖拽编辑器，只需安装 base-editor 包（它包含了引擎和 react 绑定）：
 
 ```bash
 npm install @tangramino/base-editor
 ```
 
-### 使用示例
+### 基础使用
 
-查看 [playground/antd-demo](./playground/antd-demo) 获取如何使用 Tangramino 构建低代码编辑器的完整示例。
+下面是一个最简单的编辑器搭建示例：
+
+```tsx
+import React from 'react';
+import { EditorProvider, CanvasEditor } from '@tangramino/base-editor';
+
+// 1. 定义物料 (编辑器中可用的组件)
+const materials = [
+  {
+    type: 'button',
+    title: '按钮',
+    Component: ({ children }) => <button>{children}</button>,
+    props: { children: '点击我' }
+  }
+];
+
+// 2. 创建编辑器
+const App = () => {
+  return (
+    <EditorProvider materials={materials}>
+      <div style={{ height: '100vh', padding: 20 }}>
+        <h1>我的编辑器</h1>
+        <CanvasEditor />
+      </div>
+    </EditorProvider>
+  );
+};
+
+export default App;
+```
+
+查看 [playground/antd-demo](./playground/antd-demo) 获取包含拖拽侧边栏、属性面板等功能的完整低代码编辑器示例。
 
 ## 📖 文档
 
@@ -58,13 +91,7 @@ npm install @tangramino/base-editor
 
 ## 🤝 贡献指南
 
-我们需要你的帮助！详情请参阅我们的 [贡献指南](./site/docs/contribution.md)。
-
-1.  Fork 本仓库。
-2.  创建一个新分支 (`git checkout -b feature/my-feature`)。
-3.  提交你的更改 (`git commit -am 'Add some feature'`)。
-4.  推送到分支 (`git push origin feature/my-feature`)。
-5.  提交 Pull Request。
+我们需要你的帮助！详情请参阅我们的 [贡献指南](./site/docs/contribution.md)，了解如何搭建开发环境并提交 Pull Request。
 
 ## 📄 开源协议
 
