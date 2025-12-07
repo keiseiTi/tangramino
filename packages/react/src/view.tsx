@@ -1,6 +1,6 @@
-import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ELEMENT_UPDATE, VIEW_UPDATE, type LayoutNode, type Engine } from '@tangramino/engine';
-import { ElementWrapper } from './components/hoc';
+import { HocComponent } from './components/hoc';
 import type { Plugin } from './plugin';
 
 /**
@@ -33,61 +33,99 @@ export interface ReactViewProps {
 export const ReactView = (props: ReactViewProps) => {
   const { engine, components, plugins } = props;
   const [elements, setElements] = useState(engine.elements);
+  const [compMapElement, setCompMapElement] = useState<
+    Record<
+      string,
+      React.ComponentType<{
+        data: Record<string, unknown>;
+        hidden?: boolean | undefined;
+        children?: React.ReactNode;
+      }>
+    >
+  >({});
 
   const isMounted = useRef(false);
 
-  useEffect(() => {
-    if (!isMounted.current) {
-      (plugins || []).forEach((plugin: Plugin) => plugin(engine));
-      isMounted.current = true;
-    }
-  }, [engine, plugins]);
+  if (!isMounted.current) {
+    (plugins || []).forEach((plugin: Plugin) => plugin(engine));
+    isMounted.current = true;
+  }
 
   useLayoutEffect(() => {
-    const handleUpdate = () => {
-      // Force update by creating a shallow copy
-      setElements({ ...engine.elements });
-    };
-
-    const unsubscribeView = engine.subscribe(VIEW_UPDATE, handleUpdate);
-    const unsubscribeElement = engine.subscribe(ELEMENT_UPDATE, handleUpdate);
-
+    const unsubscribeFn = engine.subscribe(VIEW_UPDATE, () => {
+      setElements(engine.elements);
+    });
     return () => {
-      unsubscribeView();
-      unsubscribeElement();
+      unsubscribeFn();
     };
   }, [engine]);
 
-  const renderNode = useCallback(
-    (node: LayoutNode): React.ReactNode => {
-      const id = node.id;
-      const element = elements[id];
+  useLayoutEffect(() => {
+    const unsubscribeFn = engine.subscribe(ELEMENT_UPDATE, () => {
+      setElements({
+        ...elements,
+        ...engine.elements,
+      });
+    });
+    return () => {
+      unsubscribeFn();
+    };
+  }, [engine]);
 
-      if (!element) return null;
+  useEffect(() => {
+    const elements = engine.elements;
+    const enhanceComponent: Record<
+      string,
+      React.ComponentType<{
+        data: Record<string, unknown>;
+        hidden?: boolean | undefined;
+      }>
+    > = {};
+    if (typeof components === 'object' && components != null) {
+      Object.keys(elements).forEach((id: string) => {
+        const { type } = elements[id]!;
+        if (components[type]) {
+          const Component = HocComponent({
+            id,
+            type,
+            engine,
+            Comp: components[type],
+          });
+          enhanceComponent[id] = Component;
+        }
+      });
+      setCompMapElement(enhanceComponent);
+    }
+  }, [engine.elements, components]);
 
-      const Comp = components?.[element.type];
-      if (!Comp) return null;
+  // Sync elements state when engine.elements changes
+  useEffect(() => {
+    setElements(engine.elements);
+  }, [engine.elements]);
 
-      const children =
-        node.children && node.children.length > 0
-          ? node.children.map((child) => renderNode(child))
-          : null;
+  const render = (nodes: LayoutNode[]) => {
+    return (
+      nodes
+        ?.map((node: LayoutNode) => {
+          const id = node.id;
+          const element = elements[id];
+          const Component = compMapElement[id];
+          if (!element || !Component) return null;
+          if (Array.isArray(node.children) && node.children.length) {
+            return (
+              <Component key={id} data={element.props} hidden={element.hidden}>
+                {render(node.children)}
+              </Component>
+            );
+          } else {
+            return <Component key={id} data={element.props} hidden={element.hidden} />;
+          }
+        })
+        ?.filter((_) => _) || null
+    );
+  };
 
-      return (
-        <ElementWrapper
-          key={id}
-          id={id}
-          engine={engine}
-          Comp={Comp}
-          data={element.props}
-          hidden={element.hidden}
-        >
-          {children}
-        </ElementWrapper>
-      );
-    },
-    [elements, components, engine],
-  );
+  const layouts = engine.layouts;
 
-  return <>{engine.layouts?.map((node) => renderNode(node))}</>;
+  return render(layouts);
 };

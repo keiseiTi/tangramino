@@ -1,59 +1,64 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import type { Engine, Listener } from '@tangramino/engine';
 import { ErrorBoundary } from './error-boundary';
 
-interface ElementWrapperProps {
+export const HocComponent = ({
+  id,
+  type,
+  engine,
+  Comp,
+}: {
   id: string;
+  type: string;
   engine: Engine;
   Comp: React.ComponentType;
-  data: Record<string, unknown>;
-  hidden?: boolean | undefined;
-  children?: React.ReactNode;
-  renderProps?: Record<string, unknown>;
-}
+}) => {
+  const { injectionCallback } = engine;
 
-export const ElementWrapper = React.memo(
-  ({ id, engine, Comp, data, hidden = false, children, renderProps }: ElementWrapperProps) => {
-    const { injectionCallback } = engine;
-    const callbacks = injectionCallback[id];
+  const callbacks = injectionCallback[id];
 
-    const composeEvent = useMemo(() => {
-      const events: Record<string, Listener> = {};
-      Object.keys(callbacks || {}).forEach((name) => {
-        if (callbacks?.[name] && callbacks[name].length) {
-          events[name] = (...args: unknown[]) => {
-            let returnVal: unknown;
-            callbacks[name]?.forEach((event) => {
-              const value = event(...args) as unknown;
-              if (returnVal) {
-                console.warn(
-                  'Sorry, There are multiple injectCallback return values, but only the first one is returned.',
-                );
-              } else {
-                returnVal = value;
-              }
-            });
-            return returnVal;
-          };
-        }
-      });
-      return events;
-    }, [callbacks]);
+  const composeEvent: Record<string, Listener> = {};
+  Object.keys(callbacks || {}).forEach((name) => {
+    if (callbacks?.[name] && callbacks[name].length) {
+      composeEvent[name] = (...args: unknown[]) => {
+        let returnVal: unknown;
+        callbacks[name]?.forEach((event) => {
+          const value = event(...args) as unknown;
+          if (returnVal) {
+            console.warn(
+              'Sorry, There are multiple injectCallback return values, but only the first one is returned.',
+            );
+          } else {
+            returnVal = value;
+          }
+        });
+        return returnVal;
+      };
+    }
+  });
 
-    if (hidden) return null;
-
+  const Component: React.FC<{
+    data: Record<string, unknown>;
+    hidden?: boolean | undefined;
+    children?: React.ReactNode;
+    renderProps?: Record<string, unknown>;
+  }> = (props) => {
+    const { data, hidden = false, children, renderProps } = props;
     const attribute = {
       'data-element-id': id,
     };
 
-    return (
-      <ErrorBoundary>
-        <Comp {...attribute} {...renderProps} {...composeEvent} {...data}>
-          {children}
-        </Comp>
-      </ErrorBoundary>
-    );
-  },
-);
+    if (hidden) return null;
 
-ElementWrapper.displayName = 'ElementWrapper';
+    const $comp = (
+      <Comp {...attribute} {...renderProps} {...composeEvent} {...data}>
+        {children}
+      </Comp>
+    );
+
+    return <ErrorBoundary>{$comp}</ErrorBoundary>;
+  };
+  Component.displayName = `Element_${type}`;
+
+  return React.memo(Component);
+};

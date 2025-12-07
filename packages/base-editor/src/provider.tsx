@@ -81,10 +81,10 @@ export const EditorProvider = (props: EditorProviderProps) => {
   } = usePluginCore();
 
   useEffect(() => {
-    if (outerSchema && JSON.stringify(outerSchema) !== JSON.stringify(schema)) {
+    if (outerSchema) {
       setSchema(outerSchema);
     }
-  }, [outerSchema, setSchema, schema]);
+  }, [outerSchema, setSchema]);
 
   useEffect(() => {
     addPlugins([...(plugins || [])]);
