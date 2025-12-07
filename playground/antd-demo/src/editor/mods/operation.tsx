@@ -62,7 +62,10 @@ export const Operation = (props: OperationProps) => {
 
   return (
     <div className={cn('h-12 flex items-center px-3 justify-between bg-white', className)}>
-      <span className='text-base font-semibold'>Tangramino 低代码编辑器</span>
+      <div>
+        <img src='/logo.png' className='h-8 inline-block mr-2' />
+        <span className='text-base font-semibold'>Tangramino 低代码编辑器</span>
+      </div>
       <div className='flex-1 flex items-center gap-3 justify-center'>
         {mode === 'view' && (
           <>

@@ -3,7 +3,6 @@ import { ConfigProvider } from 'antd';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
-// import '@ant-design/v5-patch-for-react-19';
 import Editor from './editor';
 import Preview from './preview';
 import '@tangramino/flow-editor/index.css';
