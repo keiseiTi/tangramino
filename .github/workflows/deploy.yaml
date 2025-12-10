@@ -50,13 +50,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build Tangramino Core Packages
+        run: pnpm build
+
       - name: Build with Tangramino Site
         run: pnpm site:build
 
       - name: Build antd-demo
-        run: |
-          pnpm build
-          pnpm build:antd
+        run: pnpm build:antd
 
       - name: Copy antd-demo to site output
         run: |

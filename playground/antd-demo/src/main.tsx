@@ -10,16 +10,21 @@ import '@/components/code-editor/use-worker';
 import zhCN from 'antd/lib/locale/zh_CN';
 import './main.css';
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <Editor />,
+    },
+    {
+      path: '/preview',
+      element: <Preview />,
+    },
+  ],
   {
-    path: '/',
-    element: <Editor />,
+    basename: import.meta.env.BASE_URL,
   },
-  {
-    path: '/preview',
-    element: <Preview />,
-  },
-]);
+);
 
 createRoot(document.getElementById('root')!).render(
   <ConfigProvider locale={zhCN}>
