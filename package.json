@@ -8,6 +8,7 @@
     "dev": "pnpm -F playground-demo dev",
     "dev:antd": "pnpm -F playground-antd-demo dev",
     "build": "pnpm -F @tangramino/* build",
+    "build:antd": "pnpm -F playground-antd-demo build",
     "watch": "pnpm --parallel -F @tangramino/* watch",
     "lint": "eslint packages/* --ext .js,.jsx,.ts,.tsx",
     "prepare": "husky",

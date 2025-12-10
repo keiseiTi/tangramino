@@ -54,9 +54,7 @@ jobs:
         run: pnpm site:build
 
       - name: Build antd-demo
-        run: |
-          cd playground/antd-demo
-          pnpm build --base=/tangramino/playground/
+        run: pnpm build:antd
 
       - name: Copy antd-demo to site output
         run: |
