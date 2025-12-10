@@ -54,7 +54,9 @@ jobs:
         run: pnpm site:build
 
       - name: Build antd-demo
-        run: pnpm build:antd
+        run: |
+          pnpm build
+          pnpm build:antd
 
       - name: Copy antd-demo to site output
         run: |
