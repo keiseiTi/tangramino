@@ -59,6 +59,11 @@ export interface Material {
  */
 export interface MaterialComponentProps {
   /**
+   * Unique identifier for the element instance
+   * 元素实例的唯一标识 ID
+   */
+  'data-element-id'?: string;
+  /**
    * Whether the component is in read-only mode
    * 是否只读
    */

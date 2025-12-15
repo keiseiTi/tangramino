@@ -77,6 +77,17 @@ export const usePluginCore = create<PluginCore>((set, get) => ({
       plugin.editorContext?.beforeInitMaterials?.(materials);
     });
   },
+  beforeInsertMaterial: (sourceElement, element) => {
+    const plugins = get().plugins;
+    let newElement = element;
+    plugins.forEach((plugin) => {
+      const result = plugin.editorContext?.beforeInsertMaterial?.(sourceElement, newElement);
+      if (result) {
+        newElement = result;
+      }
+    });
+    return newElement;
+  },
   afterInsertMaterial: (sourceMaterial, targetElement) => {
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
@@ -87,6 +98,12 @@ export const usePluginCore = create<PluginCore>((set, get) => ({
     const plugins = get().plugins;
     plugins.forEach((plugin) => {
       plugin.editorContext?.activateElement?.(element, parentElements);
+    });
+  },
+  afterCanvasUpdated: (engine) => {
+    const plugins = get().plugins;
+    plugins.forEach((plugin) => {
+      plugin.editorContext?.afterCanvasUpdated?.(engine);
     });
   },
 }));

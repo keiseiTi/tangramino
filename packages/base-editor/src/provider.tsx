@@ -66,7 +66,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
       setActiveElement: state.setActiveElement,
       setInsertPosition: state.setInsertPosition,
       setDragElement: state.setDragElement,
-    }))
+    })),
   );
 
   const {
@@ -77,7 +77,9 @@ export const EditorProvider = (props: EditorProviderProps) => {
     beforeMoveElement,
     afterMoveElement,
     beforeInitMaterials,
+    beforeInsertMaterial,
     afterInsertMaterial,
+    afterCanvasUpdated,
   } = usePluginCore();
 
   useEffect(() => {
@@ -102,11 +104,9 @@ export const EditorProvider = (props: EditorProviderProps) => {
 
   useEffect(() => {
     onChange?.(schema);
-  }, [schema, onChange]);
-
-  useEffect(() => {
     engine.changeSchema(schema);
-  }, [schema, engine]);
+    afterCanvasUpdated(engine);
+  }, [schema, engine, schema]);
 
   const onDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -122,7 +122,6 @@ export const EditorProvider = (props: EditorProviderProps) => {
     const { over, active } = event;
     if (!over) return;
     const overId = over.data.current!.id as string;
-    // const activeMaterial = active.data.current as Material;
     const overMaterial = over.data.current!.material as Material;
     const threshold = 10;
 
@@ -201,7 +200,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
       } else {
         // 插入元素
         const dragMaterial = dragData as Material;
-        const newElement = {
+        let newElement = {
           id: uniqueId(dragMaterial.type),
           type: dragMaterial.type,
           props: dragMaterial.defaultProps || {},
@@ -223,6 +222,13 @@ export const EditorProvider = (props: EditorProviderProps) => {
           return;
         }
         beforeInsertElement(schema, dropData.id, newElement);
+        newElement = beforeInsertMaterial(
+          {
+            ...newElement,
+            material: dragMaterial,
+          },
+          newElement,
+        );
         if (position) {
           newSchema = SchemaUtils.insertAdjacentElement(
             schema,

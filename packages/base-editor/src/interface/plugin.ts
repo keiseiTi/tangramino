@@ -1,4 +1,4 @@
-import type { Schema, InsertElement, Element } from '@tangramino/engine';
+import type { Schema, InsertElement, Element, Engine } from '@tangramino/engine';
 import type { Material } from './material';
 
 /**
@@ -76,11 +76,12 @@ export interface Plugin {
      * @param materials - Array of materials to be initialized
      */
     beforeInitMaterials?: (materials: Material[]) => void;
-    /**
-     *
-     * @param sourceMaterial
-     * @param targetElement
-     */
+    beforeInsertMaterial?: (
+      sourceElement: Element & {
+        material: Material;
+      },
+      element: Element,
+    ) => Element;
     /**
      * Triggered after a material is successfully inserted into the editor
      * Can be used for subsequent initialization, event binding, or linkage logic
@@ -107,5 +108,6 @@ export interface Plugin {
         material: Material;
       })[],
     ) => void;
+    afterCanvasUpdated?: (engine: Engine) => void;
   };
 }
