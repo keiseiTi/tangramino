@@ -1,14 +1,22 @@
 import React from 'react';
 import { Drawer as AntdDrawer, type DrawerProps } from 'antd';
+import type { MaterialComponentProps } from '@tangramino/base-editor';
 
-export type IProps = DrawerProps & {
-};
+interface IProps extends MaterialComponentProps, DrawerProps {}
 
 export const Drawer = (props: IProps) => {
-  const { children, ...restProps } = props;
+  const { children, tg_mode, tg_dropPlaceholder, ...restProps } = props;
   return (
     <AntdDrawer
       {...restProps}
+      classNames={
+        tg_mode === 'design'
+          ? {
+              mask: 'absolute!',
+              wrapper: 'absolute!',
+            }
+          : undefined
+      }
     >
       {children}
     </AntdDrawer>

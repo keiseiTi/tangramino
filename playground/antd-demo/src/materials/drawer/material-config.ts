@@ -6,16 +6,14 @@ const DrawerMaterial: Material = {
   title: '抽屉容器',
   type: 'drawer',
   isContainer: true,
+  defaultProps: {
+    title: '抽屉标题',
+  },
   editorConfig: {
     panels: [
       {
         title: '属性',
         configs: [
-          {
-            label: '打开',
-            field: 'open',
-            uiType: 'checkbox',
-          },
           {
             label: '标题',
             field: 'title',
@@ -24,12 +22,13 @@ const DrawerMaterial: Material = {
           {
             label: '宽度',
             field: 'width',
-            uiType: 'input',
-          },
-          {
-            label: '高度',
-            field: 'height',
-            uiType: 'input',
+            uiType: 'number',
+            props: {
+              min: 200,
+              max: 1200,
+              step: 10,
+              unit: 'px',
+            },
           },
           {
             label: '位置',
@@ -59,14 +58,8 @@ const DrawerMaterial: Material = {
             field: 'forceRender',
             uiType: 'checkbox',
           },
-          {
-            label: '类名',
-            field: 'className',
-            uiType: 'input',
-          },
         ],
       },
-
     ],
   },
 };
