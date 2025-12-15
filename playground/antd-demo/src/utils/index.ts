@@ -60,3 +60,8 @@ export const transformFlowGraph2Flow = (flowGraphData: FlowGraphData): Flow => {
     nodes: flowNodes,
   };
 };
+
+
+export const isPortal = (type: string) => {
+  return type === 'modal' || type === 'drawer';
+}

@@ -6,13 +6,14 @@ import { SchemaUtils } from '@tangramino/engine';
 import { cn } from '@/utils/cn';
 import { MaterialPanel } from './material-panel';
 import type { DataNode } from 'antd/es/tree';
+import { isPortal } from '@/utils';
 
 interface RightPanelProps {
   materialGroups: { title: string; children: Material[] }[];
 }
 
 export const RightPanel = ({ materialGroups }: RightPanelProps): JSX.Element => {
-  const { schema, materials, setActiveElement } = useEditorCore();
+  const { schema, materials, engine, activeElement, setActiveElement } = useEditorCore();
   const [hidden, setHidden] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('materials');
 
@@ -51,10 +52,24 @@ export const RightPanel = ({ materialGroups }: RightPanelProps): JSX.Element => 
     return root ? [root] : [];
   }, [schema, materials]);
 
-  const onSelect = (keys: React.Key[], info: { node: any }) => {
-    void keys;
+  const onSelect = (_: React.Key[], info: { node: any }) => {
     const data = info?.node?.data as ActiveElement | undefined;
     if (!data?.id || !data?.material) return;
+    if (isPortal(activeElement?.type || '')) {
+      engine.setState({
+        [activeElement!.id]: {
+          open: false,
+        },
+      });
+    }
+    if (isPortal(data.type)) {
+      engine.setState({
+        [data.id]: {
+          open: true,
+          getContainer: false,
+        },
+      });
+    }
     setActiveElement(data);
   };
 

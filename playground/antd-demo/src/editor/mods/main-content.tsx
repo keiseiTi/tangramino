@@ -67,7 +67,7 @@ export const MainContent = ({ materialGroups }: IProps) => {
                   }}
                 >
                   <CanvasEditor
-                    className='size-full'
+                    className='size-full relative'
                     renderElement={CustomElement}
                     renderDropIndicator={renderDropIndicator}
                   />

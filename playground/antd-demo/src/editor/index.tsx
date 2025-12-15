@@ -4,6 +4,8 @@ import { materialGroups } from '@/materials/group';
 import BasicPage from '@/materials/basic-page/material-config';
 import { materialPlugin } from '@/plugins/material';
 import { formPlugin } from '@/plugins/form';
+import { portalPlugin } from '@/plugins/portal';
+
 import { Operation } from './mods/operation';
 import { Sidebar } from './mods/sidebar';
 import { MainContent } from './mods/main-content';
@@ -60,14 +62,13 @@ const EditorPage = (props: EditorPageProps) => {
     return schema || getLocalSchema() || defaultSchema;
   }, [schema]);
 
-  const plugins = useMemo(() => [historyPlugin(), materialPlugin(), formPlugin()], []);
+  const plugins = useMemo(
+    () => [historyPlugin(), materialPlugin(), formPlugin(), portalPlugin()],
+    [],
+  );
 
   return (
-    <EditorProvider
-      materials={materials}
-      schema={initialSchema}
-      plugins={plugins}
-    >
+    <EditorProvider materials={materials} schema={initialSchema} plugins={plugins}>
       <EditorLayout />
     </EditorProvider>
   );

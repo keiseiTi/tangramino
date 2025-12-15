@@ -11,7 +11,7 @@ import { Dropdown, Popover, Tooltip } from 'antd';
 import { DeleteOutlined, DragOutlined, PartitionOutlined } from '@ant-design/icons';
 import { useShallow } from 'zustand/react/shallow';
 import { useEditorContext } from '@/hooks/use-editor-context';
-import { cn } from '@/utils';
+import { cn, isPortal } from '@/utils';
 import { useLogicEvent } from '@/hooks/use-logic-event';
 
 export const CustomElement = (props: EnhancedComponentProps) => {
@@ -38,7 +38,6 @@ export const CustomElement = (props: EnhancedComponentProps) => {
 
   const rootId = schema?.layout?.root;
 
-  // Derive open state directly from activeElement and mode
   const isSelected = activeElement?.id === elementId;
   const popoverOpen = isSelected && mode !== 'logic';
 
@@ -78,6 +77,14 @@ export const CustomElement = (props: EnhancedComponentProps) => {
       })),
     [parents],
   );
+
+  if (isPortal(material.type)) {
+    return React.cloneElement(children, {
+      onClick: () => {
+        onSelectElement();
+      },
+    });
+  }
 
   return (
     <Popover

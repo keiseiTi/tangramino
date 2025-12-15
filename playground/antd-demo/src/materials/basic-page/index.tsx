@@ -9,10 +9,10 @@ interface BasicPageProps extends MaterialComponentProps {
 }
 
 export const BasicPage = (props: BasicPageProps) => {
-  const { children, margin, padding, tg_dropPlaceholder } = props;
+  const { children, margin, padding, tg_dropPlaceholder, ...rest } = props;
 
   return (
-    <div className={cn('overflow-auto h-full w-full')} style={{ margin, padding }}>
+    <div className={cn('overflow-auto h-screen w-full')} style={{ margin, padding }} {...rest}>
       {children || tg_dropPlaceholder}
     </div>
   );
