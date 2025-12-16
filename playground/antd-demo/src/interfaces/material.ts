@@ -12,8 +12,8 @@ import type {
   CheckboxProps,
   SwitchProps,
   RadioProps,
-  ColorPickerProps
 } from 'antd';
+import type { ColorPickerProps } from '@/components/color-picker';
 
 export type OptionItem = {
   label: string;

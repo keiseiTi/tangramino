@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { SchemaUtils } from '@tangramino/engine';
 import { useEditorCore, usePluginCore } from '@tangramino/base-editor';
-import { Input, Radio, Checkbox, Select, Switch, Tabs, Form, InputNumber, ColorPicker } from 'antd';
+import { Input, Radio, Checkbox, Select, Switch, Tabs, Form, InputNumber } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
+import { ColorPicker } from '@/components/color-picker';
 import { cn } from '@/utils';
 import type { ActiveElement, Method } from '@tangramino/base-editor';
 import type {
@@ -204,7 +205,7 @@ export const AttributePanel = () => {
   };
 
   return (
-    <div className={cn('w-70 border-l-1 border-gray-200 bg-white flex flex-col shadow-sm')}>
+    <div className={cn('w-70 border-l border-gray-200 bg-white flex flex-col shadow-sm')}>
       {activeElement ? (
         <>
           <div className='border-b border-gray-200 h-9.5 px-3 text-sm flex items-center text-stone-600 gap-1'>

@@ -8,6 +8,14 @@ const TextMaterial: Material = {
   defaultProps: {
     text: '文本',
   },
+  contextConfig: {
+    variables: [
+      {
+        name: 'text',
+        description: '文本内容',
+      },
+    ],
+  },
   editorConfig: {
     panels: [
       {
@@ -18,9 +26,33 @@ const TextMaterial: Material = {
             field: 'text',
             uiType: 'input',
           },
+          {
+            label: '字体大小',
+            field: 'fontSize',
+            uiType: 'input',
+          },
+          {
+            label: '字体颜色',
+            field: 'color',
+            uiType: 'color',
+          },
+          {
+            label: '背景色',
+            field: 'backgroundColor',
+            uiType: 'color',
+          },
+          {
+            label: '粗体',
+            field: 'bold',
+            uiType: 'checkbox',
+          },
+          {
+            label: '斜体',
+            field: 'italic',
+            uiType: 'checkbox',
+          },
         ],
       },
-      
     ],
   },
 };

@@ -14,13 +14,14 @@ export interface EnhancedComponentProps {
 }
 
 interface CanvasEditorProps {
+  style?: React.CSSProperties;
   className?: string;
   renderElement?: (props: EnhancedComponentProps) => React.ReactNode;
   renderDropIndicator?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
 }
 
 export const CanvasEditor = (props: CanvasEditorProps) => {
-  const { className, renderElement, renderDropIndicator } = props;
+  const { style, className, renderElement, renderDropIndicator } = props;
   const { materials, engine } = useEditorCore();
 
   const components = useMemo(() => {
@@ -56,7 +57,7 @@ export const CanvasEditor = (props: CanvasEditorProps) => {
   }, [materials]);
 
   return (
-    <div className={className}>
+    <div style={style} className={className}>
       <ReactView engine={engine} components={components} />
     </div>
   );
