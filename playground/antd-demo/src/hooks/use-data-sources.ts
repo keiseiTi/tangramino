@@ -3,11 +3,24 @@ import { uniqueId } from '@tangramino/base-editor';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
+export type FieldType = 'string' | 'number' | 'boolean' | 'array' | 'object';
+
+export interface FieldConfig {
+  id: string;
+  name: string;
+  type: FieldType;
+  description?: string;
+  required?: boolean; // 仅用于请求参数
+  children?: FieldConfig[]; // 当type为object或array时的子字段
+}
+
 export interface DataSourceItem {
   id: string;
   name: string;
   url: string;
   method: HttpMethod;
+  requestParams?: FieldConfig[]; // 请求参数配置
+  responseParams?: FieldConfig[]; // 返回参数配置
 }
 
 interface UseDataSourcesState {
@@ -19,7 +32,7 @@ interface UseDataSourcesState {
   };
   updateSource: (
     id: string,
-    changes: Pick<DataSourceItem, 'url' | 'method'>,
+    changes: Partial<Omit<DataSourceItem, 'id' | 'name'>>,
   ) => { success: boolean; error?: string };
   deleteSource: (id: string) => { success: boolean };
   replaceAll: (next: DataSourceItem[]) => void;
