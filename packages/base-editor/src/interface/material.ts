@@ -43,6 +43,11 @@ export interface Material {
    */
   isContainer?: boolean;
   /**
+   * Whether this material is a block-level element
+   * 是否为块级元素
+   */
+  isBlock?: boolean;
+  /**
    * Editor configuration for the material's properties panel
    * 编辑器配置
    */

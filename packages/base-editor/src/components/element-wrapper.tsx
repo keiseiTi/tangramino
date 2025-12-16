@@ -111,6 +111,8 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
       }
     };
 
+    const isBlockElement = material.isBlock || material.isContainer;
+
     return (
       <div
         ref={setRef}
@@ -118,7 +120,7 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
         onClick={onSelectElement}
         className={className}
         style={
-          !material.isContainer
+          !isBlockElement
             ? {
                 display: 'inline-block',
               }

@@ -1,24 +1,67 @@
 import React from 'react';
+import { Typography } from 'antd';
 
 export interface IProps {
   text?: string;
-  fontSize?: number;
-  color?: string;
-  backgroundColor?: string;
-  bold?: boolean;
+  type?: 'text' | 'paragraph' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
+  copyable?: boolean;
+  editable?: boolean;
+  underline?: boolean;
+  strong?: boolean;
   italic?: boolean;
+  textType?: 'secondary' | 'success' | 'warning' | 'danger';
+  ellipsis?: boolean | { rows: number; expandable: boolean; symbol: string };
+  code?: boolean;
+  mark?: boolean;
+  onClick?: () => void;
 }
 
-export const Text = (props: IProps) => {
-  const { text, fontSize = 14, color = '#000000', backgroundColor = 'transparent', bold = false, italic = false } = props;
+const TitleLevel: Record<string, 1 | 2 | 3 | 4 | 5> = {
+  h1: 1,
+  h2: 2,
+  h3: 3,
+  h4: 4,
+  h5: 5,
+};
 
-  const style: React.CSSProperties = {
-    fontSize: `${fontSize}px`,
-    color,
-    backgroundColor,
-    fontWeight: bold ? 'bold' : 'normal',
-    fontStyle: italic ? 'italic' : 'normal',
+export const Text = (props: IProps) => {
+  const {
+    text,
+    type,
+    copyable,
+    code,
+    mark,
+    editable,
+    underline,
+    ellipsis,
+    textType,
+    strong,
+    italic,
+    onClick,
+  } = props;
+
+  const _props = {
+    copyable: copyable,
+    editable: editable,
+    code: code,
+    mark: mark,
+    underline: underline,
+    ellipsis: ellipsis,
+    type: textType,
+    strong: strong,
+    italic: italic,
+    onClick: onClick,
   };
 
-  return <span style={style}>{text}</span>;
+  if (type === 'paragraph') {
+    return <Typography.Paragraph {..._props}>{text}</Typography.Paragraph>;
+  } else if (['h1', 'h2', 'h3', 'h4', 'h5'].includes(type!)) {
+    return (
+      <Typography.Title level={TitleLevel[type!]} {..._props}>
+        {text}
+      </Typography.Title>
+    );
+  } else {
+    return <Typography.Text {..._props}>{text}</Typography.Text>;
+  }
 };

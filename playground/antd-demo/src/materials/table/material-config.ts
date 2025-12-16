@@ -1,71 +1,55 @@
 import { Table } from './index';
 import type { Material } from '@/interfaces/material';
+import { ColumnConfig } from '@/components/column-config';
+import { PaginationConfig } from '@/components/pagination-config';
 
 const TableMaterial: Material = {
   Component: Table,
   title: '表格',
   type: 'table',
+  isBlock: true,
+  defaultProps: {
+    rowKey: 'id',
+    columns: [
+      {
+        title: '列1',
+        dataIndex: 'col1',
+      },
+      {
+        title: '列2',
+        dataIndex: 'col2',
+      },
+    ],
+    enabledPagination: false,
+  },
+  contextConfig: {
+    variables: [
+      {
+        name: 'dataSource',
+        description: '数据源',
+      },
+      {
+        name: 'loading',
+        description: '加载中',
+      },
+      {
+        name: 'bordered',
+        description: '是否显示边框',
+      },
+    ],
+  },
   editorConfig: {
     panels: [
       {
         title: '属性',
         configs: [
           {
-            label: '边框',
-            field: 'bordered',
-            uiType: 'checkbox',
-          },
-          {
-            label: '大小',
-            field: 'size',
-            uiType: 'radio',
-            props: {
-              options: [
-                { label: '大', value: 'large' },
-                { label: '中', value: 'middle' },
-                { label: '小', value: 'small' },
-              ],
-            },
-          },
-          {
-            label: '表头固定(sticky)',
-            field: 'sticky',
-            uiType: 'checkbox',
-          },
-          {
-            label: '行 key',
+            label: '行 Key',
             field: 'rowKey',
             uiType: 'input',
-          },
-          {
-            label: '分页配置',
-            field: 'pagination',
-            uiType: 'input',
-          },
-          {
-            label: '滚动配置',
-            field: 'scroll',
-            uiType: 'input',
-          },
-          {
-            label: '行选择',
-            field: 'rowSelection',
-            uiType: 'input',
-          },
-          {
-            label: '数据源',
-            field: 'dataSource',
-            uiType: 'input',
-          },
-          {
-            label: '列定义',
-            field: 'columns',
-            uiType: 'input',
-          },
-          {
-            label: '加载中',
-            field: 'loading',
-            uiType: 'checkbox',
+            props: {
+              placeholder: '数据行的唯一标识字段',
+            },
           },
           {
             label: '表格标题',
@@ -73,18 +57,47 @@ const TableMaterial: Material = {
             uiType: 'input',
           },
           {
-            label: '空状态文案',
-            field: 'locale',
-            uiType: 'input',
+            label: '表格大小',
+            field: 'size',
+            uiType: 'select',
+            props: {
+              options: [
+                { label: '默认', value: 'middle' },
+                { label: '小', value: 'small' },
+                { label: '大', value: 'large' },
+              ],
+            },
           },
           {
-            label: '表格类名',
-            field: 'className',
-            uiType: 'input',
+            label: '列配置',
+            field: 'columns',
+            uiType: 'custom',
+            render: ColumnConfig,
+          },
+          {
+            label: '开启分页',
+            field: 'enabledPagination',
+            uiType: 'checkbox',
+          },
+          {
+            field: 'pagination',
+            uiType: 'custom',
+            render: PaginationConfig,
+            linkageShow: [
+              {
+                field: 'enabledPagination',
+                value: true,
+              },
+            ],
+          },
+
+          {
+            label: '边框',
+            field: 'bordered',
+            uiType: 'checkbox',
           },
         ],
       },
-      
     ],
   },
 };

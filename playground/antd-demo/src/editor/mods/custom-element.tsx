@@ -86,6 +86,8 @@ export const CustomElement = (props: EnhancedComponentProps) => {
     });
   }
 
+  const isBlockElement = material.isBlock || material.isContainer;
+
   return (
     <Popover
       title={null}
@@ -156,21 +158,20 @@ export const CustomElement = (props: EnhancedComponentProps) => {
         },
         className: cn({
           'border-2 border-blue-600': isSelected,
-          'inline-block': !material.isContainer,
           'border-l-4 border-yellow-500':
-            !material.isContainer &&
+            !isBlockElement &&
             insertPosition?.id === elementId &&
             insertPosition.position === 'before',
           'border-r-4 border-yellow-500':
-            !material.isContainer &&
+            !isBlockElement &&
             insertPosition?.id === elementId &&
             insertPosition.position === 'after',
           'border-t-4 border-yellow-500':
-            material.isContainer &&
+            isBlockElement &&
             insertPosition?.id === elementId &&
             insertPosition.position === 'up',
           'border-b-4 border-yellow-500':
-            material.isContainer &&
+            isBlockElement &&
             insertPosition?.id === elementId &&
             insertPosition.position === 'down',
         }),

@@ -26,7 +26,7 @@ import Slider from './slider/material-config';
 export const materialGroups = [
   {
     title: '布局容器',
-    children: [Container, Form, Modal, Drawer, Tabs],
+    children: [Container, Form, Modal, Drawer],
   },
   {
     title: '原子物料',
