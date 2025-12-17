@@ -17,6 +17,14 @@ const ContainerMaterial: Material = {
         title: '样式',
         configs: [
           {
+            label: '高度',
+            field: 'height',
+            uiType: 'number',
+            props: {
+              suffix: 'px',
+            },
+          },
+          {
             label: '外边距',
             field: 'margin',
             uiType: 'number',

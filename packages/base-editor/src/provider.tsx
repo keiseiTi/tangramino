@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import {
   DndContext,
   type DragEndEvent,
@@ -82,7 +82,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
     afterCanvasUpdated,
   } = usePluginCore();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (outerSchema) {
       setSchema(outerSchema);
     }
@@ -102,7 +102,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
     }
   }, [materials, beforeInitMaterials, setMaterials]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     onChange?.(schema);
     engine.changeSchema(schema);
     afterCanvasUpdated(engine);

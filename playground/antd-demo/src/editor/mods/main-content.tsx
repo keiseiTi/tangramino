@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { CanvasEditor, type Material } from '@tangramino/base-editor';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { CanvasEditor, useEditorCore, type Material } from '@tangramino/base-editor';
 import { FlowEditor } from '@/flow-editor';
 import { useEditorContext } from '@/hooks/use-editor-context';
 import { SchemaEditor } from './schema-editor';
@@ -59,19 +59,18 @@ export const MainContent = ({ materialGroups }: IProps) => {
           <>
             <RightPanel materialGroups={materialGroups} />
             <div className='flex-1 p-3 overflow-hidden min-w-0'>
-              <div className='h-full overflow-auto'>
-                <div
-                  className='mx-auto border border-gray-200 bg-white shadow-sm min-h-full'
-                  style={{
-                    width: viewportWidth < 1440 && viewportWidth > 568 ? 'auto' : viewportWidth,
-                  }}
-                >
-                  <CanvasEditor
-                    className='size-full relative'
-                    renderElement={CustomElement}
-                    renderDropIndicator={renderDropIndicator}
-                  />
-                </div>
+              <div
+                id="canvasContainer"
+                className='mx-auto border border-gray-200 bg-white shadow-sm h-full min-h-full'
+                style={{
+                  width: viewportWidth < 1440 && viewportWidth > 568 ? 'auto' : viewportWidth,
+                }}
+              >
+                <CanvasEditor
+                  className='size-full relative overflow-auto'
+                  renderElement={CustomElement}
+                  renderDropIndicator={renderDropIndicator}
+                />
               </div>
             </div>
             <AttributePanel />

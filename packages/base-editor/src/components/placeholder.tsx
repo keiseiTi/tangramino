@@ -39,7 +39,7 @@ export const Placeholder = (props: PlaceholderProps) => {
   };
 
   return (
-    <div ref={setNodeRef} onClick={selectedElement}>
+    <div ref={setNodeRef} onClick={selectedElement} style={{ height: '100%' }}>
       {renderDropPlaceholder
         ? renderDropPlaceholder({
             isDragOver: isOver,
