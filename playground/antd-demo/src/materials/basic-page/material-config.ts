@@ -6,6 +6,9 @@ const BasicPageMaterial: Material = {
   type: 'basicPage',
   isContainer: true,
   Component: BasicPage as React.ComponentType,
+  defaultProps: {
+    display: 'flow',
+  },
   editorConfig: {
     panels: [
       {
@@ -15,6 +18,34 @@ const BasicPageMaterial: Material = {
       {
         title: '样式',
         configs: [
+          {
+            label: '布局方式',
+            field: 'display',
+            uiType: 'select',
+            props: {
+              options: [
+                { label: '流式布局', value: 'flow' },
+                { label: '弹性布局', value: 'flex' },
+              ],
+            },
+          },
+          {
+            label: '布局方向',
+            field: 'flexDirection',
+            uiType: 'select',
+            props: {
+              options: [
+                { label: '垂直', value: 'column' },
+                { label: '水平', value: 'row' },
+              ],
+            },
+            linkageShow: [
+              {
+                field: 'display',
+                value: 'flex',
+              },
+            ],
+          },
           {
             label: '外边距',
             field: 'margin',

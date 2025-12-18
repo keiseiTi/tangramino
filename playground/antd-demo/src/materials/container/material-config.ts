@@ -7,6 +7,10 @@ const ContainerMaterial: Material = {
   type: 'container',
   dropTypes: ['basicPage', 'container'],
   isContainer: true,
+  defaultProps: {
+    heightConfig: 'fixed',
+    height: 200,
+  },
   editorConfig: {
     panels: [
       {
@@ -17,12 +21,25 @@ const ContainerMaterial: Material = {
         title: '样式',
         configs: [
           {
+            label: '高度配置',
+            field: 'heightConfig',
+            uiType: 'select',
+            props: {
+              defaultValue: 'fixed',
+              options: [
+                { label: '固定高度', value: 'fixed' },
+                { label: '自适应', value: 'auto' },
+              ],
+            },
+          },
+          {
             label: '高度',
             field: 'height',
             uiType: 'number',
             props: {
               suffix: 'px',
             },
+            linkageShow: [{ field: 'heightConfig', value: 'fixed' }],
           },
           {
             label: '外边距',
