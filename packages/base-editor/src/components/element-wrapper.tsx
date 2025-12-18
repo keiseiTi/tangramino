@@ -111,7 +111,35 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
       }
     };
 
-    const isBlockElement = material.isBlock || material.isContainer;
+    // 计算自定义 wrapper 样式
+    const customWrapperStyle = material.wrapperStyle
+      ? typeof material.wrapperStyle === 'function'
+        ? material.wrapperStyle(elementProps)
+        : material.wrapperStyle
+      : undefined;
+
+    // 默认样式策略：
+    // 1. 使用 flex 布局让 wrapper 能参与父容器的 flex 布局
+    // 2. flex: 1 让它能够伸缩填充空间（对于需要自适应高度的场景）
+    // 3. minHeight: 0 防止 flex 子元素溢出
+    // 4. 物料可通过 wrapperStyle 覆盖这些默认行为
+    const isInline = !material.isBlock && !material.isContainer;
+
+    const defaultWrapperStyle: React.CSSProperties = isInline
+      ? {
+          display: 'inline-block',
+        }
+      : {
+          display: 'flex',
+          flexDirection: 'column',
+          flex: '1 1 auto',
+          minHeight: 0,
+          width: '100%',
+        };
+
+    const wrapperStyle: React.CSSProperties = customWrapperStyle
+      ? { ...defaultWrapperStyle, ...customWrapperStyle }
+      : defaultWrapperStyle;
 
     return (
       <div
@@ -119,13 +147,7 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
         data-element-id={elementId}
         onClick={onSelectElement}
         className={className}
-        style={
-          !isBlockElement
-            ? {
-                display: 'inline-block',
-              }
-            : undefined
-        }
+        style={wrapperStyle}
       >
         {renderComponent(extraCompProps)}
       </div>

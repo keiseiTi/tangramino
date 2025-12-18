@@ -94,7 +94,7 @@ export const AttributePanel = () => {
   };
 
   const renderFormItem = (config: AttributeConfig) => {
-    const { field, label, uiType, required } = config;
+    const { field, label, uiType, required, defaultValue } = config;
     const values = form.getFieldsValue(true) as Record<string, unknown>;
     if (!evaluateLinkageVisibility(config, values)) {
       return null;
@@ -149,6 +149,7 @@ export const AttributePanel = () => {
         name={field}
         key={field}
         valuePropName={valuePropName}
+        initialValue={defaultValue}
       >
         {children}
       </Form.Item>

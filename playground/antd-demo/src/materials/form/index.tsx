@@ -43,26 +43,27 @@ export const Form = (props: IProps) => {
   };
 
   return (
-    <AntdForm
-      form={form}
-      onValuesChange={onValuesChange}
-      labelCol={
-        labelColVal
-          ? {
-              span: labelColVal,
-            }
-          : undefined
-      }
-      wrapperCol={
-        wrapperColVal
-          ? {
-              span: wrapperColVal,
-            }
-          : undefined
-      }
-      {...restProps}
-    >
-      {children || tg_dropPlaceholder}
-    </AntdForm>
+      <AntdForm
+        className='h-full'
+        form={form}
+        onValuesChange={onValuesChange}
+        labelCol={
+          labelColVal
+            ? {
+                span: labelColVal,
+              }
+            : undefined
+        }
+        wrapperCol={
+          wrapperColVal
+            ? {
+                span: wrapperColVal,
+              }
+            : undefined
+        }
+        {...restProps}
+      >
+        {children || tg_dropPlaceholder}
+      </AntdForm>
   );
 };

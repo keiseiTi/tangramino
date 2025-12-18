@@ -33,6 +33,7 @@ const BasicPageMaterial: Material = {
             label: '布局方向',
             field: 'flexDirection',
             uiType: 'select',
+            defaultValue: 'column',
             props: {
               options: [
                 { label: '垂直', value: 'column' },
