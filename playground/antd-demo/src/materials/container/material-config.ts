@@ -11,24 +11,6 @@ const ContainerMaterial: Material = {
     heightConfig: 'fixed',
     height: 200,
   },
-  // 根据 heightConfig 动态设置 wrapper 样式
-  wrapperStyle: (props) => {
-    if (props.heightConfig === 'auto') {
-      // 自适应高度：wrapper 需要 flex: 1 来填充剩余空间
-      return {
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: 0,
-      };
-    }
-    // 固定高度：wrapper 使用 auto 以适应内容
-    return {
-      flex: '0 0 auto',
-      display: 'flex',
-      flexDirection: 'column',
-    };
-  },
   editorConfig: {
     panels: [
       {

@@ -11,7 +11,7 @@ interface BasicPageProps extends MaterialComponentProps {
 }
 
 export const BasicPage = (props: BasicPageProps) => {
-  const { children, margin, padding, tg_dropPlaceholder, display, flexDirection, ...rest } = props;
+  const { children, margin, padding, tg_dropPlaceholder, tg_ref, display, flexDirection, style: propStyle, ...rest } = props;
   const [height, setHeight] = useState<number>();
 
   useLayoutEffect(() => {
@@ -23,6 +23,7 @@ export const BasicPage = (props: BasicPageProps) => {
   }, []);
 
   const style: React.CSSProperties = {
+    ...propStyle,
     margin,
     padding,
     display: display === 'flex' ? 'flex' : undefined,
@@ -34,7 +35,7 @@ export const BasicPage = (props: BasicPageProps) => {
   }
 
   return (
-    <div className={cn('overflow-auto w-full')} style={style} {...rest}>
+    <div ref={tg_ref} className={cn('overflow-auto w-full')} style={style} {...rest}>
       {children || tg_dropPlaceholder}
     </div>
   );

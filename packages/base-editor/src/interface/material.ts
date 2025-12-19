@@ -57,12 +57,6 @@ export interface Material {
    * 流程上下文配置
    */
   contextConfig?: ContextConfig;
-  /**
-   * Custom wrapper style configuration for the ElementWrapper
-   * Used to control how the wrapper div behaves in different layout contexts
-   * 自定义包裹层样式配置，用于控制 ElementWrapper 在不同布局上下文中的行为
-   */
-  wrapperStyle?: React.CSSProperties | ((props: Record<string, unknown>) => React.CSSProperties);
 }
 
 /**
@@ -94,4 +88,13 @@ export interface MaterialComponentProps {
    * 设置上下文值
    */
   tg_setContextValues?: (contextValues: Record<string, unknown>) => void;
+  /**
+   * Ref for drag and drop
+   * 拖拽 ref
+   */
+  tg_ref?: (node: HTMLElement | null) => void;
+  /**
+   * Allow other standard props
+   */
+  [key: string]: unknown;
 }
