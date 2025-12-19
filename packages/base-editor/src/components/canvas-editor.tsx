@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { ReactView } from '@tangramino/react';
 import { ElementWrapper } from './element-wrapper';
 import { useEditorCore } from '../hooks/use-editor-core';
+import { CanvasOverlay } from './canvas-overlay';
 import type { Material, MaterialComponentProps } from '../interface/material';
 import { type DropPlaceholderProps } from './placeholder';
 
@@ -16,12 +17,23 @@ export interface EnhancedComponentProps {
 interface CanvasEditorProps {
   style?: React.CSSProperties;
   className?: string;
+  overlayStyle?: React.CSSProperties;
+  overlayClassNames?: string;
   renderElement?: (props: EnhancedComponentProps) => React.ReactNode;
-  renderDropIndicator?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
+  renderDropIndicator?: (props: DropPlaceholderProps) => React.ReactNode;
+  renderOverlayContent?: () => React.ReactNode;
 }
 
 export const CanvasEditor = (props: CanvasEditorProps) => {
-  const { style, className, renderElement, renderDropIndicator } = props;
+  const {
+    style,
+    className,
+    renderElement,
+    renderDropIndicator,
+    overlayStyle,
+    overlayClassNames,
+    renderOverlayContent,
+  } = props;
   const { materials, engine } = useEditorCore();
 
   const components = useMemo(() => {
@@ -57,8 +69,13 @@ export const CanvasEditor = (props: CanvasEditorProps) => {
   }, [materials]);
 
   return (
-    <div style={style} className={className}>
+    <div style={style} className={className} id='tgCanvasContainer'>
       <ReactView engine={engine} components={components} />
+      <CanvasOverlay
+        style={overlayStyle}
+        className={overlayClassNames}
+        renderContent={renderOverlayContent}
+      />
     </div>
   );
 };

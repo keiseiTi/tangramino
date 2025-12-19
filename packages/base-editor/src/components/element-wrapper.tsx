@@ -12,13 +12,11 @@ interface EnhancedCompProps {
   elementProps: Record<string, unknown>;
   renderComponent: (extraProps: MaterialComponentProps) => React.ReactNode;
   renderDropIndicator?: ((props: DropPlaceholderProps) => React.ReactNode) | undefined;
-  className?: string;
   onClick?: (e: React.MouseEvent) => void;
 }
 
 export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps>((props, ref) => {
-  const { material, elementProps, className, renderComponent, renderDropIndicator, onClick } =
-    props;
+  const { material, elementProps, renderComponent, renderDropIndicator, onClick } = props;
   const { schema, activeElement, setActiveElement, engine, materials } = useEditorCore(
     useShallow((state) => ({
       schema: state.schema,
@@ -94,21 +92,11 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
     }
   };
 
-  const isInline = !material.isBlock && !material.isContainer;
-
-  const wrapperStyle: React.CSSProperties = isInline
-    ? {
-        display: 'inline-block',
-      }
-    : {};
-
   const extraCompProps: MaterialComponentProps = {
     tg_mode: 'design',
     tg_ref: setRef,
     onClick: onSelectElement,
     'data-element-id': elementId,
-    className,
-    style: wrapperStyle,
     ...(material.isContainer
       ? {
           tg_dropPlaceholder: (
