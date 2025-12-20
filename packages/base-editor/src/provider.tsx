@@ -7,7 +7,7 @@ import {
 } from '@dnd-kit/core';
 import { SchemaUtils, type Schema } from '@tangramino/engine';
 import { useShallow } from 'zustand/react/shallow';
-import { useEditorCore } from './hooks/use-editor-core';
+import { useEditorCore, type DargElement } from './hooks/use-editor-core';
 import { usePluginCore } from './hooks/use-plugin-core';
 import { uniqueId } from './utils';
 import type { Material } from './interface/material';
@@ -51,6 +51,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
     schema,
     engine,
     insertPosition,
+    dragElement,
     setSchema,
     setMaterials,
     setActiveElement,
@@ -61,6 +62,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
       schema: state.schema,
       engine: state.engine,
       insertPosition: state.insertPosition,
+      dragElement: state.dragElement,
       setSchema: state.setSchema,
       setMaterials: state.setMaterials,
       setActiveElement: state.setActiveElement,
@@ -110,11 +112,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
 
   const onDragStart = (event: DragStartEvent) => {
     const { active } = event;
-    if (String(active.id).endsWith('-move')) {
-      setDragElement(event.active.data.current?.material as Material);
-    } else {
-      setDragElement(event.active.data.current as Material);
-    }
+    setDragElement(active.data.current as DargElement);
     setActiveElement(null);
   };
 
@@ -171,7 +169,8 @@ export const EditorProvider = (props: EditorProviderProps) => {
       return;
     }
 
-    const dragData = active.data.current as unknown;
+    // 优先使用保存的拖拽数据，如果没有则使用 event 中的数据
+    const dragData = dragElement ?? active.data.current;
     const dropData = over.data.current as {
       id: string;
       props: Record<string, unknown>;
@@ -185,15 +184,16 @@ export const EditorProvider = (props: EditorProviderProps) => {
       if (String(active.id).endsWith('-move')) {
         const dragElement = dragData as { id: string; material: Material };
         beforeMoveElement(schema, dragElement.id, dropData.id);
-        if (position === 'up' || position === 'down') {
+        if (position) {
+          // 有位置信息时，使用同级移动（before/after/up/down）
           newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
-            mode: 'cross-level',
+            mode: 'same-level',
             position: position,
           });
         } else {
+          // 没有位置信息时，使用跨级移动（插入到容器内部）
           newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
-            mode: 'same-level',
-            position: (position as 'before' | 'after') || 'after',
+            mode: 'cross-level',
           });
         }
         afterMoveElement(newSchema);

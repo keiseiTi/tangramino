@@ -235,7 +235,6 @@ const moveElement = (
 ): Schema => {
   const { layout } = schema;
   const { structure, root } = layout;
-
   // 基本保护
   if (!elementId || !targetElementId) return schema;
   if (elementId === targetElementId) return schema;

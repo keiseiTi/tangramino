@@ -10,9 +10,7 @@ export const renderDropIndicator = (props: DropPlaceholderProps) => {
       className={cn('w-full flex justify-center items-center transition-colors h-full', {
         'bg-slate-200 text-slate-600': material.type === 'container',
         'bg-stone-200 text-stone-600': material.type === 'form',
-        'bg-gray-200 text-gray-600': !['container', 'form', 'basicPage'].includes(
-          material.type,
-        ),
+        'bg-gray-200 text-gray-600': !['container', 'form'].includes(material.type),
         'bg-blue-100': isDragOver,
       })}
     >

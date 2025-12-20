@@ -1,26 +1,25 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
-import type { Material } from '../interface/material';
+import { useEditorCore } from 'src/hooks/use-editor-core';
 
 interface MovableProps {
-  elementId: string;
-  elementProps: Record<string, unknown>;
-  material: Material;
   children: React.ReactNode;
   className?: string;
   onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export const Movable = (props: MovableProps) => {
-  const { elementId, elementProps, material, children, className, onClick } = props;
+  const { children, className, onClick } = props;
+  const activeElement = useEditorCore((state) => state.activeElement);
+  const { id, props: elementProps, material } = activeElement || {};
   const {
     setNodeRef: setMoveNodeRef,
     listeners,
     attributes,
   } = useDraggable({
-    id: elementId + '-move',
+    id: id + '-move',
     data: {
-      id: elementId,
+      id: id,
       props: elementProps,
       material: material,
     },

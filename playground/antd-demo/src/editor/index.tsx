@@ -11,6 +11,7 @@ import { Sidebar } from './mods/sidebar';
 import { MainContent } from './mods/main-content';
 import { defaultSchema } from '../constant';
 import type { Schema } from '@tangramino/engine';
+import type { Material } from '@/interfaces/material';
 
 const materials = materialGroups.flatMap((group) => group.children).concat(BasicPage);
 
@@ -31,6 +32,16 @@ const getLocalSchema = (): Schema | undefined => {
 const EditorLayout = () => {
   const { dragElement } = useEditorCore();
 
+  let title = '组件';
+
+  if (dragElement) {
+    if (dragElement.hasOwnProperty('material')) {
+      title = (dragElement as any).material.title;
+    } else {
+      title = (dragElement as Material).title;
+    }
+  }
+
   return (
     <>
       <div className='flex flex-col w-full h-screen min-w-[1080px] bg-gray-50'>
@@ -48,7 +59,7 @@ const EditorLayout = () => {
       </div>
       <DragOverlay>
         <div className='w-24 p-1 text-xs flex justify-center items-center rounded-sm border border-slate-600 bg-[#fafafabf] cursor-copy'>
-          <span className='text-store-600'>{dragElement?.title}</span>
+          <span className='text-store-600'>{title}</span>
         </div>
       </DragOverlay>
     </>

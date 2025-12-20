@@ -107,7 +107,6 @@ const ButtonMaterial: Material = {
           },
         ],
       },
-      
     ],
   },
 };

@@ -127,12 +127,7 @@ export const CustomOverlay = () => {
             })}
           />
         </Tooltip>
-        <Movable
-          elementId={id}
-          elementProps={elementProps}
-          material={material}
-          className={cn('ml-2 pl-2 cursor-move border-l border-gray-400')}
-        >
+        <Movable className={cn('ml-2 pl-2 cursor-move border-l border-gray-400')}>
           <DragOutlined />
         </Movable>
         <span

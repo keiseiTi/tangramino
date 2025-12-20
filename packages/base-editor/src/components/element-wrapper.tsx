@@ -94,11 +94,11 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
 
   const extraCompProps: MaterialComponentProps = {
     tg_mode: 'design',
-    tg_ref: setRef,
     onClick: onSelectElement,
     'data-element-id': elementId,
     ...(material.isContainer
       ? {
+          ref: setRef,
           tg_dropPlaceholder: (
             <Placeholder
               elementProps={elementProps}

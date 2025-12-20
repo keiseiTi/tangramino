@@ -10,10 +10,9 @@ export interface IProps extends MaterialComponentProps {
 }
 
 export const Container = (props: IProps) => {
-  const { children, margin, padding, heightConfig, height, tg_dropPlaceholder, tg_ref, style: propStyle, ...rest } = props;
+  const { children, margin, padding, heightConfig, height, tg_dropPlaceholder, ...rest } = props;
 
   const style: React.CSSProperties = {
-    ...propStyle,
     margin,
     padding,
   };
@@ -25,7 +24,7 @@ export const Container = (props: IProps) => {
   }
 
   return (
-    <div ref={tg_ref} style={style} {...rest}>
+    <div style={style} {...rest}>
       {children || tg_dropPlaceholder}
     </div>
   );

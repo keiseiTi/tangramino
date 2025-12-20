@@ -8,6 +8,7 @@ const BasicPageMaterial: Material = {
   Component: BasicPage as React.ComponentType,
   defaultProps: {
     display: 'flow',
+    flexDirection: 'column',
   },
   editorConfig: {
     panels: [
