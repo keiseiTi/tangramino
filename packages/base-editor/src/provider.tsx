@@ -7,7 +7,7 @@ import {
 } from '@dnd-kit/core';
 import { SchemaUtils, type Schema } from '@tangramino/engine';
 import { useShallow } from 'zustand/react/shallow';
-import { useEditorCore, type DargElement } from './hooks/use-editor-core';
+import { useEditorCore, type DragElement } from './hooks/use-editor-core';
 import { usePluginCore } from './hooks/use-plugin-core';
 import { uniqueId } from './utils';
 import type { Material } from './interface/material';
@@ -108,11 +108,11 @@ export const EditorProvider = (props: EditorProviderProps) => {
     onChange?.(schema);
     engine.changeSchema(schema);
     afterCanvasUpdated(engine);
-  }, [schema, engine, schema]);
+  }, [schema, engine, onChange, afterCanvasUpdated]);
 
   const onDragStart = (event: DragStartEvent) => {
     const { active } = event;
-    setDragElement(active.data.current as DargElement);
+    setDragElement(active.data.current as DragElement);
     setActiveElement(null);
   };
 

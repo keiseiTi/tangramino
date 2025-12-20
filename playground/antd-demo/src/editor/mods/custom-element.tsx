@@ -41,7 +41,7 @@ export const CustomElement = (props: EnhancedComponentProps) => {
       e.stopPropagation();
       onSelectElement();
     },
-    className: cn({
+    className: cn(children.props.className, {
       'border-2 border-blue-600': isSelected,
     }),
   });

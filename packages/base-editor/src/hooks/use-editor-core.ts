@@ -15,7 +15,7 @@ export type InsertPosition = {
   position: 'before' | 'after' | 'up' | 'down';
 };
 
-export type DargElement =
+export type DragElement =
   | {
       id: string;
       props: Record<string, unknown>;
@@ -33,8 +33,8 @@ export interface EditorCore {
   setActiveElement: (activeElement: ActiveElement | null) => void;
   insertPosition: InsertPosition | null;
   setInsertPosition: (insertPosition: InsertPosition | null) => void;
-  dragElement: DargElement | null;
-  setDragElement: (dragElement: DargElement | null) => void;
+  dragElement: DragElement | null;
+  setDragElement: (dragElement: DragElement | null) => void;
 }
 
 const defaultSchema = {

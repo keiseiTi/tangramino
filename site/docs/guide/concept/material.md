@@ -24,28 +24,40 @@ export interface Material<P = any> {
   Component: React.ComponentType<P>;
 
   /** 
-   * 设计时渲染组件 (可选)
-   * 如果提供，在编辑器画布中将使用此组件代替 Component 渲染
-   * 适用于一些需要特殊交互或占位的场景
-   */
-  DesignComponent?: React.ComponentType<P>;
-
-  /** 
-   * 编辑器配置 
-   * 定义了该物料在编辑器中的属性面板、样式面板等配置
-   */
-  editorConfig?: {
-    /** 属性面板配置 */
-    panels?: PanelConfig[];
-    /** 默认尺寸 */
-    defaultSize?: { width: number; height: number };
-  };
-  
-  /** 
    * 初始属性 
    * 拖入画布时默认携带的 props
    */
-  props?: Partial<P>;
+  defaultProps?: Partial<P>;
+
+  /** 
+   * 是否为容器
+   * 容器可以包含其他元素
+   */
+  isContainer?: boolean;
+
+  /** 
+   * 是否为块级元素
+   * Block 元素只能在上下方插入，非 Block 元素可以左右插入
+   */
+  isBlock?: boolean;
+
+  /** 
+   * 允许放入的容器类型
+   * 如果设置，只能拖入指定类型的容器中
+   */
+  dropTypes?: string[];
+
+  /** 
+   * 编辑器配置 
+   * 定义了该物料在编辑器中的属性面板配置
+   */
+  editorConfig?: EditorConfig;
+
+  /** 
+   * 上下文配置 
+   * 定义物料的变量和方法，用于流程编辑
+   */
+  contextConfig?: ContextConfig;
 }
 ```
 
