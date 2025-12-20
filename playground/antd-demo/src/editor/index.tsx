@@ -9,6 +9,7 @@ import { portalPlugin } from '@/plugins/portal';
 import { Operation } from './mods/operation';
 import { Sidebar } from './mods/sidebar';
 import { MainContent } from './mods/main-content';
+import { InsertPositionIndicator } from './mods/insert-position-indicator';
 import { defaultSchema } from '../constant';
 import type { Schema } from '@tangramino/engine';
 import type { Material } from '@/interfaces/material';
@@ -57,6 +58,7 @@ const EditorLayout = () => {
           </div>
         </div>
       </div>
+      <InsertPositionIndicator />
       <DragOverlay>
         <div className='w-24 p-1 text-xs flex justify-center items-center rounded-sm border border-slate-600 bg-[#fafafabf] cursor-copy'>
           <span className='text-store-600'>{title}</span>

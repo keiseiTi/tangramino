@@ -10,8 +10,12 @@ const CheckboxMaterial: Material = {
   defaultProps: {
     options: [
       {
-        label: '示例1',
-        value: '示例1',
+        label: '选项1',
+        value: '选项1',
+      },
+      {
+        label: '选项2',
+        value: '选项2',
       },
     ],
   },
@@ -54,7 +58,6 @@ const CheckboxMaterial: Material = {
           },
         ],
       },
-
     ],
   },
 };

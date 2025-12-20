@@ -7,6 +7,12 @@ const RadioMaterial: Material = {
   title: '单选框',
   type: 'radio',
   dropTypes: ['container', 'form'],
+  defaultProps: {
+    options: [
+      { label: '选项一', value: 'option1' },
+      { label: '选项二', value: 'option2' },
+    ],
+  },
   contextConfig: {
     variables: [
       {
@@ -51,7 +57,6 @@ const RadioMaterial: Material = {
           },
         ],
       },
-
     ],
   },
 };

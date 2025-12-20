@@ -111,7 +111,22 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
       : {}),
   };
 
-  return renderComponent(extraCompProps);
+  // 容器元素直接渲染，非容器元素需要包裹div来接收droppable的ref
+  if (material.isContainer) {
+    return renderComponent(extraCompProps);
+  } else {
+    // 非容器元素：包裹一个div来接收ref，使其可被droppable
+    // 根据 isBlock 属性决定 display 样式，避免影响布局
+    const wrapperStyle: React.CSSProperties = {
+      display: material.isBlock ? 'block' : 'inline-block',
+    };
+
+    return (
+      <div ref={setRef} style={wrapperStyle}>
+        {renderComponent(extraCompProps)}
+      </div>
+    );
+  }
 });
 
 ElementWrapper.displayName = 'ElementWrapper';

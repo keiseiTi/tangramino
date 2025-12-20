@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { SchemaUtils } from '@tangramino/engine';
 import { useEditorCore, usePluginCore } from '@tangramino/base-editor';
 import { Input, Radio, Checkbox, Select, Switch, Tabs, Form, InputNumber } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import { ColorPicker } from '@/components/color-picker';
-import { cn } from '@/utils';
 import type { ActiveElement, Method } from '@tangramino/base-editor';
 import type {
   AttributeConfig,
@@ -18,33 +17,35 @@ export const AttributePanel = () => {
   const { activeElement, setActiveElement, engine, schema, setSchema } = useEditorCore();
   const { beforeSetElementProps, afterSetElementProps } = usePluginCore();
   const [activePanel, setActivePanel] = useState<string>('0');
-  const [elementShowMap, setElementShowMap] = useState<Record<string, boolean>>({});
   const [form] = Form.useForm();
   const { openFlow } = useLogicEvent();
 
   const material = activeElement?.material;
   const methods = material?.contextConfig?.methods;
+  const panels = material?.editorConfig?.panels;
 
-  const isNotEmpty = (v: unknown): boolean => {
+  // 判断值是否非空
+  const isNotEmpty = useCallback((v: unknown): boolean => {
     if (v === undefined || v === null) return false;
     if (typeof v === 'string') return v.trim().length > 0;
     if (Array.isArray(v)) return v.length > 0;
     return true;
-  };
+  }, []);
 
-  const evaluateLinkageVisibility = (
-    config: AttributeConfig,
-    values: Record<string, unknown>,
-  ): boolean => {
-    const rules = config.linkageShow;
-    if (!rules || rules.length === 0) return true;
-    return rules.every((rule) => {
-      const rv = values[rule.field];
-      if (rule.isNotEmpty) return isNotEmpty(rv);
-      if (Object.prototype.hasOwnProperty.call(rule, 'value')) return rv === rule.value;
-      return isNotEmpty(rv);
-    });
-  };
+  // 评估联动显示规则
+  const evaluateLinkageVisibility = useCallback(
+    (config: AttributeConfig, values: Record<string, unknown>): boolean => {
+      const rules = config.linkageShow;
+      if (!rules || rules.length === 0) return true;
+      return rules.every((rule) => {
+        const rv = values[rule.field];
+        if (rule.isNotEmpty) return isNotEmpty(rv);
+        if (Object.prototype.hasOwnProperty.call(rule, 'value')) return rv === rule.value;
+        return isNotEmpty(rv);
+      });
+    },
+    [isNotEmpty],
+  );
 
   useEffect(() => {
     if (activeElement) {
@@ -54,56 +55,52 @@ export const AttributePanel = () => {
         ...state,
       });
       setActivePanel('0');
-      const values = { elementId: activeElement.id, ...state } as Record<string, unknown>;
-      const linkageConfigs = (material?.editorConfig?.panels || [])
-        .flatMap((p) => p.configs || [])
-        .filter((c) => Array.isArray(c.linkageShow) && c.linkageShow.length);
-      const hasValue = linkageConfigs.some((c) =>
-        evaluateLinkageVisibility(c as AttributeConfig, values),
-      );
-      setElementShowMap((prev) => ({ ...prev, [activeElement.id]: hasValue }));
     }
-  }, [activeElement, engine]);
+  }, [activeElement, engine, form]);
 
-  const selectedParentElement = (element: ActiveElement) => {
-    setActiveElement(element);
-  };
+  const selectedParentElement = useCallback(
+    (element: ActiveElement) => {
+      setActiveElement(element);
+    },
+    [setActiveElement],
+  );
 
-  const selectElementMethod = (method: Method) => {
-    const elementId = activeElement!.id;
-    openFlow({ elementId, method, material: material! });
-  };
+  const selectElementMethod = useCallback(
+    (method: Method) => {
+      if (!activeElement || !material) return;
+      openFlow({ elementId: activeElement.id, method, material });
+    },
+    [activeElement, material, openFlow],
+  );
 
-  const onValuesChange = (changedFields: Record<string, unknown>) => {
-    beforeSetElementProps(schema, activeElement!.id, changedFields);
-    const newSchema = SchemaUtils.setElementProps(schema, activeElement!.id, changedFields);
-    afterSetElementProps(newSchema);
-    setSchema(newSchema);
-    const values = form.getFieldsValue(true) as Record<string, unknown>;
-    const linkageConfigs = (material?.editorConfig?.panels || [])
-      .flatMap((p) => p.configs || [])
-      .filter((c) => Array.isArray(c.linkageShow) && c.linkageShow.length);
-    const hasValue = linkageConfigs.some((c) =>
-      evaluateLinkageVisibility(c as AttributeConfig, values),
-    );
-    setElementShowMap((prev) => ({ ...prev, [activeElement!.id]: hasValue }));
-  };
+  const onValuesChange = useCallback(
+    (changedFields: Record<string, unknown>) => {
+      if (!activeElement) return;
+      beforeSetElementProps(schema, activeElement.id, changedFields);
+      const newSchema = SchemaUtils.setElementProps(schema, activeElement.id, changedFields);
+      afterSetElementProps(newSchema);
+      setSchema(newSchema);
+    },
+    [activeElement, schema, beforeSetElementProps, afterSetElementProps, setSchema],
+  );
 
-  const renderLabel = (label: React.ReactNode) => {
+  const renderLabel = useCallback((label: React.ReactNode) => {
     return typeof label === 'string' ? <span className='text-xs'>{label}</span> : label;
-  };
+  }, []);
 
   const renderFormItem = (config: AttributeConfig) => {
     const { field, label, uiType, required, defaultValue } = config;
-    const values = form.getFieldsValue(true) as Record<string, unknown>;
-    if (!evaluateLinkageVisibility(config, values)) {
-      return null;
-    }
+
     let children: React.ReactNode = null;
     let valuePropName = 'value';
+
     switch (uiType) {
       case 'text':
-        children = <span>{form.getFieldValue(field) as string}</span>;
+        children = (
+          <Form.Item noStyle shouldUpdate>
+            {() => <span>{form.getFieldValue(field) as string}</span>}
+          </Form.Item>
+        );
         break;
       case 'input':
         children = <Input {...config.props} />;
@@ -114,15 +111,17 @@ export const AttributePanel = () => {
       case 'radio':
         children = <Radio.Group {...config.props} />;
         break;
-      case 'checkbox':
+      case 'checkbox': {
         const checkboxConfig = config as CheckboxAttributeConfig;
         valuePropName = 'checked';
-        if (Array.isArray(checkboxConfig.props?.options) && checkboxConfig.props?.options.length) {
+        if (Array.isArray(checkboxConfig.props?.options) && checkboxConfig.props.options.length) {
           children = <Checkbox.Group options={checkboxConfig.props.options} />;
+          valuePropName = 'value';
         } else {
           children = <Checkbox {...config.props} />;
         }
         break;
+      }
       case 'select':
         children = <Select {...config.props} />;
         break;
@@ -133,87 +132,89 @@ export const AttributePanel = () => {
       case 'color':
         children = <ColorPicker {...config.props} />;
         break;
-      case 'custom':
+      case 'custom': {
         const customConfig = config as CustomAttributeConfig;
         const CustomComp = customConfig.render;
         children = <CustomComp {...customConfig} />;
         break;
+      }
       default:
         return null;
     }
 
+    // 使用 shouldUpdate 实现联动显隐
     return (
-      <Form.Item
-        label={renderLabel(label)}
-        required={required}
-        name={field}
-        key={field}
-        valuePropName={valuePropName}
-        initialValue={defaultValue}
-      >
-        {children}
+      <Form.Item noStyle shouldUpdate key={field}>
+        {() => {
+          const values = form.getFieldsValue(true) as Record<string, unknown>;
+          if (!evaluateLinkageVisibility(config, values)) {
+            return null;
+          }
+
+          return (
+            <Form.Item
+              label={renderLabel(label)}
+              required={required}
+              name={field}
+              valuePropName={valuePropName}
+              initialValue={defaultValue}
+            >
+              {children}
+            </Form.Item>
+          );
+        }}
       </Form.Item>
     );
   };
 
-  const renderMaterialMethods = (): React.ReactElement[] => {
-    return (
-      methods?.map((method) => (
-        <div
-          key={method.name}
-          className='mb-2 bg-gray-100 py-1 px-2 cursor-pointer rounded'
-          onClick={() => selectElementMethod(method)}
-        >
-          <div className=' text-gray-800'>{method.name}</div>
-          <div className='text-xs  text-gray-400'>{method.description}</div>
-        </div>
-      )) || []
-    );
-  };
+  // 渲染物料方法列表
+  const renderMaterialMethods = useMemo(() => {
+    if (!methods?.length) return null;
 
-  const renderPanelConfig = (config: PanelConfig[]) => {
-    const tabsItems = config.map((item, index) => ({
+    return methods.map((method) => (
+      <div
+        key={method.name}
+        className='mb-2 bg-gray-100 py-1 px-2 cursor-pointer rounded hover:bg-gray-200 transition-colors'
+        onClick={() => selectElementMethod(method)}
+      >
+        <div className='text-gray-800'>{method.name}</div>
+        <div className='text-xs text-gray-400'>{method.description}</div>
+      </div>
+    ));
+  }, [methods, selectElementMethod]);
+
+  // 渲染面板配置
+  const tabsItems = useMemo(() => {
+    if (!panels) return [];
+
+    const items = panels.map((item, index) => ({
       key: String(index),
       label: <div className='px-2'>{item.title}</div>,
-      style: {
-        padding: '0 8px',
-      },
-      children: item.configs?.map(renderFormItem),
+      style: { padding: '0 8px' },
+      children: (item.configs as AttributeConfig[])?.map((config) => renderFormItem(config)),
     }));
 
-    if (methods?.length) {
-      tabsItems.push({
+    if (renderMaterialMethods) {
+      items.push({
         key: 'event',
         label: <div className='px-2'>事件</div>,
-        style: {
-          padding: '0 8px',
-        },
-        children: renderMaterialMethods(),
+        style: { padding: '0 8px' },
+        children: renderMaterialMethods,
       });
     }
 
-    return (
-      <Form form={form} onValuesChange={onValuesChange}>
-        <Tabs
-          size='small'
-          activeKey={activePanel}
-          tabBarGutter={4}
-          onChange={setActivePanel}
-          items={tabsItems}
-        />
-      </Form>
-    );
-  };
+    return items;
+  }, [panels, renderMaterialMethods]);
 
   return (
-    <div className={cn('w-70 border-l border-gray-200 bg-white flex flex-col shadow-sm')}>
+    <div className='w-70 border-l border-gray-200 bg-white flex flex-col shadow-sm'>
       {activeElement ? (
         <>
           <div className='border-b border-gray-200 h-9.5 px-3 text-sm flex items-center text-stone-600 gap-1'>
             {activeElement.parents?.map((element) => (
               <div
                 key={element.id}
-                className='flex items-center cursor-pointer hover:text-blue-500'
+                className='flex items-center cursor-pointer hover:text-blue-500 transition-colors'
                 onClick={() => selectedParentElement(element)}
               >
                 <span>{element.material.title}</span>
@@ -223,8 +224,17 @@ export const AttributePanel = () => {
             <span className='cursor-pointer'>{material?.title}</span>
           </div>
           <div className='flex-1 overflow-auto p-2'>
-            {material?.editorConfig?.panels &&
-              renderPanelConfig(material?.editorConfig?.panels as PanelConfig[])}
+            {tabsItems.length > 0 && (
+              <Form form={form} onValuesChange={onValuesChange}>
+                <Tabs
+                  size='small'
+                  activeKey={activePanel}
+                  tabBarGutter={4}
+                  onChange={setActivePanel}
+                  items={tabsItems}
+                />
+              </Form>
+            )}
           </div>
         </>
       ) : (

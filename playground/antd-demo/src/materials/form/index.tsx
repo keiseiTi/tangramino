@@ -43,7 +43,7 @@ export const Form = React.forwardRef<HTMLDivElement, IProps>((props: IProps, ref
   };
 
   return (
-    <div ref={ref}>
+    <div ref={ref} className='h-full'>
       <AntdForm
         className='h-full'
         form={form}

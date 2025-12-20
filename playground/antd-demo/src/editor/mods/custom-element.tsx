@@ -14,10 +14,6 @@ export const CustomElement = (props: EnhancedComponentProps) => {
     })),
   );
 
-  const insertPosition = useEditorCore((state) =>
-    state.insertPosition?.id === elementId ? state.insertPosition : null,
-  );
-
   const { setActiveElementEvent } = useEditorContext();
 
   const isSelected = activeElement?.id === elementId;
@@ -39,8 +35,6 @@ export const CustomElement = (props: EnhancedComponentProps) => {
     });
   }
 
-  const isBlockElement = material.isBlock || material.isContainer;
-
   return React.cloneElement(children, {
     onClick: (e: React.MouseEvent) => {
       e.preventDefault();
@@ -49,14 +43,6 @@ export const CustomElement = (props: EnhancedComponentProps) => {
     },
     className: cn({
       'border-2 border-blue-600': isSelected,
-      'border-l-4 border-yellow-500':
-        !isBlockElement && insertPosition?.id === elementId && insertPosition.position === 'before',
-      'border-r-4 border-yellow-500':
-        !isBlockElement && insertPosition?.id === elementId && insertPosition.position === 'after',
-      'border-t-4 border-yellow-500':
-        isBlockElement && insertPosition?.id === elementId && insertPosition.position === 'up',
-      'border-b-4 border-yellow-500':
-        isBlockElement && insertPosition?.id === elementId && insertPosition.position === 'down',
     }),
   });
 };

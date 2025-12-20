@@ -296,7 +296,9 @@ const moveElement = (
       } else {
         // 先移除同级中的 elementId（若存在），再插入
         const filtered = siblings.filter((id) => id !== elementId);
-        const insertIndex = position === 'before' ? tIdx : tIdx + 1;
+        // up/before 插入到目标元素之前，down/after 插入到目标元素之后
+        const shouldInsertBefore = position === 'before' || position === 'up';
+        const insertIndex = shouldInsertBefore ? tIdx : tIdx + 1;
         const next = [...filtered.slice(0, insertIndex), elementId, ...filtered.slice(insertIndex)];
         newStructure[targetParentId] = next;
         return {
