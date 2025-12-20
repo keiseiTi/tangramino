@@ -13,7 +13,7 @@ export const CustomOverlay = () => {
 
   if (!activeElement) return;
 
-  const { id, material, props: elementProps } = activeElement;
+  const { id, material } = activeElement;
   const methods = material.contextConfig?.methods || [];
   const rootId = schema?.layout?.root;
 
@@ -21,7 +21,7 @@ export const CustomOverlay = () => {
 
   const parentMenus = useMemo(
     () =>
-      parents.map((parent) => ({
+      parents.reverse().map((parent) => ({
         key: parent.id,
         label: parent.material.title,
       })),

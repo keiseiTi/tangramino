@@ -10,9 +10,8 @@ interface BasicPageProps extends MaterialComponentProps {
   flexDirection?: 'row' | 'column';
 }
 
-export const BasicPage = (props: BasicPageProps) => {
-  const { children, margin, padding, tg_dropPlaceholder, tg_ref, display, flexDirection, ...rest } =
-    props;
+export const BasicPage = React.forwardRef<HTMLDivElement>((props: BasicPageProps, ref) => {
+  const { children, margin, padding, tg_dropPlaceholder, display, flexDirection, ...rest } = props;
 
   const style: React.CSSProperties = {
     margin,
@@ -26,8 +25,8 @@ export const BasicPage = (props: BasicPageProps) => {
   }
 
   return (
-    <div ref={tg_ref} className={cn('overflow-auto w-full')} style={style} {...rest}>
+    <div ref={ref} className={cn('overflow-auto w-full')} style={style} {...rest}>
       {children || tg_dropPlaceholder}
     </div>
   );
-};
+});

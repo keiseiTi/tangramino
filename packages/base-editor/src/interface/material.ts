@@ -89,11 +89,6 @@ export interface MaterialComponentProps {
    */
   tg_setContextValues?: (contextValues: Record<string, unknown>) => void;
   /**
-   * Ref for drag and drop
-   * 拖拽 ref
-   */
-  tg_ref?: (node: HTMLElement | null) => void;
-  /**
    * Allow other standard props
    */
   [key: string]: unknown;

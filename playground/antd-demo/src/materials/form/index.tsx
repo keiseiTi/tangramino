@@ -9,7 +9,7 @@ export interface IProps extends FormProps, MaterialComponentProps {
   value?: Record<string, unknown>;
 }
 
-export const Form = (props: IProps) => {
+export const Form = React.forwardRef<HTMLDivElement, IProps>((props: IProps, ref) => {
   const {
     children,
     labelColVal,
@@ -43,6 +43,7 @@ export const Form = (props: IProps) => {
   };
 
   return (
+    <div ref={ref}>
       <AntdForm
         className='h-full'
         form={form}
@@ -65,5 +66,6 @@ export const Form = (props: IProps) => {
       >
         {children || tg_dropPlaceholder}
       </AntdForm>
+    </div>
   );
-};
+});

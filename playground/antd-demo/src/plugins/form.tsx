@@ -16,7 +16,7 @@ type FormItemElementProps = {
 };
 
 const withForm = (Component: React.ComponentType<any>) => {
-  return (props: FormItemElementProps) => {
+  return React.forwardRef<HTMLDivElement, FormItemElementProps>((props, ref) => {
     const { label, name, required, tooltip } = props;
     const elementId = props['data-element-id'];
 
@@ -36,8 +36,8 @@ const withForm = (Component: React.ComponentType<any>) => {
         </FormItem>
       );
     }
-    return <Component {...props} />;
-  };
+    return <Component {...props} ref={ref} />;
+  });
 };
 
 export const formPlugin = (): Plugin => ({
