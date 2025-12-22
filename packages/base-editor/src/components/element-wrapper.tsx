@@ -121,9 +121,12 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
       display: material.isBlock ? 'block' : 'inline-block',
     };
 
+    const { onClick, ...propsWithoutClick } = extraCompProps;
+    void onClick
+
     return (
-      <div ref={setRef} style={wrapperStyle}>
-        {renderComponent(extraCompProps)}
+      <div ref={setRef} style={wrapperStyle} onClick={onSelectElement}>
+        {renderComponent(propsWithoutClick)}
       </div>
     );
   }

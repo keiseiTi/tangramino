@@ -5,15 +5,10 @@ import type { MaterialComponentProps } from '@tangramino/base-editor';
 export type IProps = MaterialComponentProps & {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onPressEnter?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
-  placeholder?: string;
-  maxLength?: number;
-  showCount?: boolean;
-  autoSize?: boolean | { minRows?: number; maxRows?: number };
 };
 
 export const Textarea = (props: IProps) => {
-  const { onChange, value, ...restProps } = props;
+  const { onChange, value, tg_setContextValues, ...restProps } = props;
   const [innerValue, setInnerValue] = useState<string>();
 
   useEffect(() => {
@@ -25,11 +20,5 @@ export const Textarea = (props: IProps) => {
     onChange?.(e);
   };
 
-  return (
-    <AntdInput.TextArea
-      value={innerValue}
-      onChange={handleChange}
-      {...restProps}
-    />
-  );
+  return <AntdInput.TextArea value={innerValue} onChange={handleChange} {...restProps} />;
 };

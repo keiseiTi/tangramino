@@ -10,7 +10,13 @@ const SelectMaterial: Material = {
   defaultProps: {
     placeholder: '请选择',
     size: 'middle',
-    options: [],
+    options: [{
+      label: '选项一',
+      value: 'option1',
+    }, {
+      label: '选项二',
+      value: 'option2',
+    }],
   },
   contextConfig: {
     variables: [

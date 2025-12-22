@@ -13,11 +13,13 @@ type FormItemElementProps = {
   name?: string;
   required?: boolean;
   tooltip?: string;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 };
 
-const withForm = (Component: React.ComponentType<any>) => {
+const withForm = (Component: React.ComponentType<any>, materialType: string) => {
+  const isRadioOrCheckbox = materialType === 'radio' || materialType === 'checkbox';
   return React.forwardRef<HTMLDivElement, FormItemElementProps>((props, ref) => {
-    const { label, name, required, tooltip } = props;
+    const { label, name, required, tooltip, ...restProps } = props;
     const elementId = props['data-element-id'];
 
     const { schema } = useEditorCore();
@@ -31,8 +33,14 @@ const withForm = (Component: React.ComponentType<any>) => {
 
     if (isForm) {
       return (
-        <FormItem label={label} name={name} required={required} tooltip={tooltip}>
-          <Component {...props} />
+        <FormItem
+          label={label}
+          name={name}
+          required={required}
+          tooltip={tooltip}
+          valuePropName={isRadioOrCheckbox ? 'checked' : 'value'}
+        >
+          <Component {...restProps} />
         </FormItem>
       );
     }
@@ -46,12 +54,12 @@ export const formPlugin = (): Plugin => ({
     beforeInitMaterials: (materials) => {
       materials.forEach((material) => {
         const Component = material.Component;
-        material.Component = withForm(Component);
+        material.Component = withForm(Component, material.type);
       });
     },
     activateElement: (element, parentElements) => {
       if (parentElements.length) {
-        const parentElement = parentElements[parentElements.length - 1];
+        const parentElement = parentElements[0];
         if (parentElement.type === 'form') {
           const panels = element.material.editorConfig?.panels || [];
           const isAble = panels.some((panel) => panel.title === '表单项');
