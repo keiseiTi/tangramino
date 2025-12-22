@@ -29,6 +29,9 @@ export const CanvasOverlay = (props: CanvasOverlayProps) => {
 
   useEffect(() => {
     updateRect();
+  }, [activeElement]);
+
+  useEffect(() => {
     window.addEventListener('scroll', updateRect, true);
     window.addEventListener('resize', updateRect);
 
@@ -36,6 +39,14 @@ export const CanvasOverlay = (props: CanvasOverlayProps) => {
     const tgCanvasContainer = document.querySelector('#tgCanvasContainer');
     if (tgCanvasContainer) {
       observer.observe(tgCanvasContainer);
+    }
+
+    // 监听选中元素本身的尺寸变化
+    const activeElementDom = activeElement
+      ? document.querySelector(`[data-element-id="${activeElement.id}"]`)
+      : null;
+    if (activeElementDom) {
+      observer.observe(activeElementDom);
     }
 
     return () => {

@@ -1,9 +1,12 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useCallback } from 'react';
 import {
   DndContext,
+  pointerWithin,
+  rectIntersection,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
+  type CollisionDetection,
 } from '@dnd-kit/core';
 import { SchemaUtils, type Schema } from '@tangramino/engine';
 import { useShallow } from 'zustand/react/shallow';
@@ -110,6 +113,29 @@ export const EditorProvider = (props: EditorProviderProps) => {
     afterCanvasUpdated(engine);
   }, [schema, engine, onChange, afterCanvasUpdated]);
 
+  // 自定义碰撞检测策略：优先使用指针检测，如果没有结果则使用矩形相交
+  // 这样可以确保在滚动容器中也能正确检测到 placeholder
+  const customCollisionDetection: CollisionDetection = useCallback((args) => {
+    // 首先尝试使用 pointerWithin，它基于鼠标指针位置
+    const pointerCollisions = pointerWithin(args);
+
+    if (pointerCollisions.length > 0) {
+      // 如果有多个碰撞，优先选择 placeholder（id 包含 '-placeholder'）
+      const placeholderCollision = pointerCollisions.find((collision) =>
+        String(collision.id).endsWith('-placeholder'),
+      );
+
+      if (placeholderCollision) {
+        return [placeholderCollision];
+      }
+
+      return pointerCollisions;
+    }
+
+    // 如果 pointerWithin 没有结果，回退到 rectIntersection
+    return rectIntersection(args);
+  }, []);
+
   const onDragStart = (event: DragStartEvent) => {
     const { active } = event;
     setDragElement(active.data.current as DragElement);
@@ -163,7 +189,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
   };
 
   const onDragMove = (event: DragOverEvent) => {
-    const { over, active } = event;
+    const { over, active, delta } = event;
     if (!over) return;
     const overId = over.data.current!.id as string;
     const overMaterial = over.data.current!.material as Material;
@@ -196,8 +222,12 @@ export const EditorProvider = (props: EditorProviderProps) => {
     if (isDragBlock) {
       // 拖拽的是 Block 元素，只能在 Block 元素上下插入
       if (isOverBlock) {
-        const pointTop = active.rect.current.translated?.top || 0;
-        const pointBottom = active.rect.current.translated?.bottom || 0;
+        // 使用 delta 和初始位置计算当前鼠标位置
+        const activeInitialTop = active.rect.current.initial?.top || 0;
+        const activeInitialBottom = active.rect.current.initial?.bottom || 0;
+        const pointTop = activeInitialTop + delta.y;
+        const pointBottom = activeInitialBottom + delta.y;
+
         const top = over.rect.top;
         const bottom = over.rect.bottom ?? over.rect.top + over.rect.height;
         const distTop = Math.abs(pointTop - top);
@@ -213,7 +243,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
           }
         }
       } else {
-        // Block 元素不能在非 Block 元素位置插入，清除位置指示s
+        // Block 元素不能在非 Block 元素位置插入，清除位置指示
         if (insertPosition !== null) {
           setInsertPosition(null);
         }
@@ -222,8 +252,12 @@ export const EditorProvider = (props: EditorProviderProps) => {
       // 拖拽的是非 Block 元素，只能在非 Block 元素左右插入
       if (!isOverBlock) {
         if (String(over.id).endsWith('-placeholder')) return;
-        const pointLeft = active.rect.current.translated?.left || 0;
-        const pointRight = active.rect.current.translated?.right || 0;
+        // 使用 delta 和初始位置计算当前鼠标位置
+        const activeInitialLeft = active.rect.current.initial?.left || 0;
+        const activeInitialRight = active.rect.current.initial?.right || 0;
+        const pointLeft = activeInitialLeft + delta.x;
+        const pointRight = activeInitialRight + delta.x;
+
         const left = over.rect.left;
         const right = over.rect.right;
         const distLeft = Math.abs(pointLeft - left);
@@ -353,6 +387,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
 
   return (
     <DndContext
+      collisionDetection={customCollisionDetection}
       onDragStart={onDragStart}
       onDragMove={onDragMove}
       onDragAbort={onDragCancel}
