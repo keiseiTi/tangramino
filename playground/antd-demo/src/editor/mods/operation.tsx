@@ -48,15 +48,13 @@ export const Operation = (props: OperationProps) => {
 
   const onUndo = () => {
     if (history?.canUndo?.()) {
-      const next = history.undo(schema);
-      setSchema(next);
+      history.undo();
     }
   };
 
   const onRedo = () => {
     if (history?.canRedo?.()) {
-      const next = history.redo(schema);
-      setSchema(next);
+      history.redo();
     }
   };
 

@@ -1,29 +1,45 @@
+import { definePlugin, type EditorPlugin, type PluginContext } from '@tangramino/base-editor';
 import { isPortal } from '@/utils';
-import type { Plugin } from '@tangramino/base-editor';
 import type { Element } from '@tangramino/engine';
 
-export const portalPlugin = (): Plugin => {
-  let portalElement: Element | null = null;
+/**
+ * Portal 插件 - 自动打开 Portal 类组件（如 Modal, Drawer 等）
+ */
+export const portalPlugin = definePlugin<EditorPlugin>(() => {
+  let portalElement: (Element & { material: { type: string } }) | null = null;
+  let ctx: PluginContext | null = null;
+
   return {
     id: 'portal',
-    editorContext: {
-      afterInsertMaterial(sourceElement) {
-        if (isPortal(sourceElement.type)) {
-          portalElement = sourceElement;
-        }
-      },
-      afterCanvasUpdated: (engine) => {
-        if (portalElement) {
-          engine.setState({
-            [portalElement.id]: {
-              ...portalElement.props,
-              open: true,
-              getContainer: false,
-            },
-          });
-          portalElement = null;
-        }
-      },
+    onInit(context) {
+      ctx = context;
+      return () => {
+        portalElement = null;
+        ctx = null;
+      };
+    },
+    onAfterInsert(schema, insertedId) {
+      const element = schema.elements[insertedId];
+      if (element && isPortal(element.type)) {
+        portalElement = {
+          id: insertedId,
+          type: element.type,
+          props: element.props,
+          material: { type: element.type },
+        };
+      }
+    },
+    onCanvasUpdated() {
+      if (portalElement && ctx) {
+        ctx.engine.setState({
+          [portalElement.id]: {
+            ...portalElement.props,
+            open: true,
+            getContainer: false,
+          },
+        });
+        portalElement = null;
+      }
     },
   };
-};
+});

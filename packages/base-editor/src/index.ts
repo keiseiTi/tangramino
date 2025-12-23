@@ -8,7 +8,10 @@ export { useEditorCore, type EditorCore, type ActiveElement } from './hooks/use-
 export { usePluginCore, usePluginContext, type PluginCore } from './hooks/use-plugin-core';
 
 export { uniqueId } from './utils';
-export { validatePluginDependencies, applyPluginsWithValidation } from './utils/plugin-validator';
+export { validatePluginDependencies } from './utils/plugin-validator';
+export { definePlugin, type EditorPluginFactory } from './utils/define-plugin';
+
+export { PluginManager } from './plugins/plugin-manager';
 
 export { historyPlugin } from './plugins/history';
 export { modePlugin } from './plugins/mode';
@@ -16,5 +19,13 @@ export { contextValuePlugin } from './plugins/context-value';
 
 export type { EditorConfig, AttributeConfig, PanelConfig } from './interface/editor-config';
 export type { Material, MaterialComponentProps } from './interface/material';
-export type { Plugin } from './interface/plugin';
+export type {
+  EditorPlugin,
+  PluginContext,
+  PluginMeta,
+  PluginLifecycle,
+  MaterialHooks,
+  SchemaHooks,
+  EditorHooks,
+} from './interface/plugin';
 export type { Variable, Method, ContextConfig } from './interface/context-config';

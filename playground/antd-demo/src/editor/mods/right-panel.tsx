@@ -18,6 +18,8 @@ export const RightPanel = ({ materialGroups }: RightPanelProps): JSX.Element => 
   const [activeTab, setActiveTab] = useState<string>('materials');
 
   const outlineTree = useMemo<DataNode[]>(() => {
+    if (!schema?.layout || !schema?.elements) return [];
+
     const { layout, elements } = schema;
     const buildNode = (id: string): DataNode | null => {
       const element = elements[id];

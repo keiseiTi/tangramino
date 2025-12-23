@@ -1,117 +1,100 @@
 import { create } from 'zustand';
-import type { Plugin } from '../interface/plugin';
+import { PluginManager } from '../plugins/plugin-manager';
+import type { EditorPlugin, PluginContext, SchemaHooks, EditorHooks } from '../interface/plugin';
+import type { Material } from '../interface/material';
 
-type TransformSchemaForPlugin = Required<Plugin['transformSchema']>;
+/**
+ * 插件核心 Hook：仅管理插件列表和 PluginManager 实例
+ */
+export interface PluginCore {
+  plugins: EditorPlugin[];
+  pluginManager: PluginManager | null;
 
-type EditorContextForPlugin = Required<Plugin['editorContext']>;
+  addPlugins: (plugins: EditorPlugin[]) => void;
+  removePlugins: () => void;
+  initPluginManager: (ctx: PluginContext) => void;
+  disposePluginManager: () => void;
 
-export type PluginCore = TransformSchemaForPlugin &
-  EditorContextForPlugin & {
-    plugins: Plugin[];
-    addPlugins: (plugins: Plugin[]) => void;
-    removePlugins: () => void;
-  };
+  // 核心方法
+  transformMaterials: (materials: Material[]) => Material[];
+
+  // 直接暴露钩子调用接口（最新 API）
+  callSchemaHook: <K extends keyof SchemaHooks>(
+    hookName: K,
+    ...args: Parameters<NonNullable<SchemaHooks[K]>>
+  ) => boolean;
+
+  callEditorHook: <K extends keyof EditorHooks>(
+    hookName: K,
+    ...args: Parameters<NonNullable<EditorHooks[K]>>
+  ) => void;
+}
 
 export const usePluginCore = create<PluginCore>((set, get) => ({
   plugins: [],
+  pluginManager: null,
+
   addPlugins: (plugins) =>
     set((state) => ({
       plugins: [...state.plugins, ...plugins],
     })),
+
   removePlugins: () => {
     set(() => ({
       plugins: [],
     }));
   },
-  beforeInsertElement: (schema, targetId, insertElement) => {
+
+  initPluginManager: (ctx: PluginContext) => {
     const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.transformSchema?.beforeInsertElement?.(schema, targetId, insertElement);
-    });
+    const pm = new PluginManager(ctx);
+
+    try {
+      pm.register(plugins);
+      pm.init();
+      set({ pluginManager: pm });
+    } catch (error) {
+      console.error('[usePluginCore] Failed to initialize PluginManager:', error);
+    }
   },
-  afterInsertElement: (schema) => {
-    const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.transformSchema?.afterInsertElement?.(schema);
-    });
+
+  disposePluginManager: () => {
+    const pm = get().pluginManager;
+    if (pm) {
+      pm.dispose();
+      set({ pluginManager: null });
+    }
   },
-  beforeMoveElement: (schema, sourceId, targetId) => {
-    const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.transformSchema?.beforeMoveElement?.(schema, sourceId, targetId);
-    });
+
+  transformMaterials: (materials: Material[]): Material[] => {
+    const pm = get().pluginManager;
+    if (pm) {
+      return pm.transformMaterials(materials);
+    }
+    return materials;
   },
-  afterMoveElement: (schema) => {
-    const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.transformSchema?.afterMoveElement?.(schema);
-    });
+
+  callSchemaHook: (hookName, ...args) => {
+    const pm = get().pluginManager;
+    if (pm) {
+      return pm.callSchemaHook(hookName, ...args);
+    }
+    return true;
   },
-  beforeRemoveElement: (schema, targetId) => {
-    const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.transformSchema?.beforeRemoveElement?.(schema, targetId);
-    });
-  },
-  afterRemoveElement: (schema) => {
-    const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.transformSchema?.afterRemoveElement?.(schema);
-    });
-  },
-  beforeSetElementProps: (schema, targetId, props) => {
-    const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.transformSchema?.beforeSetElementProps?.(schema, targetId, props);
-    });
-  },
-  afterSetElementProps: (nextSchema) => {
-    const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.transformSchema?.afterSetElementProps?.(nextSchema);
-    });
-  },
-  beforeInitMaterials: (materials) => {
-    const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.editorContext?.beforeInitMaterials?.(materials);
-    });
-  },
-  beforeInsertMaterial: (sourceElement, element) => {
-    const plugins = get().plugins;
-    let newElement = element;
-    plugins.forEach((plugin) => {
-      const result = plugin.editorContext?.beforeInsertMaterial?.(sourceElement, newElement);
-      if (result) {
-        newElement = result;
-      }
-    });
-    return newElement;
-  },
-  afterInsertMaterial: (sourceMaterial, targetElement) => {
-    const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.editorContext?.afterInsertMaterial?.(sourceMaterial, targetElement);
-    });
-  },
-  activateElement: (element, parentElements) => {
-    const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.editorContext?.activateElement?.(element, parentElements);
-    });
-  },
-  afterCanvasUpdated: (engine) => {
-    const plugins = get().plugins;
-    plugins.forEach((plugin) => {
-      plugin.editorContext?.afterCanvasUpdated?.(engine);
-    });
+
+  callEditorHook: (hookName, ...args) => {
+    const pm = get().pluginManager;
+    if (pm) {
+      pm.callEditorHook(hookName, ...args);
+    }
   },
 }));
 
 /**
- * 传入插件 id，即可获取对应的插件的实例
+ * 获取插件实例
  */
-export const usePluginContext = <T extends Plugin>(id: string): T => {
-  const plugin = usePluginCore((state) => state.plugins.find((plugin) => plugin.id === id)) as T;
-  return plugin;
+export const usePluginContext = <T extends EditorPlugin>(id: string): T | undefined => {
+  const pm = usePluginCore.getState().pluginManager;
+  if (!pm) return undefined;
+  return pm.getPlugin<T>(id);
 };

@@ -27,7 +27,7 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
     })),
   );
 
-  const { activateElement } = usePluginCore();
+  const { callEditorHook } = usePluginCore();
 
   const elementId = elementProps['data-element-id'] as string;
 
@@ -60,15 +60,12 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
         });
       }
 
-      activateElement(
-        {
-          id: elementId,
-          type: material.type,
-          props: elementProps,
-          material,
-        },
-        parentElements,
-      );
+      callEditorHook('onElementActivate', {
+        id: elementId,
+        type: material.type,
+        props: elementProps,
+        material,
+      }, parentElements);
 
       setActiveElement({
         id: elementId,

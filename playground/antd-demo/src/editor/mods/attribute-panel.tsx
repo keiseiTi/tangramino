@@ -15,7 +15,7 @@ import { useLogicEvent } from '@/hooks/use-logic-event';
 
 export const AttributePanel = () => {
   const { activeElement, setActiveElement, engine, schema, setSchema } = useEditorCore();
-  const { beforeSetElementProps, afterSetElementProps } = usePluginCore();
+  const { callSchemaHook } = usePluginCore();
   const [activePanel, setActivePanel] = useState<string>('0');
   const [form] = Form.useForm();
   const { openFlow } = useLogicEvent();
@@ -76,12 +76,12 @@ export const AttributePanel = () => {
   const onValuesChange = useCallback(
     (changedFields: Record<string, unknown>) => {
       if (!activeElement) return;
-      beforeSetElementProps(schema, activeElement.id, changedFields);
+      callSchemaHook('onBeforeUpdateProps', schema, activeElement.id, changedFields);
       const newSchema = SchemaUtils.setElementProps(schema, activeElement.id, changedFields);
-      afterSetElementProps(newSchema);
+      callSchemaHook('onAfterUpdateProps', newSchema, activeElement.id);
       setSchema(newSchema);
     },
-    [activeElement, schema, beforeSetElementProps, afterSetElementProps, setSchema],
+    [activeElement, schema, callSchemaHook, setSchema],
   );
 
   const renderLabel = useCallback((label: React.ReactNode) => {

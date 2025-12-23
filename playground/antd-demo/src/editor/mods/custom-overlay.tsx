@@ -8,7 +8,7 @@ import { SchemaUtils } from '@tangramino/engine';
 
 export const CustomOverlay = () => {
   const { activeElement, schema, setSchema, setActiveElement } = useEditorCore();
-  const { beforeRemoveElement, afterRemoveElement } = usePluginCore();
+  const { callSchemaHook } = usePluginCore();
   const { openFlow } = useLogicEvent();
 
   if (!activeElement) return;
@@ -38,9 +38,9 @@ export const CustomOverlay = () => {
   };
 
   const deleteElement = () => {
-    beforeRemoveElement(schema!, id);
+    callSchemaHook('onBeforeRemove', schema!, id);
     const nextSchema = SchemaUtils.removeElement(schema!, id);
-    afterRemoveElement(nextSchema);
+    callSchemaHook('onAfterRemove', nextSchema, id);
     setSchema(nextSchema);
     setActiveElement(null);
   };

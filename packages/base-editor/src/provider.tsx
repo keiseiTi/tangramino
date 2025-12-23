@@ -14,7 +14,7 @@ import { useEditorCore, type DragElement } from './hooks/use-editor-core';
 import { usePluginCore } from './hooks/use-plugin-core';
 import { uniqueId } from './utils';
 import type { Material } from './interface/material';
-import type { Plugin } from './interface/plugin';
+import type { EditorPlugin } from './interface/plugin';
 
 /**
  * Props for the EditorProvider component
@@ -23,7 +23,7 @@ export interface EditorProviderProps {
   /** Initial schema for the editor */
   schema?: Schema;
   /** Array of plugins to extend editor functionality */
-  plugins?: Plugin[];
+  plugins?: EditorPlugin[];
   /** Array of available materials (components) that can be used in the editor */
   materials: Material[];
   /** Child components to render within the editor context */
@@ -77,14 +77,11 @@ export const EditorProvider = (props: EditorProviderProps) => {
   const {
     addPlugins,
     removePlugins,
-    beforeInsertElement,
-    afterInsertElement,
-    beforeMoveElement,
-    afterMoveElement,
-    beforeInitMaterials,
-    beforeInsertMaterial,
-    afterInsertMaterial,
-    afterCanvasUpdated,
+    initPluginManager,
+    disposePluginManager,
+    transformMaterials,
+    callSchemaHook,
+    callEditorHook,
   } = usePluginCore();
 
   useLayoutEffect(() => {
@@ -95,23 +92,44 @@ export const EditorProvider = (props: EditorProviderProps) => {
 
   useEffect(() => {
     addPlugins([...(plugins || [])]);
+
+    // 创建 PluginContext 并初始化 PluginManager
+    const ctx = {
+      engine,
+      getSchema: () => useEditorCore.getState().schema,
+      setSchema: (newSchema: Schema) => useEditorCore.getState().setSchema(newSchema),
+      getMaterials: () => useEditorCore.getState().materials,
+      getPlugin: <T extends EditorPlugin>(id: string) =>
+        usePluginCore.getState().pluginManager?.getPlugin<T>(id),
+    };
+    initPluginManager(ctx);
+
     return () => {
+      disposePluginManager();
       removePlugins();
     };
   }, []);
 
   useEffect(() => {
     if (Array.isArray(materials) && materials.length) {
-      beforeInitMaterials(materials);
-      setMaterials(materials);
+      const transformedMaterials = transformMaterials(materials);
+      setMaterials(transformedMaterials);
     }
-  }, [materials, beforeInitMaterials, setMaterials]);
+  }, [materials, transformMaterials, setMaterials]);
 
   useLayoutEffect(() => {
     onChange?.(schema);
     engine.changeSchema(schema);
-    afterCanvasUpdated(engine);
-  }, [schema, engine, onChange, afterCanvasUpdated]);
+    engine.changeSchema(schema);
+    callEditorHook('onCanvasUpdated', {
+      engine,
+      getSchema: () => useEditorCore.getState().schema,
+      setSchema: (newSchema: Schema) => useEditorCore.getState().setSchema(newSchema),
+      getMaterials: () => useEditorCore.getState().materials,
+      getPlugin: <T extends EditorPlugin>(id: string) =>
+        usePluginCore.getState().pluginManager?.getPlugin<T>(id),
+    });
+  }, [schema, engine, onChange, callEditorHook]);
 
   // 自定义碰撞检测策略：优先使用指针检测，如果没有结果则使用矩形相交
   // 这样可以确保在滚动容器中也能正确检测到 placeholder
@@ -312,7 +330,10 @@ export const EditorProvider = (props: EditorProviderProps) => {
           return;
         }
 
-        beforeMoveElement(schema, dragElement.id, dropData.id);
+        if (callSchemaHook('onBeforeMove', schema, dragElement.id, dropData.id) === false) {
+          onDragCancel();
+          return;
+        }
         if (position) {
           // 有位置信息时，使用同级移动（before/after/up/down）
           newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
@@ -325,11 +346,11 @@ export const EditorProvider = (props: EditorProviderProps) => {
             mode: 'cross-level',
           });
         }
-        afterMoveElement(newSchema);
+        callSchemaHook('onAfterMove', newSchema, dragElement.id);
       } else {
         // 插入元素
         const dragMaterial = dragData as Material;
-        let newElement = {
+        const newElement = {
           id: uniqueId(dragMaterial.type),
           type: dragMaterial.type,
           props: dragMaterial.defaultProps || {},
@@ -342,14 +363,11 @@ export const EditorProvider = (props: EditorProviderProps) => {
           return;
         }
 
-        beforeInsertElement(schema, dropData.id, newElement);
-        newElement = beforeInsertMaterial(
-          {
-            ...newElement,
-            material: dragMaterial,
-          },
-          newElement,
-        );
+        if (callSchemaHook('onBeforeInsert', schema, dropData.id, newElement) === false) {
+          onDragCancel();
+          return;
+        }
+
         if (position) {
           newSchema = SchemaUtils.insertAdjacentElement(
             schema,
@@ -360,18 +378,7 @@ export const EditorProvider = (props: EditorProviderProps) => {
         } else {
           newSchema = SchemaUtils.insertElement(schema, dropData.id, newElement);
         }
-        afterInsertElement(newSchema);
-        afterInsertMaterial(
-          {
-            ...newElement,
-            material: dragMaterial,
-          },
-          {
-            id: dropData.id,
-            type: dropData.material.type,
-            props: dropData.props,
-          },
-        );
+        callSchemaHook('onAfterInsert', newSchema, newElement.id);
       }
 
       setSchema(newSchema);

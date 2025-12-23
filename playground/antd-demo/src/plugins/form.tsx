@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
-import { useEditorCore } from '@tangramino/base-editor';
+import { definePlugin, useEditorCore, type EditorPlugin } from '@tangramino/base-editor';
 import { SchemaUtils } from '@tangramino/engine';
 import { Form } from 'antd';
 import { formConfigPanel } from '@/materials/form/config-panel';
-import type { Plugin } from '@tangramino/base-editor';
 
 const FormItem = Form.Item;
 
@@ -27,7 +26,7 @@ const withForm = (Component: React.ComponentType<any>) => {
       const preParent = parents[0];
       const type = schema.elements[preParent]?.type;
       return type === 'form';
-    }, [schema]);
+    }, [schema, elementId]);
 
     if (isForm) {
       return (
@@ -40,26 +39,30 @@ const withForm = (Component: React.ComponentType<any>) => {
   });
 };
 
-export const formPlugin = (): Plugin => ({
+/**
+ * Form 插件 - 为表单内的组件添加 FormItem 包装和配置面板
+ */
+export const formPlugin = definePlugin<EditorPlugin>(() => ({
   id: 'form',
-  editorContext: {
-    beforeInitMaterials: (materials) => {
-      materials.forEach((material) => {
-        const Component = material.Component;
-        material.Component = withForm(Component);
-      });
-    },
-    activateElement: (element, parentElements) => {
-      if (parentElements.length) {
-        const parentElement = parentElements[parentElements.length - 1];
-        if (parentElement.type === 'form') {
-          const panels = element.material.editorConfig?.panels || [];
-          const isAble = panels.some((panel) => panel.title === '表单项');
-          if (!isAble) {
-            panels.splice(1, 0, formConfigPanel);
-          }
+
+  transformMaterials: (materials) => {
+    return materials.map((material) => ({
+      ...material,
+      Component: withForm(material.Component),
+    }));
+  },
+
+  onElementActivate(element, parentChain) {
+    if (parentChain.length) {
+      const hasFormParent = parentChain.some((parent) => parent.type === 'form');
+      if (hasFormParent) {
+        const panels = element.material.editorConfig?.panels || [];
+        const hasFormPanel = panels.some((panel) => panel.title === '表单项');
+        if (!hasFormPanel) {
+          // 动态添加表单项配置面板
+          panels.splice(1, 0, formConfigPanel);
         }
       }
-    },
+    }
   },
-});
+}));
