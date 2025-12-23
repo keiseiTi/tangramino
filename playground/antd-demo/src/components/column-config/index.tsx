@@ -141,8 +141,8 @@ export const ColumnConfig: React.FC<ColumnConfigProps> = (props) => {
       title: '',
       dataIndex: '',
       width: null,
-      align: 'left',
-      fixed: false,
+      align: undefined,
+      fixed: undefined,
       ellipsis: false,
     };
     setEditingDataSource([...editingDataSource, newItem]);

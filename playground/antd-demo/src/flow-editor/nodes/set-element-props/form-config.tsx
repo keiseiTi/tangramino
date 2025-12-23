@@ -31,7 +31,7 @@ export const FormConfig = () => {
             {fields.map((filed, index) => (
               <div
                 key={filed.key}
-                className='relative border-1 border-dashed border-slate-300 rounded-sm px-2 pt-2 mb-2'
+                className='relative border border-dashed border-slate-300 rounded-sm px-2 pt-2 mb-2'
               >
                 {index !== 0 && (
                   <div className='absolute -top-1 -right-1 z-10'>

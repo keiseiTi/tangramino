@@ -5,7 +5,7 @@ import { useEditorContext } from '@/hooks/use-editor-context';
 import { SchemaEditor } from './schema-editor';
 import { GlobalVariablesPanel } from './global-variables';
 import { DataSourcePanel } from './data-source-panel';
-import { RightPanel } from './right-panel';
+import { LeftPanel } from './left-panel';
 import { AttributePanel } from './attribute-panel';
 import { renderDropIndicator } from './drop-indicator';
 import { CustomElement } from './custom-element';
@@ -58,7 +58,7 @@ export const MainContent = ({ materialGroups }: IProps) => {
       default:
         return (
           <>
-            <RightPanel materialGroups={materialGroups} />
+            <LeftPanel materialGroups={materialGroups} />
             <div className='flex-1 p-3 overflow-hidden min-w-0'>
               <div
                 className='mx-auto border border-gray-200 bg-white shadow-sm h-full min-h-full'

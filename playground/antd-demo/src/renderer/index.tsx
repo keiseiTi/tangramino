@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { createEngine, withFlowEngine, type LogicNodes, type Schema } from '@tangramino/engine';
-import { modePlugin, contextValuePlugin } from '@tangramino/base-editor';
-import { ReactView, type Plugin } from '@tangramino/react';
+import { ReactView, defaultRenderPlugins, type Plugin } from '@tangramino/react';
 import { useInitComp } from './use-init-comp';
 import { useFormComp } from './use-form-comp';
 
@@ -32,8 +31,8 @@ export const Renderer: React.FC<RendererProps> = (props) => {
   const _components = useFormComp(useInitComp(components || {}), schema);
 
   const _plugins = useMemo(() => {
-    return [...(plugins || []), modePlugin('render'), contextValuePlugin()];
-  }, []);
+    return [...defaultRenderPlugins, ...(plugins || [])];
+  }, [plugins]);
 
   return (
     <div className={className}>

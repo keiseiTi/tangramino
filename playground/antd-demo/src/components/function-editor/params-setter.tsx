@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Input, Select, Space } from 'antd';
+import { Input, Select, Space, Tag } from 'antd';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useContextOptions } from '@/hooks/use-context-options';
 import { cn } from '@/utils/cn';
@@ -11,6 +11,19 @@ interface IProps {
   value?: Param[];
   onChange?: (value: Param[]) => void;
 }
+
+const presets = [
+  'purple',
+  'blue',
+  'magenta',
+  'gold',
+  'red',
+  'green',
+  'volcano',
+  'orange',
+  'lime',
+  'cyan',
+];
 
 export const ParamsSetter = (props: IProps) => {
   const { className, value, style, onChange } = props;
@@ -92,7 +105,20 @@ export const ParamsSetter = (props: IProps) => {
               className='flex-1'
               placeholder='请选择'
               value={item.value}
-              options={[...variableOptions, ...globalVariableOptions]}
+              options={[...variableOptions, ...globalVariableOptions].map((variable) => ({
+                label: (
+                  <>
+                    <span className='mr-1'>{variable.label}</span>
+                    {variable.tags?.map((tag, index) => (
+                      <Tag key={tag} color={presets[index]} className='mr-1'>
+                        {tag}
+                      </Tag>
+                    ))}
+                  </>
+                ),
+                value: variable.value,
+                name: variable.name,
+              }))}
               onChange={handleSelectChange.bind(this, index)}
               allowClear
             />

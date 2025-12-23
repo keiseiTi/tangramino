@@ -10,6 +10,7 @@ const TableMaterial: Material = {
   isBlock: true,
   defaultProps: {
     rowKey: 'id',
+    size: 'middle',
     columns: [
       {
         title: '列1',
@@ -47,14 +48,10 @@ const TableMaterial: Material = {
             label: '行 Key',
             field: 'rowKey',
             uiType: 'input',
+            required: true,
             props: {
               placeholder: '数据行的唯一标识字段',
             },
-          },
-          {
-            label: '表格标题',
-            field: 'title',
-            uiType: 'input',
           },
           {
             label: '表格大小',

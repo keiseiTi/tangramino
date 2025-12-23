@@ -50,7 +50,7 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
         parents.forEach((id) => {
           const element = engine.elements[id];
           if (element) {
-            parentElements.unshift({
+            parentElements.push({
               id,
               type: element.type,
               props: element.props,

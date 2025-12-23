@@ -12,9 +12,10 @@ export const useContextOptions = () => {
         const findOne = materials.find((material) => material.type === element.type);
         if (findOne?.contextConfig?.variables) {
           return findOne.contextConfig.variables.map((variable) => ({
-            label: findOne.title + '(' + variable.description + ')',
+            label: variable.description,
             value: `state.${id}.${variable.name}`,
             name: variable.name,
+            tags: [element.props?.alias as string, findOne.title, '元素'].filter(Boolean),
           }));
         }
         return [];
@@ -31,9 +32,10 @@ export const useContextOptions = () => {
         const findOne = materials.find((material) => material.type === element.type);
         if (findOne?.contextConfig?.methods) {
           return findOne.contextConfig.methods.map((method) => ({
-            label: findOne.title + '(' + method.description + ')',
+            label: method.description,
             value: `method.${id}.${method.name}`,
             name: method.name,
+            tags: [element.props?.alias as string, findOne.title, '方法'].filter(Boolean),
           }));
         }
       })
@@ -48,6 +50,7 @@ export const useContextOptions = () => {
         label: variable.description,
         value: 'global.' + variable.name,
         name: variable.name,
+        tags: ['全局变量'],
       })) || []
     );
   }, [schema, materials]);

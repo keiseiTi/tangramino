@@ -27,7 +27,9 @@ export const OperationPanel = (props: OperationTreeProps): JSX.Element => {
       const element = elements[id];
       if (!element) return null;
       const material = materials.find((m) => m.type === element.type);
-      const title = material?.title || element.type;
+      const title = element.props.alias
+        ? `${element.props.alias} (${material?.title})`
+        : material?.title;
       const methods = material?.contextConfig?.methods || [];
       const children: DataNode[] = methods.map((method) => ({
         key: `${id}::${method.name}`,

@@ -14,9 +14,18 @@ export const ElementSelect = (props: IProps) => {
   const elements = engine.getElements();
 
   const filterSelfElements = useMemo(() => {
-    return elements.filter(
-      (element) => element.id !== activeElement?.id && element.type !== 'basicPage',
-    );
+    return elements
+      .filter((element) => element.id !== activeElement?.id && element.type !== 'basicPage')
+      .map((element) => {
+        const material = materials.find((m) => m.type === element.type);
+        if (element.props.alias) {
+          return {
+            ...element,
+            label: `${element.props.alias} (${material?.title})`,
+          };
+        }
+        return { ...element, label: material?.title };
+      });
   }, [elements, activeElement]);
 
   return (
@@ -26,7 +35,7 @@ export const ElementSelect = (props: IProps) => {
         value={props.value}
         onChange={props.onChange}
         options={filterSelfElements.map((element) => ({
-          label: `${materials.find((material) => material.type === element.type)?.title} (${element.id})`,
+          label: element.label,
           value: element.id,
         }))}
       />

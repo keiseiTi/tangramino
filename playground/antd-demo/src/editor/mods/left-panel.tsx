@@ -8,11 +8,11 @@ import { MaterialPanel } from './material-panel';
 import type { DataNode } from 'antd/es/tree';
 import { isPortal } from '@/utils';
 
-interface RightPanelProps {
+interface LeftPanelProps {
   materialGroups: { title: string; children: Material[] }[];
 }
 
-export const RightPanel = ({ materialGroups }: RightPanelProps): JSX.Element => {
+export const LeftPanel = ({ materialGroups }: LeftPanelProps): JSX.Element => {
   const { schema, materials, engine, activeElement, setActiveElement } = useEditorCore();
   const [hidden, setHidden] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('materials');
@@ -25,7 +25,9 @@ export const RightPanel = ({ materialGroups }: RightPanelProps): JSX.Element => 
       const element = elements[id];
       if (!element) return null;
       const material = materials.find((m) => m.type === element.type);
-      const title = material?.title || element.type;
+      const title = element.props.alias
+        ? `${element.props.alias}（${material?.title || ''}）`
+        : material?.title;
       const parentIds = SchemaUtils.getParents(schema, id);
       const parents: ActiveElement[] = parentIds
         .map((pid) => {
