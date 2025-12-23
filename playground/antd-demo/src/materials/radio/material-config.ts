@@ -6,7 +6,7 @@ const RadioMaterial: Material = {
   Component: Radio,
   title: '单选框',
   type: 'radio',
-  dropTypes: ['container', 'form'],
+  dropTypes: ['form'],
   defaultProps: {
     options: [
       { label: '选项一', value: 'option1' },

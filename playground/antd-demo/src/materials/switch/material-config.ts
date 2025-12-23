@@ -5,7 +5,7 @@ const SwitchMaterial: Material = {
   Component: Switch,
   title: '开关',
   type: 'switch',
-  dropTypes: ['container', 'form'],
+  dropTypes: ['form'],
   contextConfig: {
     variables: [
       {

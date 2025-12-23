@@ -4,7 +4,12 @@ export { Placeholder, type DropPlaceholderProps } from './components/placeholder
 export { Draggable } from './components/draggable';
 export { Movable } from './components/movable';
 export { DragOverlay } from './components/drag-overlay';
-export { useEditorCore, type EditorCore, type ActiveElement } from './hooks/use-editor-core';
+export {
+  useEditorCore,
+  type EditorCore,
+  type ActiveElement,
+  type DragElement,
+} from './hooks/use-editor-core';
 export { usePluginCore, usePluginContext, type PluginCore } from './hooks/use-plugin-core';
 
 export { uniqueId } from './utils';

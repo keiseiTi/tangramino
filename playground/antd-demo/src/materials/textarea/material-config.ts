@@ -6,7 +6,7 @@ const TextareaMaterial: Material = {
   Component: Textarea,
   title: '文本域',
   type: 'textarea',
-  dropTypes: ['container', 'form'],
+  dropTypes: ['form'],
   defaultProps: {
     placeholder: '请输入内容',
     size: 'middle',

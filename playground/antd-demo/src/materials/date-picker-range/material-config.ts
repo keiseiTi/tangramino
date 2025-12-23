@@ -5,7 +5,7 @@ const DatePickerMaterial: Material = {
   Component: DatePickerRange,
   title: '日期范围选择器',
   type: 'datePickerRange',
-  dropTypes: ['container', 'form'],
+  dropTypes: ['form'],
   contextConfig: {
     variables: [
       {

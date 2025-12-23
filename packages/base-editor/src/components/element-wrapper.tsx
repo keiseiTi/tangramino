@@ -50,7 +50,7 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
         parents.forEach((id) => {
           const element = engine.elements[id];
           if (element) {
-            parentElements.push({
+            parentElements.unshift({
               id,
               type: element.type,
               props: element.props,
@@ -60,12 +60,16 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
         });
       }
 
-      callEditorHook('onElementActivate', {
-        id: elementId,
-        type: material.type,
-        props: elementProps,
-        material,
-      }, parentElements);
+      callEditorHook(
+        'onElementActivate',
+        {
+          id: elementId,
+          type: material.type,
+          props: elementProps,
+          material,
+        },
+        parentElements,
+      );
 
       setActiveElement({
         id: elementId,
@@ -119,7 +123,7 @@ export const ElementWrapper = React.forwardRef<HTMLDivElement, EnhancedCompProps
     };
 
     const { onClick, ...propsWithoutClick } = extraCompProps;
-    void onClick
+    void onClick;
 
     return (
       <div ref={setRef} style={wrapperStyle} onClick={onSelectElement}>

@@ -5,7 +5,7 @@ const UploadMaterial: Material = {
   Component: Upload,
   title: '上传',
   type: 'upload',
-  dropTypes: ['container', 'form'],
+  dropTypes: ['form'],
   editorConfig: {
     panels: [
       {

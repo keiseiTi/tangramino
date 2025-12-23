@@ -6,17 +6,20 @@ const SelectMaterial: Material = {
   Component: Select,
   title: '选择器',
   type: 'select',
-  dropTypes: ['container', 'form'],
+  dropTypes: ['form'],
   defaultProps: {
     placeholder: '请选择',
     size: 'middle',
-    options: [{
-      label: '选项一',
-      value: 'option1',
-    }, {
-      label: '选项二',
-      value: 'option2',
-    }],
+    options: [
+      {
+        label: '选项一',
+        value: 'option1',
+      },
+      {
+        label: '选项二',
+        value: 'option2',
+      },
+    ],
   },
   contextConfig: {
     variables: [

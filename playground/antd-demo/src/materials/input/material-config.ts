@@ -5,7 +5,7 @@ const InputMaterial: Material = {
   Component: Input,
   title: '输入框',
   type: 'input',
-  dropTypes: ['container', 'form'],
+  dropTypes: ['form'],
   defaultProps: {
     placeholder: '请输入内容',
   },

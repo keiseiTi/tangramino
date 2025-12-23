@@ -5,14 +5,12 @@ import BasicPage from '@/materials/basic-page/material-config';
 import { materialPlugin } from '@/plugins/material';
 import { formPlugin } from '@/plugins/form';
 import { portalPlugin } from '@/plugins/portal';
-
 import { Operation } from './mods/operation';
 import { Sidebar } from './mods/sidebar';
 import { MainContent } from './mods/main-content';
 import { InsertPositionIndicator } from './mods/insert-position-indicator';
 import { defaultSchema } from '../constant';
 import type { Schema } from '@tangramino/engine';
-import type { Material } from '@/interfaces/material';
 
 const materials = materialGroups.flatMap((group) => group.children).concat(BasicPage);
 
@@ -33,15 +31,15 @@ const getLocalSchema = (): Schema | undefined => {
 const EditorLayout = () => {
   const { dragElement } = useEditorCore();
 
-  let title = '组件';
-
-  if (dragElement) {
-    if (dragElement.hasOwnProperty('material')) {
-      title = (dragElement as any).material.title;
-    } else {
-      title = (dragElement as Material).title;
+  const title = useMemo(() => {
+    if (dragElement) {
+      if ('material' in dragElement) {
+        return dragElement.material.title;
+      } else {
+        return dragElement.title;
+      }
     }
-  }
+  }, [dragElement]);
 
   return (
     <>
@@ -76,7 +74,7 @@ const EditorPage = (props: EditorPageProps) => {
   }, [schema]);
 
   const plugins = useMemo(
-    () => [historyPlugin(), materialPlugin(), formPlugin(), portalPlugin()],
+    () => [historyPlugin({}), materialPlugin(), formPlugin(), portalPlugin()],
     [],
   );
 

@@ -2,7 +2,10 @@ export const defaultSchema = {
   elements: {
     basicPage: {
       type: 'basicPage',
-      props: {},
+      props: {
+        display: 'flow',
+        flexDirection: 'column',
+      },
     },
   },
   layout: {
