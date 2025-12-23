@@ -12,11 +12,13 @@ type FormItemElementProps = {
   name?: string;
   required?: boolean;
   tooltip?: string;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 };
 
-const withForm = (Component: React.ComponentType<any>) => {
+const withForm = (Component: React.ComponentType<any>, materialType: string) => {
+  const isRadioOrCheckbox = materialType === 'radio' || materialType === 'checkbox';
   return React.forwardRef<HTMLDivElement, FormItemElementProps>((props, ref) => {
-    const { label, name, required, tooltip } = props;
+    const { label, name, required, tooltip, ...restProps } = props;
     const elementId = props['data-element-id'];
 
     const { schema } = useEditorCore();
@@ -30,8 +32,14 @@ const withForm = (Component: React.ComponentType<any>) => {
 
     if (isForm) {
       return (
-        <FormItem label={label} name={name} required={required} tooltip={tooltip}>
-          <Component {...props} />
+        <FormItem
+          label={label}
+          name={name}
+          required={required}
+          tooltip={tooltip}
+          valuePropName={isRadioOrCheckbox ? 'checked' : 'value'}
+        >
+          <Component {...restProps} />
         </FormItem>
       );
     }
@@ -44,11 +52,10 @@ const withForm = (Component: React.ComponentType<any>) => {
  */
 export const formPlugin = definePlugin<EditorPlugin>(() => ({
   id: 'form',
-
   transformMaterials: (materials) => {
     return materials.map((material) => ({
       ...material,
-      Component: withForm(material.Component),
+      Component: withForm(material.Component, material.type),
     }));
   },
 

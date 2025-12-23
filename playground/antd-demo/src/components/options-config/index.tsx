@@ -267,7 +267,7 @@ export const OptionsConfig: React.FC<OptionsConfigProps> = (props) => {
       },
       render: (text, record) => (
         <Checkbox
-          value={text}
+          checked={text}
           onChange={(e) => handleChange(record, 'defaultValue', e.target.checked)}
         />
       ),

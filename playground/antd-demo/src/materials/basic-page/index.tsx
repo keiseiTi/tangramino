@@ -11,7 +11,16 @@ interface BasicPageProps extends MaterialComponentProps {
 }
 
 export const BasicPage = React.forwardRef<HTMLDivElement>((props: BasicPageProps, ref) => {
-  const { children, margin, padding, tg_dropPlaceholder, display, flexDirection, ...rest } = props;
+  const {
+    children,
+    margin,
+    padding,
+    tg_dropPlaceholder,
+    tg_setContextValues,
+    display,
+    flexDirection,
+    ...rest
+  } = props;
 
   const style: React.CSSProperties = {
     margin,

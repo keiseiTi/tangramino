@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Input as AntdInput, type InputProps } from 'antd';
+import type { MaterialComponentProps } from '@tangramino/base-editor';
 
-export type IProps = InputProps & {
-  value?: string;
-};
+export type IProps = InputProps &
+  MaterialComponentProps & {
+    value?: string;
+  };
 
 export const Input = (props: IProps) => {
-  const { onChange, value, ...restProps } = props;
+  const { onChange, value, tg_setContextValues, ...restProps } = props;
   const [innerValue, setInnerValue] = useState<string>();
 
   useEffect(() => {
@@ -18,7 +20,5 @@ export const Input = (props: IProps) => {
     onChange?.(e);
   };
 
-  return (
-    <AntdInput value={innerValue} onChange={handleChange} {...restProps} />
-  );
+  return <AntdInput value={innerValue} onChange={handleChange} {...restProps} />;
 };

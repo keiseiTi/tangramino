@@ -50,6 +50,7 @@ export const AttributePanel = () => {
   useEffect(() => {
     if (activeElement) {
       const state = engine!.getState(activeElement.id);
+      form.resetFields();
       form.setFieldsValue({
         elementId: activeElement.id,
         ...state,
@@ -210,18 +211,22 @@ export const AttributePanel = () => {
     <div className='w-70 border-l border-gray-200 bg-white flex flex-col shadow-sm'>
       {activeElement ? (
         <>
-          <div className='border-b border-gray-200 h-9.5 px-3 text-sm flex items-center text-stone-600 gap-1'>
+          <div className='border-b border-gray-200 h-9.5 px-3 text-sm flex items-center text-stone-600 gap-1 overflow-x-auto overflow-y-hidden'>
             {activeElement.parents?.map((element) => (
               <div
                 key={element.id}
-                className='flex items-center cursor-pointer hover:text-blue-500 transition-colors'
+                className='flex items-center cursor-pointer hover:text-blue-500 transition-colors shrink-0'
                 onClick={() => selectedParentElement(element)}
               >
-                <span>{element.material.title}</span>
+                <span className='max-w-24 truncate' title={element.material.title}>
+                  {element.material.title}
+                </span>
                 <RightOutlined className='mx-1 text-xs' color='#79716b' />
               </div>
             ))}
-            <span className='cursor-pointer'>{material?.title}</span>
+            <span className='cursor-pointer shrink-0 ' title={material?.title}>
+              {material?.title}
+            </span>
           </div>
           <div className='flex-1 overflow-auto p-2'>
             {tabsItems.length > 0 && (

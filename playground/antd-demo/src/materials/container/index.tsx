@@ -11,11 +11,21 @@ export interface IProps extends MaterialComponentProps {
 
 // 容器组件必须使用 React.forwardRef 以支持拖放功能
 export const Container = React.forwardRef<HTMLDivElement>((props: IProps, ref) => {
-  const { children, margin, padding, heightConfig, height, tg_dropPlaceholder, ...rest } = props;
+  const {
+    children,
+    margin,
+    padding,
+    heightConfig,
+    height,
+    tg_dropPlaceholder,
+    tg_setContextValues,
+    ...rest
+  } = props;
 
   const style: React.CSSProperties = {
     margin,
     padding,
+    overflow: 'auto',
   };
 
   if (heightConfig === 'auto') {
