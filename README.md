@@ -2,16 +2,20 @@
 
 English | [简体中文](./README.zh-CN.md)
 
-A modular, schema-driven visual editor framework for building low-code platforms, drag-and-drop interfaces, and flow editors. Tangramino separates the core logic engine from the view layer, providing maximum flexibility and extensibility.
+<p align="center">
+  <strong>A flexible, schema-driven low-code framework for building visual editors and workflow designers.</strong>
+</p>
+
+Tangramino provides a complete solution for creating low-code platforms, from schema management to visual editing. With its framework-agnostic engine and modular architecture, you can build drag-and-drop page builders, flow designers, and custom low-code tools with ease.
 
 ## ✨ Key Features
 
-- 🎯 **Schema-Driven Architecture**: Define UI structure and logic using powerful JSONSchema format
-- 🔌 **Framework Agnostic Core**: Engine layer is completely decoupled from UI frameworks, theoretically adaptable to React, Vue, Svelte, and more
-- 🎨 **Visual Editors**: Ready-to-use drag-and-drop and flow diagram editors
-- 🔧 **Highly Extensible**: Plugin system and custom component support
-- 📦 **Modular Design**: Use only what you need - from engine to complete editors
-- 🛡️ **Type Safety**: Written in TypeScript with comprehensive type definitions
+- 🎯 **Schema-Driven**: JSONSchema-based architecture for defining UI structure, behavior, and data flow
+- 🔌 **Framework Agnostic**: Core engine is UI-framework independent, with official React bindings provided
+- 🎨 **Visual Editing**: Production-ready drag-and-drop editor and flow diagram designer
+- 🔧 **Plugin System**: Extensible architecture supporting custom plugins and components
+- 📦 **Modular**: Composable packages - use the engine alone or build complete editing experiences
+- 🛡️ **Type-Safe**: Full TypeScript support with comprehensive type definitions
 
 ## 📦 Core Packages
 
@@ -61,75 +65,64 @@ Tangramino follows a clean layered architecture that promotes separation of conc
 ### Prerequisites
 
 - Node.js >= 16
-- npm, yarn, or pnpm
+- Package manager: npm, yarn, or pnpm
 
 ### Installation
 
-**For a complete drag-and-drop editor:**
+Choose the packages based on your use case:
+
+**Building a drag-and-drop page editor:**
 
 ```bash
 npm install @tangramino/base-editor
-# or
-pnpm add @tangramino/base-editor
 ```
 
-**For a flow diagram editor:**
+**Building a workflow/flow editor:**
 
 ```bash
 npm install @tangramino/flow-editor
-# or
-pnpm add @tangramino/flow-editor
 ```
 
-**For custom integrations:**
+**Custom implementation (engine + view layer):**
 
 ```bash
-# Framework-agnostic engine only
+# Schema engine (framework-agnostic)
 npm install @tangramino/engine
 
-# React bindings
+# React view bindings
 npm install @tangramino/react
 ```
 
 ### Basic Drag-and-Drop Editor
+
+Create a minimal low-code editor in under 30 lines:
 
 ```tsx
 import React from 'react';
 import { EditorProvider, CanvasEditor } from '@tangramino/base-editor';
 import '@tangramino/base-editor/style';
 
-// 1. Define your materials (components available in the editor)
+// Define your component materials
 const materials = [
   {
     type: 'button',
     title: 'Button',
     Component: ({ children, ...props }) => <button {...props}>{children}</button>,
-    props: { 
-      children: 'Click Me',
-      type: 'primary'
-    }
+    props: { children: 'Click Me' }
   },
   {
     type: 'text',
     title: 'Text',
     Component: ({ content }) => <p>{content}</p>,
-    props: { 
-      content: 'Hello World' 
-    }
+    props: { content: 'Hello World' }
   }
 ];
 
-// 2. Create the Editor
 function App() {
   return (
     <EditorProvider materials={materials}>
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <header style={{ padding: '16px', background: '#f0f0f0' }}>
-          <h1>My Low-Code Editor</h1>
-        </header>
-        <div style={{ flex: 1, padding: '20px' }}>
-          <CanvasEditor />
-        </div>
+      <div style={{ height: '100vh' }}>
+        <CanvasEditor />
       </div>
     </EditorProvider>
   );
@@ -138,13 +131,14 @@ function App() {
 export default App;
 ```
 
-### Basic Schema Rendering
+### Render-Only Mode
 
-If you only need to render a schema without editing:
+Use `@tangramino/react` to render schemas without editing capabilities:
 
 ```tsx
 import React from 'react';
 import { View } from '@tangramino/react';
+import { createEngine } from '@tangramino/engine';
 
 const schema = {
   elements: {
@@ -156,62 +150,60 @@ const schema = {
   },
   layout: {
     root: 'root',
-    structure: { 
-      'root': ['btn-1'] 
-    }
+    structure: { root: ['btn-1'] }
   }
 };
 
 const materials = [
-  {
-    type: 'button',
-    Component: (props) => <button {...props} />
-  }
+  { type: 'button', Component: (props) => <button {...props} /> }
 ];
 
 function App() {
-  return <View schema={schema} materials={materials} />;
+  const engine = React.useMemo(() => createEngine(schema), []);
+  return <View engine={engine} components={{ button: materials[0].Component }} />;
 }
 ```
 
-## 💡 Examples
+## 💡 Examples & Demos
 
-### Complete Low-Code Editor
+### Full-Featured Low-Code Editor
 
-Check out our comprehensive demo in [`playground/antd-demo`](./playground/antd-demo) which includes:
+Explore our production-ready demo at [`playground/antd-demo`](./playground/antd-demo):
 
-- 🎨 Material panel with drag-and-drop
-- 🖼️ Visual canvas with element selection
-- ⚙️ Property configuration panel
-- 🔄 Undo/redo support
-- 💾 Schema export/import
-- 📱 Preview mode
-- 🎯 Integration with Ant Design components
+**Features:**
+- 🎨 **Material Panel**: Drag-and-drop component library with 25+ Ant Design components
+- 🖼️ **Visual Canvas**: Real-time editing with element selection and positioning
+- ⚙️ **Property Panel**: Dynamic property configuration for selected elements
+- 🔄 **History**: Full undo/redo support
+- 💾 **Persistence**: Schema import/export (JSON)
+- 📱 **Preview**: Multi-device viewport simulation
+- 🧩 **Logic Designer**: Visual workflow editor for complex interactions
 
-**Run the demo:**
+**Run locally:**
 
 ```bash
 git clone https://github.com/keiseiTi/tangramino.git
 cd tangramino
 pnpm install
-pnpm dev:antd
+pnpm dev:antd  # Open http://localhost:5173
 ```
 
-### Flow Editor
+### Flow Editor Example
 
 ```tsx
+import React from 'react';
 import { FlowEditor, EditorRenderer } from '@tangramino/flow-editor';
 import '@tangramino/flow-editor/index.css';
 
 const flowNodes = [
   {
     type: 'start',
-    title: 'Start Node',
+    title: 'Start',
     nodeMeta: {
       isStart: true,
       defaultPorts: [{ type: 'output' }]
     },
-    renderNode: ({ data }) => <div className="node-start">{data.title}</div>
+    renderNode: ({ data }) => <div>{data.title}</div>
   }
 ];
 
@@ -219,11 +211,7 @@ function FlowApp() {
   const [flowData, setFlowData] = React.useState({ nodes: [], edges: [] });
 
   return (
-    <FlowEditor 
-      nodes={flowNodes} 
-      value={flowData} 
-      onChange={setFlowData}
-    >
+    <FlowEditor nodes={flowNodes} value={flowData} onChange={setFlowData}>
       <div style={{ height: '100vh' }}>
         <EditorRenderer />
       </div>
@@ -234,12 +222,13 @@ function FlowApp() {
 
 ## 📖 Documentation
 
-Visit our comprehensive [documentation site](https://keiseiti.github.io/tangramino/) for:
+Comprehensive guides and API references are available at [keiseiti.github.io/tangramino](https://keiseiti.github.io/tangramino/)
 
-- [Quick Start Guide](https://keiseiti.github.io/tangramino/guide/start/introduce.html)
-- [Core Concepts](https://keiseiti.github.io/tangramino/guide/concept/schema.html)
-- [Advanced Topics](https://keiseiti.github.io/tangramino/guide/advanced/custom-editor.html)
-- [Plugin Development](https://keiseiti.github.io/tangramino/guide/plugin.html)
+**Essential Reading:**
+- **[Getting Started](https://keiseiti.github.io/tangramino/guide/start/introduce.html)** - Installation and first steps
+- **[Schema Concepts](https://keiseiti.github.io/tangramino/guide/concept/schema.html)** - Understanding the data structure
+- **[Custom Editors](https://keiseiti.github.io/tangramino/guide/advanced/custom-editor.html)** - Building tailored editing experiences
+- **[Plugin Development](https://keiseiti.github.io/tangramino/guide/plugin.html)** - Extending functionality
 
 ## 🎯 Use Cases
 

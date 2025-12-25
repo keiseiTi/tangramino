@@ -2,16 +2,20 @@
 
 [English](./README.md) | 简体中文
 
-Tangramino 是一个模块化、Schema 驱动的可视化编辑器框架，可用于构建低代码平台、拖拽界面和流程编辑器等。Tangramino 将核心逻辑引擎与视图层分离，提供最大的灵活性和可扩展性。
+<p align="center">
+  <strong>灵活的 Schema 驱动低代码框架，用于构建可视化编辑器和工作流设计器。</strong>
+</p>
+
+Tangramino 为构建低代码平台提供了完整的解决方案，从 Schema 管理到可视化编辑。凭借其框架无关的引擎和模块化架构，您可以轻松构建拖拽页面搭建器、流程设计器和定制化低代码工具。
 
 ## ✨ 核心特性
 
-- 🎯 **Schema 驱动架构**：使用强大的 JSONSchema 格式定义 UI 结构和逻辑
-- 🔌 **框架无关核心**：引擎层完全与 UI 框架解耦，理论上可适配 React、 Vue、Svelte 等框架
-- 🎨 **可视化编辑器**：开箱即用的拖拽和流程图编辑器
-- 🔧 **高度可扩展**：插件系统和自定义组件支持
-- 📦 **模块化设计**：按需使用 - 从引擎到完整编辑器
-- 🛡️ **类型安全**：使用 TypeScript 编写，提供完整的类型定义
+- 🎯 **Schema 驱动**：基于 JSONSchema 的架构，用于定义 UI 结构、行为和数据流
+- 🔌 **框架无关**：核心引擎与 UI 框架无关，官方提供 React 绑定
+- 🎨 **可视化编辑**：生产级拖拽编辑器和流程图设计器
+- 🔧 **插件系统**：可扩展的架构，支持自定义插件和组件
+- 📦 **模块化**：可组合的包 - 单独使用引擎或构建完整的编辑体验
+- 🛡️ **类型安全**：完整的 TypeScript 支持和类型定义
 
 ## 📦 核心包
 
@@ -61,75 +65,64 @@ Tangramino 采用清晰的分层架构，促进关注点分离：
 ### 环境要求
 
 - Node.js >= 16
-- npm 或 yarn 或 pnpm
+- 包管理器：npm、yarn 或 pnpm
 
 ### 安装
 
-**完整的拖拽编辑器：**
+根据您的使用场景选择包：
+
+**构建拖拽页面编辑器：**
 
 ```bash
 npm install @tangramino/base-editor
-# 或
-pnpm add @tangramino/base-editor
 ```
 
-**流程图编辑器：**
+**构建工作流/流程编辑器：**
 
 ```bash
 npm install @tangramino/flow-editor
-# 或
-pnpm add @tangramino/flow-editor
 ```
 
-**自定义集成：**
+**自定义实现（引擎 + 视图层）：**
 
 ```bash
-# 仅框架无关的引擎
+# Schema 引擎（框架无关）
 npm install @tangramino/engine
 
-# React 绑定
+# React 视图绑定
 npm install @tangramino/react
 ```
 
 ### 基础拖拽编辑器
+
+不到 30 行代码创建一个最小化的低代码编辑器：
 
 ```tsx
 import React from 'react';
 import { EditorProvider, CanvasEditor } from '@tangramino/base-editor';
 import '@tangramino/base-editor/style';
 
-// 1. 定义物料（编辑器中可用的组件）
+// 定义组件物料
 const materials = [
   {
     type: 'button',
     title: '按钮',
     Component: ({ children, ...props }) => <button {...props}>{children}</button>,
-    props: { 
-      children: '点击我',
-      type: 'primary'
-    }
+    props: { children: '点击我' }
   },
   {
     type: 'text',
     title: '文本',
     Component: ({ content }) => <p>{content}</p>,
-    props: { 
-      content: 'Hello World' 
-    }
+    props: { content: 'Hello World' }
   }
 ];
 
-// 2. 创建编辑器
 function App() {
   return (
     <EditorProvider materials={materials}>
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <header style={{ padding: '16px', background: '#f0f0f0' }}>
-          <h1>我的低代码编辑器</h1>
-        </header>
-        <div style={{ flex: 1, padding: '20px' }}>
-          <CanvasEditor />
-        </div>
+      <div style={{ height: '100vh' }}>
+        <CanvasEditor />
       </div>
     </EditorProvider>
   );
@@ -138,13 +131,14 @@ function App() {
 export default App;
 ```
 
-### 基础 Schema 渲染
+### 纯渲染模式
 
-如果只需要渲染 Schema 而不需要编辑功能：
+使用 `@tangramino/react` 渲染 Schema，无需编辑功能：
 
 ```tsx
 import React from 'react';
 import { View } from '@tangramino/react';
+import { createEngine } from '@tangramino/engine';
 
 const schema = {
   elements: {
@@ -156,45 +150,42 @@ const schema = {
   },
   layout: {
     root: 'root',
-    structure: { 
-      'root': ['btn-1'] 
-    }
+    structure: { root: ['btn-1'] }
   }
 };
 
 const materials = [
-  {
-    type: 'button',
-    Component: (props) => <button {...props} />
-  }
+  { type: 'button', Component: (props) => <button {...props} /> }
 ];
 
 function App() {
-  return <View schema={schema} materials={materials} />;
+  const engine = React.useMemo(() => createEngine(schema), []);
+  return <View engine={engine} components={{ button: materials[0].Component }} />;
 }
 ```
 
-## 💡 示例
+## 💡 示例与演示
 
-### 完整的低代码编辑器
+### 全功能低代码编辑器
 
-查看我们在 [`playground/antd-demo`](./playground/antd-demo) 中的综合示例，包含：
+查看 [`playground/antd-demo`](./playground/antd-demo) 中的生产级演示：
 
-- 🎨 支持拖拽的物料面板
-- 🖼️ 支持元素选择的可视化画布
-- ⚙️ 属性配置面板
-- 🔄 撤销/重做支持
-- 💾 Schema 导出/导入
-- 📱 预览模式
-- 🎯 与 Ant Design 组件集成
+**功能亮点：**
+- 🎨 **物料面板**：拖拽组件库，包含 25+ Ant Design 组件
+- 🖼️ **可视化画布**：实时编辑，支持元素选择和定位
+- ⚙️ **属性面板**：选中元素的动态属性配置
+- 🔄 **历史记录**：完整的撤销/重做支持
+- 💾 **持久化**：Schema 导入/导出（JSON）
+- 📱 **预览**：多设备视口模拟
+- 🧩 **逻辑设计器**：可视化工作流编辑器，用于复杂交互
 
-**运行示例：**
+**本地运行：**
 
 ```bash
 git clone https://github.com/keiseiTi/tangramino.git
 cd tangramino
 pnpm install
-pnpm dev:antd
+pnpm dev:antd  # 打开 http://localhost:5173
 ```
 
 ### 流程编辑器
@@ -234,12 +225,13 @@ function FlowApp() {
 
 ## 📖 文档
 
-访问我们的综合 [文档站点](https://keiseiti.github.io/tangramino/) 获取：
+详尽的指南和 API 参考文档请访问 [keiseiti.github.io/tangramino](https://keiseiti.github.io/tangramino/)
 
-- [快速开始指南](https://keiseiti.github.io/tangramino/guide/start/introduce.html)
-- [核心概念](https://keiseiti.github.io/tangramino/guide/concept/schema.html)
-- [进阶主题](https://keiseiti.github.io/tangramino/guide/advanced/custom-editor.html)
-- [插件开发](https://keiseiti.github.io/tangramino/guide/plugin.html)
+**必读文档：**
+- **[快速开始](https://keiseiti.github.io/tangramino/guide/start/introduce.html)** - 安装和第一步
+- **[Schema 概念](https://keiseiti.github.io/tangramino/guide/concept/schema.html)** - 理解数据结构
+- **[自定义编辑器](https://keiseiti.github.io/tangramino/guide/advanced/custom-editor.html)** - 构建定制化编辑体验
+- **[插件开发](https://keiseiti.github.io/tangramino/guide/plugin.html)** - 扩展功能
 
 ## 🎯 应用场景
 
