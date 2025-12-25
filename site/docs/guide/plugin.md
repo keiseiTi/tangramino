@@ -1,56 +1,112 @@
 # 插件开发指南
 
-Tangramino 提供了强大的插件系统，允许开发者通过插件机制扩展编辑器的功能。插件可以介入编辑器的生命周期、修改 Schema、注入自定义逻辑等。
+Tangramino 提供了强大的插件系统，允许开发者通过插件机制扩展编辑器的功能。插件可以介入编辑器的生命周期、修改 Schema、转换物料、拦截操作等。
 
-## 插件接口定义
+> 完整的插件 API 参考请查看 [插件系统 API](/api/plugin)
 
-插件是一个符合 `Plugin` 接口的对象，主要包含 `id` 和一系列钩子函数。
+## 快速入门
+
+### 使用 definePlugin 创建插件
+
+推荐使用 `definePlugin` 工厂函数创建类型安全的插件：
 
 ```typescript
-export interface Plugin {
-  /** 插件唯一标识 */
-  id: string;
-  
-  /** Schema 转换钩子 */
-  transformSchema?: {
-    // 插入元素前
-    beforeInsertElement?: (schema: Schema, targetId: string, insertElement: InsertElement) => void;
-    // 插入元素后
-    afterInsertElement?: (nextSchema: Schema) => void;
-    // 移动元素前
-    beforeMoveElement?: (schema: Schema, sourceId: string, targetId: string) => void;
-    // 移动元素后
-    afterMoveElement?: (nextSchema: Schema) => void;
-    // 删除元素前
-    beforeRemoveElement?: (schema: Schema, targetId: string) => void;
-    // 删除元素后
-    afterRemoveElement?: (nextSchema: Schema) => void;
-    // 设置属性前
-    beforeSetElementProps?: (schema: Schema, targetId: string, props: Record<string, unknown>) => void;
-    // 设置属性后
-    afterSetElementProps?: (nextSchema: Schema) => void;
-  };
+import { definePlugin } from '@tangramino/base-editor';
 
-  /** 编辑器上下文钩子 */
-  editorContext?: {
-    // 物料初始化前
-    beforeInitMaterials?: (materials: Material[]) => void;
-    // 物料插入后
-    afterInsertMaterial?: (sourceElement: Element & { material: Material }, targetElement: Element) => void;
-    // 激活元素时
-    activateElement?: (element: Element, parentElements: Element[]) => void;
-  };
+const myPlugin = definePlugin(() => ({
+  id: 'my-plugin',
+  
+  onInit(ctx) {
+    console.log('插件初始化');
+    // 返回清理函数（可选）
+    return () => console.log('插件清理');
+  },
+  
+  onDispose(ctx) {
+    console.log('插件销毁');
+  },
+}));
+```
+
+### 带配置的插件
+
+```typescript
+interface MyPluginOptions {
+  debug?: boolean;
+  maxItems?: number;
+}
+
+const configPlugin = definePlugin<EditorPlugin, MyPluginOptions>((options) => ({
+  id: 'config-plugin',
+  
+  onInit(ctx) {
+    if (options.debug) {
+      console.log('Debug mode enabled');
+    }
+  },
+}));
+
+// 使用
+const plugins = [configPlugin({ debug: true, maxItems: 10 })];
+```
+
+## 插件接口
+
+插件是一个符合 `EditorPlugin` 接口的对象：
+
+```typescript
+interface EditorPlugin {
+  // 元数据
+  id: string;                    // 唯一标识
+  dependencies?: string[];       // 依赖的插件
+  priority?: number;             // 优先级（越小越先执行）
+  
+  // 生命周期
+  onInit?: (ctx: PluginContext) => (() => void) | void;
+  onDispose?: (ctx: PluginContext) => void;
+  
+  // 物料转换
+  transformMaterials?: (materials: Material[]) => Material[];
+  
+  // Schema 操作钩子
+  onBeforeInsert?: (schema, targetId, element) => boolean | void;
+  onAfterInsert?: (schema, insertedId) => void;
+  onBeforeMove?: (schema, sourceId, targetId) => boolean | void;
+  onAfterMove?: (schema, movedId) => void;
+  onBeforeRemove?: (schema, targetId) => boolean | void;
+  onAfterRemove?: (schema, removedId) => void;
+  onBeforeUpdateProps?: (schema, targetId, props) => boolean | void;
+  onAfterUpdateProps?: (schema, targetId) => void;
+  
+  // 编辑器钩子
+  onElementActivate?: (element, parentChain) => void;
+  onElementDeactivate?: (element) => void;
+  onCanvasUpdated?: (ctx) => void;
 }
 ```
 
-## 开发一个简单的插件
+## 插件上下文
+
+插件通过 `PluginContext` 访问编辑器能力：
+
+```typescript
+interface PluginContext {
+  engine: Engine;                           // 引擎实例
+  getSchema: () => Schema;                  // 获取当前 Schema
+  setSchema: (schema: Schema) => void;      // 更新 Schema
+  getMaterials: () => Material[];           // 获取物料列表
+  getPlugin: <T>(id: string) => T | undefined;  // 获取其他插件
+}
+```
+
+## 实战示例
 
 ### 示例 1：表单插件
 
-假设我们需要为特定的组件（如输入框）自动包裹 `Form.Item`，并根据上下文动态添加配置面板。
+为表单内的组件自动包裹 `Form.Item`：
 
 ```typescript
-import { Plugin } from '@tangramino/base-editor';
+import { definePlugin, useEditorCore } from '@tangramino/base-editor';
 import { SchemaUtils } from '@tangramino/engine';
 import { Form } from 'antd';
 
@@ -63,14 +119,13 @@ const withForm = (Component: React.ComponentType<any>) => {
     const elementId = props['data-element-id'];
     const { schema } = useEditorCore();
 
-    // 判断父级是否为 form
-    const isForm = useMemo(() => {
+    const isInForm = useMemo(() => {
       const parents = SchemaUtils.getParents(schema, elementId);
-      const preParent = parents[0];
-      return schema.elements[preParent]?.type === 'form';
-    }, [schema]);
+      const parentId = parents[0];
+      return schema.elements[parentId]?.type === 'form';
+    }, [schema, elementId]);
 
-    if (isForm) {
+    if (isInForm) {
       return (
         <FormItem label={label} name={name} required={required} tooltip={tooltip}>
           <Component {...props} />
@@ -81,91 +136,145 @@ const withForm = (Component: React.ComponentType<any>) => {
   };
 };
 
-export const formPlugin = (): Plugin => ({
+export const formPlugin = definePlugin(() => ({
   id: 'form',
-  editorContext: {
-    // 在物料初始化前，对组件进行包装
-    beforeInitMaterials: (materials) => {
-      materials.forEach((material) => {
-        const Component = material.Component;
-        material.Component = withForm(Component);
-      });
-    },
-    // 激活元素时，动态添加配置面板
-    activateElement: (element, parentElements) => {
-      if (parentElements.length) {
-        const parentElement = parentElements[parentElements.length - 1];
-        if (parentElement.type === 'form') {
-          const panels = element.material.editorConfig?.panels || [];
-          const hasPanel = panels.some((panel) => panel.title === '表单项');
-          if (!hasPanel) {
-            // 动态插入配置面板
-            panels.splice(1, 0, formConfigPanel);
-          }
-        }
-      }
-    },
+  
+  transformMaterials(materials) {
+    return materials.map(material => ({
+      ...material,
+      Component: withForm(material.Component),
+    }));
   },
-});
+  
+  onElementActivate(element, parentElements) {
+    // 当元素在表单中时，动态添加表单项配置
+    const isInForm = parentElements.some(p => p.type === 'form');
+    if (isInForm) {
+      // 动态注入表单配置面板...
+    }
+  },
+}));
 ```
 
 ### 示例 2：物料增强插件
 
-该插件为所有物料自动添加初始化方法和通用属性。
+为所有物料自动添加通用属性：
 
 ```typescript
-import { Plugin } from '@tangramino/base-editor';
+import { definePlugin } from '@tangramino/base-editor';
 
-export const materialPlugin = (): Plugin => ({
+export const materialPlugin = definePlugin(() => ({
   id: 'material',
-  editorContext: {
-    beforeInitMaterials: (materials) => {
-      materials.forEach((material) => {
-        // 注入默认方法
-        const methods = material.contextConfig?.methods || [];
-        methods.unshift({
-          name: 'init',
-          description: '初始化',
-        });
-        material.contextConfig = {
-          ...material.contextConfig,
-          methods,
-        };
+  
+  transformMaterials(materials) {
+    return materials.map(material => {
+      // 注入默认方法
+      const methods = material.contextConfig?.methods || [];
+      methods.unshift({ name: 'init', description: '初始化' });
 
-        // 注入通用属性配置
-        const attrPanel = material?.editorConfig?.panels?.find((panel) => panel.title === '属性');
-        if (attrPanel) {
-          attrPanel.configs?.unshift({
-            label: '别名',
-            field: 'alias',
-            required: true,
-            uiType: 'input',
-          });
-        }
-      });
-    },
+      // 注入通用属性配置
+      const panels = material.editorConfig?.panels || [];
+      const attrPanel = panels.find(p => p.title === '属性');
+      if (attrPanel?.configs) {
+        attrPanel.configs.unshift({
+          label: '别名',
+          field: 'alias',
+          required: true,
+          uiType: 'input',
+        });
+      }
+
+      return {
+        ...material,
+        contextConfig: { ...material.contextConfig, methods },
+      };
+    });
   },
-});
+}));
+```
+
+### 示例 3：验证插件
+
+拦截操作并进行验证：
+
+```typescript
+export const validationPlugin = definePlugin(() => ({
+  id: 'validation',
+  
+  onBeforeRemove(schema, targetId) {
+    // 禁止删除根元素
+    if (targetId === schema.layout.root) {
+      console.warn('不能删除根元素');
+      return false;
+    }
+    return true;
+  },
+  
+  onBeforeInsert(schema, targetId, element) {
+    // 限制嵌套层级
+    const parents = SchemaUtils.getParents(schema, targetId);
+    if (parents.length >= 10) {
+      console.warn('嵌套层级不能超过 10 层');
+      return false;
+    }
+    return true;
+  },
+}));
+```
+
+## 内置插件
+
+### historyPlugin - 历史记录
+
+提供撤销/重做功能：
+
+```typescript
+import { historyPlugin, type HistoryPlugin } from '@tangramino/base-editor';
+
+const plugins = [historyPlugin({ limit: 50 })];
+
+// 在组件中使用
+const history = ctx.getPlugin<HistoryPlugin>('history');
+history?.undo();
+history?.redo();
+```
+
+### modePlugin - 模式切换
+
+设置编辑/渲染模式：
+
+```typescript
+import { modePlugin } from '@tangramino/base-editor';
+
+const plugins = [modePlugin('edit')]; // 或 'render'
 ```
 
 ## 使用插件
 
-在 `EditorProvider` 中注册插件：
+在 `EditorProvider` 中注册：
 
 ```tsx
 import { EditorProvider } from '@tangramino/base-editor';
-import { formPlugin } from './plugins/form';
-import { materialPlugin } from './plugins/material';
+import { formPlugin, materialPlugin, validationPlugin, historyPlugin } from './plugins';
 
-const EditorPage = () => {
-  return (
-    <EditorProvider
-      materials={materials}
-      schema={schema}
-      plugins={[formPlugin(), materialPlugin()]}
-    >
-      {/* 编辑器内容 */}
-    </EditorProvider>
-  );
-};
+const Editor = () => (
+  <EditorProvider
+    materials={materials}
+    schema={schema}
+    plugins={[
+      historyPlugin(),
+      formPlugin(),
+      materialPlugin(),
+      validationPlugin(),
+    ]}
+  >
+    {/* 编辑器内容 */}
+  </EditorProvider>
+);
 ```
+
+## 下一步
+
+- 查看完整的 [插件 API 参考](/api/plugin)
+- 了解 [内置插件的详细用法](/api/plugin#内置插件)
+- 学习如何 [创建自定义插件](/api/plugin#创建自定义插件)

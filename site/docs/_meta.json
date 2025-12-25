@@ -5,6 +5,11 @@
     "activeMatch": "/guide/"
   },
   {
+    "text": "API",
+    "link": "/api/engine",
+    "activeMatch": "/api/"
+  },
+  {
     "text": "演练场",
     "link": "https://keiseiti.github.io/tangramino/playground",
     "activeMatch": "/playground/"
