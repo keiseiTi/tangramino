@@ -1,119 +1,150 @@
 # 物料体系
 
-物料（Material）是构建页面的积木。在 Tangramino 中，物料不仅仅是一个 React 组件，它还包含了该组件在编辑器中表现的所有元信息。
+物料（Material）是构成页面的基本单元。在 Tangramino 中，物料不仅包含 React 组件本身，还包含该组件在编辑器中的元数据、属性配置面板定义以及逻辑上下文配置。
 
-## 物料定义
-
-一个标准的物料定义如下：
+## Material 接口
 
 ```typescript
-export interface Material<P = any> {
-  /** 物料类型 (唯一标识) */
+export interface Material {
+  /** 唯一标识符 */
   type: string;
 
-  /** 物料标题 */
+  /** 物料展示名称 */
   title: string;
 
-  /** 物料图标 (ReactNode) */
+  /** 运行时渲染的 React 组件 */
+  Component: React.ComponentType<any>;
+
+  /** 物料图标 (可选) */
   icon?: React.ReactNode;
 
   /** 
-   * 运行时渲染组件 
-   * 这是在最终页面中实际渲染的组件
-   */
-  Component: React.ComponentType<P>;
-
-  /** 
-   * 初始属性 
-   * 拖入画布时默认携带的 props
-   */
-  defaultProps?: Partial<P>;
-
-  /** 
-   * 是否为容器
-   * 容器可以包含其他元素
-   */
-  isContainer?: boolean;
-
-  /** 
-   * 是否为块级元素
-   * Block 元素只能在上下方插入，非 Block 元素可以左右插入
-   */
-  isBlock?: boolean;
-
-  /** 
-   * 允许放入的容器类型
-   * 如果设置，只能拖入指定类型的容器中
+   * 允许拖入的容器类型列表
+   * 若未定义，则允许拖入任何容器
    */
   dropTypes?: string[];
 
-  /** 
-   * 编辑器配置 
-   * 定义了该物料在编辑器中的属性面板配置
-   */
-  editorConfig?: EditorConfig;
+  /** 默认属性值 */
+  defaultProps?: Record<string, unknown>;
+
+  /** 是否为容器组件 (可包含子元素) */
+  isContainer?: boolean;
 
   /** 
-   * 上下文配置 
-   * 定义物料的变量和方法，用于流程编辑
+   * 是否为块级元素 
+   * 影响拖拽时的占位表现：
+   * - true: 只能在上下方插入
+   * - false: 可在左右插入
    */
+  isBlock?: boolean;
+
+  /** 编辑器属性面板配置 */
+  editorConfig?: EditorConfig;
+
+  /** 逻辑上下文配置 (用于流程编排) */
   contextConfig?: ContextConfig;
 }
 ```
 
-## 物料分类
+## 属性面板配置 (EditorConfig)
 
-在实际项目中，我们通常会将物料进行分类管理，例如：
+通过 `editorConfig` 可以自动生成编辑器右侧的属性配置面板。
 
-- **基础组件**：按钮、文本、图片等原子组件。
-- **表单组件**：输入框、选择器、开关等用于数据录入的组件。
-- **容器组件**：布局容器、卡片、弹窗等可以嵌套子元素的组件。
-- **业务组件**：特定业务场景下的复杂组件。
+```typescript
+interface EditorConfig {
+  panels?: PanelConfig[];
+}
 
-## 开发物料
+interface PanelConfig {
+  title?: React.ReactNode;
+  configs?: AttributeConfig[];
+}
 
-开发一个物料通常只需三个步骤：
+// 属性配置项
+type AttributeConfig = {
+  label?: React.ReactNode; // 标签文本
+  field: string;           // 对应 props 中的字段名
+  uiType?: string;         // 控件类型: 'input' | 'select' | 'color' | ...
+  defaultValue?: any;
+  required?: boolean;
+  props?: Record<string, unknown>; // 传递给配置控件的 props
+  // 联动显示规则
+  linkageShow?: {
+    field: string;
+    value?: any;
+    isNotEmpty?: boolean;
+  }[];
+  // 自定义渲染函数 (uiType='custom' 时使用)
+  render?: (props: AttributeConfig) => React.ReactNode;
+};
+```
 
-1.  **编写组件**：开发标准的 React 组件。
-2.  **定义配置**：描述组件有哪些属性可以配置（用于生成属性面板）。
-3.  **注册物料**：将物料对象传递给 `EditorProvider`。
+## 上下文配置 (ContextConfig)
 
-### 示例：自定义按钮物料
+`contextConfig` 定义了组件对外暴露的状态和事件，用于在逻辑编排中被引用。
+
+```typescript
+interface ContextConfig {
+  /** 
+   * 暴露的变量 
+   * 例如: 输入框的 value,禁用状态 disabled
+   */
+  variables?: {
+    name: string;
+    description?: string;
+  }[];
+
+  /** 
+   * 暴露的方法/事件
+   * 例如: onClick, setValue, validate
+   */
+  methods?: {
+    name: string;
+    description?: string;
+    params?: { description: string }[];
+  }[];
+  
+  /**
+   * 上下文值定义
+   * 通常用于同时包含属性和方法的混合定义
+   */
+  contextValues?: {
+    name: string;
+    description?: string;
+    isMethod?: boolean;
+  }[];
+}
+```
+
+## 示例：输入框物料
 
 ```tsx
-import { Button } from 'antd';
-import { Material } from '@tangramino/base-editor';
+import { Input } from 'antd';
 
-export const ButtonMaterial: Material = {
-  type: 'button',
-  title: '按钮',
-  Component: Button,
-  props: {
-    type: 'primary',
-    children: '按钮文本',
-  },
+const InputMaterial: Material = {
+  type: 'input',
+  title: '输入框',
+  Component: Input,
+  defaultProps: { placeholder: '请输入' },
   editorConfig: {
     panels: [
       {
         title: '基础属性',
         configs: [
-          {
-            label: '文本',
-            field: 'children', // 对应 props.children
-            uiType: 'input',   // 使用输入框编辑
-          },
-          {
-            label: '类型',
-            field: 'type',     // 对应 props.type
-            uiType: 'select',  // 使用下拉框编辑
-            options: [
-              { label: '主按钮', value: 'primary' },
-              { label: '次按钮', value: 'default' },
-            ],
-          },
-        ],
-      },
-    ],
+          { label: '占位符', field: 'placeholder', uiType: 'input' },
+          { label: '禁用', field: 'disabled', uiType: 'checkbox' }
+        ]
+      }
+    ]
   },
+  contextConfig: {
+    variables: [
+      { name: 'value', description: '输入值' }
+    ],
+    methods: [
+      { name: 'onChange', description: '值变更' },
+      { name: 'focus', description: '聚焦' }
+    ]
+  }
 };
 ```
