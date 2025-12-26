@@ -17,18 +17,18 @@ const myPlugin = definePlugin(() => ({
 
 ## 钩子一览
 
-| 类别 | 钩子 | 描述 |
-|------|------|------|
-| **生命周期** | `onInit` | 编辑器初始化时调用 |
-| | `onDispose` | 编辑器销毁时调用 |
-| **物料转换** | `transformMaterials` | 批量转换/增强物料 |
-| **Schema 操作** | `onBeforeInsert` / `onAfterInsert` | 元素插入前后 |
-| | `onBeforeRemove` / `onAfterRemove` | 元素删除前后 |
-| | `onBeforeMove` / `onAfterMove` | 元素移动前后 |
-| | `onBeforeUpdateProps` / `onAfterUpdateProps` | 属性更新前后 |
-| **编辑器交互** | `onElementActivate` | 元素被选中时 |
-| | `onElementDeactivate` | 元素取消选中时 |
-| | `onCanvasUpdated` | 画布更新后 |
+| 类别            | 钩子                                         | 描述               |
+| --------------- | -------------------------------------------- | ------------------ |
+| **生命周期**    | `onInit`                                     | 编辑器初始化时调用 |
+|                 | `onDispose`                                  | 编辑器销毁时调用   |
+| **物料转换**    | `transformMaterials`                         | 批量转换/增强物料  |
+| **Schema 操作** | `onBeforeInsert` / `onAfterInsert`           | 元素插入前后       |
+|                 | `onBeforeRemove` / `onAfterRemove`           | 元素删除前后       |
+|                 | `onBeforeMove` / `onAfterMove`               | 元素移动前后       |
+|                 | `onBeforeUpdateProps` / `onAfterUpdateProps` | 属性更新前后       |
+| **编辑器交互**  | `onElementActivate`                          | 元素被选中时       |
+|                 | `onElementDeactivate`                        | 元素取消选中时     |
+|                 | `onCanvasUpdated`                            | 画布更新后         |
 
 > **注意**: `onBefore...` 钩子返回 `false` 可阻止操作执行。
 
@@ -37,7 +37,7 @@ const myPlugin = definePlugin(() => ({
 ```typescript
 definePlugin(() => ({
   id: 'lifecycle-demo',
-  
+
   onInit(ctx) {
     console.log('编辑器初始化');
     // 返回清理函数
@@ -45,10 +45,10 @@ definePlugin(() => ({
       console.log('清理资源');
     };
   },
-  
+
   onDispose(ctx) {
     console.log('编辑器销毁');
-  }
+  },
 }));
 ```
 
@@ -66,23 +66,24 @@ const aliasPlugin = definePlugin(() => ({
       ...material,
       editorConfig: {
         ...material.editorConfig,
-        panels: material.editorConfig?.panels?.map((panel) => {
-          if (panel.title === '属性') {
-            return {
-              ...panel,
-              configs: [
-                { 
-                  label: '别名', 
-                  field: 'alias', 
-                  uiType: 'input', 
-                  required: true 
-                },
-                ...(panel.configs || []),
-              ],
-            };
-          }
-          return panel;
-        }) || [],
+        panels:
+          material.editorConfig?.panels?.map((panel) => {
+            if (panel.title === '属性') {
+              return {
+                ...panel,
+                configs: [
+                  {
+                    label: '别名',
+                    field: 'alias',
+                    uiType: 'input',
+                    required: true,
+                  },
+                  ...(panel.configs || []),
+                ],
+              };
+            }
+            return panel;
+          }) || [],
       },
     }));
   },
@@ -96,13 +97,13 @@ const aliasPlugin = definePlugin(() => ({
 ```typescript
 const protectRootPlugin = definePlugin(() => ({
   id: 'protect-root',
-  
+
   onBeforeRemove(schema, targetId) {
     if (targetId === schema.layout.root) {
       console.warn('根节点不允许删除');
       return false; // 阻止删除
     }
-  }
+  },
 }));
 ```
 
@@ -111,19 +112,19 @@ const protectRootPlugin = definePlugin(() => ({
 ```typescript
 const autoIdPlugin = definePlugin(() => ({
   id: 'auto-id',
-  
+
   onBeforeInsert(schema, element, targetId, position) {
     // 修改元素属性
     element.props = {
       ...element.props,
-      'data-id': `${element.type}-${Date.now()}`
+      'data-id': `${element.type}-${Date.now()}`,
     };
     // 返回 true 或 undefined 继续执行
   },
-  
+
   onAfterInsert(schema, elementId, targetId) {
     console.log(`插入成功: ${elementId}`);
-  }
+  },
 }));
 ```
 
@@ -132,11 +133,11 @@ const autoIdPlugin = definePlugin(() => ({
 ```typescript
 const trackChangesPlugin = definePlugin(() => ({
   id: 'track-changes',
-  
+
   onAfterUpdateProps(schema, elementId, newProps) {
     console.log(`属性更新: ${elementId}`, newProps);
     // 可用于撤销/重做、状态同步等
-  }
+  },
 }));
 ```
 
@@ -145,20 +146,20 @@ const trackChangesPlugin = definePlugin(() => ({
 ```typescript
 const interactionPlugin = definePlugin(() => ({
   id: 'interaction',
-  
+
   onElementActivate(elementId, element) {
     console.log('选中元素:', elementId);
     // 可用于显示属性面板、更新工具栏状态等
   },
-  
+
   onElementDeactivate(elementId) {
     console.log('取消选中:', elementId);
   },
-  
+
   onCanvasUpdated(schema) {
     console.log('画布已更新');
     // 可用于自动保存、预览刷新等
-  }
+  },
 }));
 ```
 
@@ -168,9 +169,9 @@ const interactionPlugin = definePlugin(() => ({
 
 ```typescript
 interface PluginContext {
-  schema: Schema;           // 当前 Schema
-  materials: Material[];    // 已注册物料
-  activeElement?: string;   // 当前选中元素 ID
+  schema: Schema; // 当前 Schema
+  materials: Material[]; // 已注册物料
+  activeElement?: string; // 当前选中元素 ID
   // ... 更多能力
 }
 ```
@@ -183,13 +184,9 @@ interface PluginContext {
 import { BaseEditor } from '@tangramino/base-editor';
 
 <BaseEditor
-  plugins={[
-    protectRootPlugin(),
-    aliasPlugin(),
-    trackChangesPlugin()
-  ]}
+  plugins={[protectRootPlugin(), aliasPlugin(), trackChangesPlugin()]}
   // ...
-/>
+/>;
 ```
 
 ## 最佳实践

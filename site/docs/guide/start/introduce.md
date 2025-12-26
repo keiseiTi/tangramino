@@ -13,23 +13,23 @@
 const schema = {
   elements: {
     root: { type: 'container', props: {} },
-    'btn-1': { type: 'button', props: { text: '点击' } }
+    'btn-1': { type: 'button', props: { text: '点击' } },
   },
   layout: {
     root: 'root',
-    structure: { root: ['btn-1'] }
-  }
+    structure: { root: ['btn-1'] },
+  },
 };
 ```
 
 ### 2. 分层架构
 
-| 层级 | 包名 | 职责 |
-|------|------|------|
-| **引擎层** | `@tangramino/engine` | Schema 管理、事件分发、数据流转（框架无关） |
-| **视图层** | `@tangramino/react` | 订阅引擎状态，渲染 React 组件树 |
-| **编辑器层** | `@tangramino/base-editor` | 拖拽交互、选中状态、插件系统、物料注册 |
-| **流程编辑器** | `@tangramino/flow-editor` | 可视化工作流设计 |
+| 层级           | 包名                      | 职责                                        |
+| -------------- | ------------------------- | ------------------------------------------- |
+| **引擎层**     | `@tangramino/engine`      | Schema 管理、事件分发、数据流转（框架无关） |
+| **视图层**     | `@tangramino/react`       | 订阅引擎状态，渲染 React 组件树             |
+| **编辑器层**   | `@tangramino/base-editor` | 拖拽交互、选中状态、插件系统、物料注册      |
+| **流程编辑器** | `@tangramino/flow-editor` | 可视化工作流设计                            |
 
 ### 3. 插件优先
 
@@ -46,18 +46,18 @@ const myPlugin = definePlugin(() => ({
   transformMaterials(materials) {
     // 批量修改物料
     return materials;
-  }
+  },
 }));
 ```
 
 ## 适用场景
 
-| 场景 | 描述 |
-|------|------|
+| 场景         | 描述                           |
+| ------------ | ------------------------------ |
 | **页面搭建** | 通过拖拽组件构建静态或动态页面 |
-| **动态表单** | 可视化配置表单结构及校验规则 |
-| **逻辑编排** | 设计工作流或业务规则链 |
-| **仪表盘** | 自定义数据可视化面板 |
+| **动态表单** | 可视化配置表单结构及校验规则   |
+| **逻辑编排** | 设计工作流或业务规则链         |
+| **仪表盘**   | 自定义数据可视化面板           |
 
 ## 快速选择
 

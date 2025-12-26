@@ -24,7 +24,7 @@ interface Material {
   /** 是否为容器（可包含子元素） */
   isContainer?: boolean;
 
-  /** 
+  /**
    * 是否为块级元素
    * - true: 只能在上下方插入
    * - false: 可在左右插入
@@ -57,20 +57,20 @@ interface PanelConfig {
 }
 
 interface AttributeConfig {
-  label?: React.ReactNode;     // 标签文本
-  field: string;               // 对应 props 字段名
-  uiType?: string;             // 控件类型
+  label?: React.ReactNode; // 标签文本
+  field: string; // 对应 props 字段名
+  uiType?: string; // 控件类型
   defaultValue?: any;
   required?: boolean;
-  props?: Record<string, unknown>;  // 传递给控件的 props
-  
+  props?: Record<string, unknown>; // 传递给控件的 props
+
   // 联动显示规则
   linkageShow?: {
     field: string;
     value?: any;
     isNotEmpty?: boolean;
   }[];
-  
+
   // 自定义渲染（uiType='custom' 时）
   render?: (props: AttributeConfig) => React.ReactNode;
 }
@@ -78,16 +78,16 @@ interface AttributeConfig {
 
 ### 常用 uiType
 
-| uiType | 描述 | 示例 |
-|--------|------|------|
-| `input` | 文本输入 | 标题、占位符 |
-| `textarea` | 多行文本 | 描述、内容 |
-| `number` | 数字输入 | 宽度、数量 |
-| `select` | 下拉选择 | 类型、状态 |
-| `checkbox` | 复选框 | 禁用、隐藏 |
-| `switch` | 开关 | 启用/禁用 |
-| `color` | 颜色选择 | 背景色、文字色 |
-| `custom` | 自定义渲染 | 复杂配置 |
+| uiType     | 描述       | 示例           |
+| ---------- | ---------- | -------------- |
+| `input`    | 文本输入   | 标题、占位符   |
+| `textarea` | 多行文本   | 描述、内容     |
+| `number`   | 数字输入   | 宽度、数量     |
+| `select`   | 下拉选择   | 类型、状态     |
+| `checkbox` | 复选框     | 禁用、隐藏     |
+| `switch`   | 开关       | 启用/禁用      |
+| `color`    | 颜色选择   | 背景色、文字色 |
+| `custom`   | 自定义渲染 | 复杂配置       |
 
 ## 上下文配置
 
@@ -120,33 +120,33 @@ export const InputMaterial: Material = {
   type: 'input',
   title: '输入框',
   Component: Input,
-  
+
   defaultProps: {
-    placeholder: '请输入'
+    placeholder: '请输入',
   },
-  
+
   editorConfig: {
     panels: [
       {
         title: '基础属性',
         configs: [
-          { 
-            label: '占位符', 
-            field: 'placeholder', 
-            uiType: 'input' 
+          {
+            label: '占位符',
+            field: 'placeholder',
+            uiType: 'input',
           },
-          { 
-            label: '最大长度', 
-            field: 'maxLength', 
+          {
+            label: '最大长度',
+            field: 'maxLength',
             uiType: 'number',
-            props: { min: 0 }
+            props: { min: 0 },
           },
-          { 
-            label: '禁用', 
-            field: 'disabled', 
-            uiType: 'switch' 
-          }
-        ]
+          {
+            label: '禁用',
+            field: 'disabled',
+            uiType: 'switch',
+          },
+        ],
       },
       {
         title: '样式',
@@ -159,26 +159,26 @@ export const InputMaterial: Material = {
               options: [
                 { label: '大', value: 'large' },
                 { label: '中', value: 'middle' },
-                { label: '小', value: 'small' }
-              ]
-            }
-          }
-        ]
-      }
-    ]
+                { label: '小', value: 'small' },
+              ],
+            },
+          },
+        ],
+      },
+    ],
   },
-  
+
   contextConfig: {
     variables: [
       { name: 'value', description: '输入值' },
-      { name: 'disabled', description: '禁用状态' }
+      { name: 'disabled', description: '禁用状态' },
     ],
     methods: [
       { name: 'onChange', description: '值变更时触发' },
       { name: 'onFocus', description: '获得焦点时触发' },
-      { name: 'onBlur', description: '失去焦点时触发' }
-    ]
-  }
+      { name: 'onBlur', description: '失去焦点时触发' },
+    ],
+  },
 };
 ```
 
@@ -188,37 +188,39 @@ export const InputMaterial: Material = {
 export const ContainerMaterial: Material = {
   type: 'container',
   title: '容器',
-  isContainer: true,  // 标记为容器
+  isContainer: true, // 标记为容器
   isBlock: true,
-  
+
   Component: ({ children, style, ...props }) => (
     <div style={{ minHeight: 50, ...style }} {...props}>
       {children}
     </div>
   ),
-  
+
   defaultProps: {
-    style: { padding: 16 }
+    style: { padding: 16 },
   },
-  
+
   editorConfig: {
-    panels: [{
-      title: '布局',
-      configs: [
-        {
-          label: '内边距',
-          field: 'style.padding',
-          uiType: 'number',
-          props: { min: 0 }
-        },
-        {
-          label: '背景色',
-          field: 'style.backgroundColor',
-          uiType: 'color'
-        }
-      ]
-    }]
-  }
+    panels: [
+      {
+        title: '布局',
+        configs: [
+          {
+            label: '内边距',
+            field: 'style.padding',
+            uiType: 'number',
+            props: { min: 0 },
+          },
+          {
+            label: '背景色',
+            field: 'style.backgroundColor',
+            uiType: 'color',
+          },
+        ],
+      },
+    ],
+  },
 };
 ```
 
@@ -232,16 +234,16 @@ export const ContainerMaterial: Material = {
     {
       label: '显示标题',
       field: 'showTitle',
-      uiType: 'switch'
+      uiType: 'switch',
     },
     {
       label: '标题文本',
       field: 'title',
       uiType: 'input',
       // 仅当 showTitle 为 true 时显示
-      linkageShow: [{ field: 'showTitle', value: true }]
-    }
-  ]
+      linkageShow: [{ field: 'showTitle', value: true }],
+    },
+  ];
 }
 ```
 

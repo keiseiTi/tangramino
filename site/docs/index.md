@@ -14,13 +14,13 @@ hero:
       link: https://github.com/keiseiTi/tangramino
 features:
   - title: 🎨 可视化编辑
-    details: 基于 @dnd-kit/core 构建的拖拽系统，支持画布内的自由排序与嵌套，提供基础的拖拽交互原语。
+    details: 基于 @dnd-kit 构建的拖拽系统，支持画布内的自由排序与嵌套，提供基础的拖拽交互原语。
   - title: 🔄 逻辑编排
     details: 集成流程图编辑器，通过节点连线编排业务逻辑。支持条件判断、接口请求及自定义脚本。
   - title: ⚛️ React 生态
     details: 核心视图层基于 React 构建，能够无缝集成 Ant Design 等现有 React 组件库作为物料。
   - title: 🔌 插件架构
-    details: 通过插件机制扩展编辑器能力，支持介入 Schema 变更、生命周期管理及自定义功能扩展。
+    details: 通过插件机制扩展编辑器能力，支持 Schema 变更、生命周期管理及自定义功能扩展。
   - title: 🎯 Schema 驱动
     details: 采用标准 JSON 结构描述页面布局与逻辑，实现视图渲染与底层数据的解耦。
   - title: 🛠️ TypeScript

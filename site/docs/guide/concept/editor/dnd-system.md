@@ -8,10 +8,10 @@
 
 编辑器区分两类元素，它们的拖拽行为不同：
 
-| 元素类型 | 判定条件 | 拖拽位置 |
-|---------|---------|---------|
-| **Block 元素** | `isBlock: true` 或 `isContainer: true` | 只能在其他 Block 元素的**上方**或**下方**插入 |
-| **非 Block 元素** | 普通元素（如按钮、文本） | 可在非 Block 元素**左右**插入，或插入到**容器内部** |
+| 元素类型          | 判定条件                               | 拖拽位置                                            |
+| ----------------- | -------------------------------------- | --------------------------------------------------- |
+| **Block 元素**    | `isBlock: true` 或 `isContainer: true` | 只能在其他 Block 元素的**上方**或**下方**插入       |
+| **非 Block 元素** | 普通元素（如按钮、文本）               | 可在非 Block 元素**左右**插入，或插入到**容器内部** |
 
 ### 位置指示
 
@@ -47,7 +47,7 @@ import { Draggable } from '@tangramino/base-editor';
 
 <Draggable material={ButtonMaterial}>
   <div>按钮</div>
-</Draggable>
+</Draggable>;
 ```
 
 ### Movable
@@ -60,7 +60,7 @@ import { Movable } from '@tangramino/base-editor';
 // 在 overlay 工具栏中使用
 <Movable>
   <DragOutlined />
-</Movable>
+</Movable>;
 ```
 
 ### DragOverlay
@@ -72,7 +72,7 @@ import { DragOverlay } from '@tangramino/base-editor';
 
 <DragOverlay>
   <div>拖拽预览</div>
-</DragOverlay>
+</DragOverlay>;
 ```
 
 ## 自定义拖拽指示

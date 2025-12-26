@@ -24,18 +24,18 @@ import { EditorProvider } from '@tangramino/base-editor';
   onChange={(newSchema) => console.log(newSchema)}
 >
   <CanvasEditor />
-</EditorProvider>
+</EditorProvider>;
 ```
 
 ### Props
 
-| 属性 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| schema | `Schema` | 否 | 初始 Schema |
-| materials | `Material[]` | 是 | 可用物料数组 |
-| plugins | `EditorPlugin[]` | 否 | 编辑器插件数组 |
-| children | `React.ReactNode` | 否 | 子组件 |
-| onChange | `(schema: Schema) => void` | 否 | Schema 变化时的回调 |
+| 属性      | 类型                       | 必填 | 说明                |
+| --------- | -------------------------- | ---- | ------------------- |
+| schema    | `Schema`                   | 否   | 初始 Schema         |
+| materials | `Material[]`               | 是   | 可用物料数组        |
+| plugins   | `EditorPlugin[]`           | 否   | 编辑器插件数组      |
+| children  | `React.ReactNode`          | 否   | 子组件              |
+| onChange  | `(schema: Schema) => void` | 否   | Schema 变化时的回调 |
 
 ## CanvasEditor
 
@@ -54,20 +54,20 @@ import { CanvasEditor } from '@tangramino/base-editor';
     <div className={`drop-indicator ${position}`} />
   )}
   renderOverlayContent={() => <ToolBar />}
-/>
+/>;
 ```
 
 ### Props
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| style | `React.CSSProperties` | 画布样式 |
-| className | `string` | 画布 CSS 类名 |
-| overlayStyle | `React.CSSProperties` | 覆盖层样式 |
-| overlayClassNames | `string` | 覆盖层 CSS 类名 |
-| renderElement | `(props: EnhancedComponentProps) => React.ReactNode` | 自定义元素渲染 |
-| renderDropIndicator | `(props: DropPlaceholderProps) => React.ReactNode` | 自定义拖放指示器渲染 |
-| renderOverlayContent | `() => React.ReactNode` | 覆盖层内容渲染 |
+| 属性                 | 类型                                                 | 说明                 |
+| -------------------- | ---------------------------------------------------- | -------------------- |
+| style                | `React.CSSProperties`                                | 画布样式             |
+| className            | `string`                                             | 画布 CSS 类名        |
+| overlayStyle         | `React.CSSProperties`                                | 覆盖层样式           |
+| overlayClassNames    | `string`                                             | 覆盖层 CSS 类名      |
+| renderElement        | `(props: EnhancedComponentProps) => React.ReactNode` | 自定义元素渲染       |
+| renderDropIndicator  | `(props: DropPlaceholderProps) => React.ReactNode`   | 自定义拖放指示器渲染 |
+| renderOverlayContent | `() => React.ReactNode`                              | 覆盖层内容渲染       |
 
 ### EnhancedComponentProps
 
@@ -90,18 +90,18 @@ import { Draggable } from '@tangramino/base-editor';
 
 <Draggable material={buttonMaterial} className="material-item">
   <div>按钮</div>
-</Draggable>
+</Draggable>;
 ```
 
 ### Props
 
-| 属性 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| material | `Material` | 是 | 物料配置 |
-| children | `React.ReactNode` | 否 | 子元素 |
-| className | `string` | 否 | CSS 类名 |
-| style | `React.CSSProperties` | 否 | 样式 |
-| isTransform | `boolean` | 否 | 是否启用拖拽时的变换效果，默认 `false` |
+| 属性        | 类型                  | 必填 | 说明                                   |
+| ----------- | --------------------- | ---- | -------------------------------------- |
+| material    | `Material`            | 是   | 物料配置                               |
+| children    | `React.ReactNode`     | 否   | 子元素                                 |
+| className   | `string`              | 否   | CSS 类名                               |
+| style       | `React.CSSProperties` | 否   | 样式                                   |
+| isTransform | `boolean`             | 否   | 是否启用拖拽时的变换效果，默认 `false` |
 
 ## Movable
 
@@ -112,16 +112,16 @@ import { Movable } from '@tangramino/base-editor';
 
 <Movable className="move-handle" onClick={handleClick}>
   <MoveIcon />
-</Movable>
+</Movable>;
 ```
 
 ### Props
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| children | `React.ReactNode` | 子元素 |
-| className | `string` | CSS 类名 |
-| onClick | `(e: React.MouseEvent) => void` | 点击回调 |
+| 属性      | 类型                            | 说明     |
+| --------- | ------------------------------- | -------- |
+| children  | `React.ReactNode`               | 子元素   |
+| className | `string`                        | CSS 类名 |
+| onClick   | `(e: React.MouseEvent) => void` | 点击回调 |
 
 ## DragOverlay
 
@@ -131,16 +131,14 @@ import { Movable } from '@tangramino/base-editor';
 import { DragOverlay } from '@tangramino/base-editor';
 
 <DragOverlay>
-  <div className="drag-preview">
-    拖拽预览
-  </div>
-</DragOverlay>
+  <div className="drag-preview">拖拽预览</div>
+</DragOverlay>;
 ```
 
 ### Props
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
+| 属性     | 类型              | 说明                 |
+| -------- | ----------------- | -------------------- |
 | children | `React.ReactNode` | 拖拽时显示的预览内容 |
 
 ## useEditorCore
@@ -168,19 +166,19 @@ function MyComponent() {
 
 ### 返回值
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| engine | `Engine` | 引擎实例 |
-| schema | `Schema` | 当前 Schema |
-| setSchema | `(schema: Schema) => void` | 更新 Schema |
-| materials | `Material[]` | 物料列表 |
-| setMaterials | `(materials: Material[]) => void` | 更新物料列表 |
-| activeElement | `ActiveElement \| null` | 当前激活的元素 |
-| setActiveElement | `(element: ActiveElement \| null) => void` | 设置激活元素 |
-| insertPosition | `InsertPosition \| null` | 当前插入位置 |
-| setInsertPosition | `(position: InsertPosition \| null) => void` | 设置插入位置 |
-| dragElement | `DragElement \| null` | 当前拖拽的元素 |
-| setDragElement | `(element: DragElement \| null) => void` | 设置拖拽元素 |
+| 属性              | 类型                                         | 说明           |
+| ----------------- | -------------------------------------------- | -------------- |
+| engine            | `Engine`                                     | 引擎实例       |
+| schema            | `Schema`                                     | 当前 Schema    |
+| setSchema         | `(schema: Schema) => void`                   | 更新 Schema    |
+| materials         | `Material[]`                                 | 物料列表       |
+| setMaterials      | `(materials: Material[]) => void`            | 更新物料列表   |
+| activeElement     | `ActiveElement \| null`                      | 当前激活的元素 |
+| setActiveElement  | `(element: ActiveElement \| null) => void`   | 设置激活元素   |
+| insertPosition    | `InsertPosition \| null`                     | 当前插入位置   |
+| setInsertPosition | `(position: InsertPosition \| null) => void` | 设置插入位置   |
+| dragElement       | `DragElement \| null`                        | 当前拖拽的元素 |
+| setDragElement    | `(element: DragElement \| null) => void`     | 设置拖拽元素   |
 
 ### ActiveElement 类型
 
@@ -242,7 +240,7 @@ const ButtonMaterial: Material = {
   icon: <ButtonIcon />,
   defaultProps: {
     text: '点击我',
-    type: 'primary'
+    type: 'primary',
   },
   isContainer: false,
   isBlock: true,
@@ -252,11 +250,11 @@ const ButtonMaterial: Material = {
         title: '基础配置',
         configs: [
           { field: 'text', label: '按钮文字', uiType: 'input' },
-          { field: 'type', label: '按钮类型', uiType: 'select' }
-        ]
-      }
-    ]
-  }
+          { field: 'type', label: '按钮类型', uiType: 'select' },
+        ],
+      },
+    ],
+  },
 };
 ```
 
@@ -325,7 +323,7 @@ import {
   CanvasEditor,
   Draggable,
   DragOverlay,
-  useEditorCore
+  useEditorCore,
 } from '@tangramino/base-editor';
 
 // 物料定义
@@ -336,21 +334,21 @@ const materials = [
     type: 'Container',
     isContainer: true,
     dropTypes: ['Button', 'Input', 'Container'],
-    defaultProps: { style: { padding: 16 } }
+    defaultProps: { style: { padding: 16 } },
   },
   {
     Component: ({ text }) => <button>{text}</button>,
     title: '按钮',
     type: 'Button',
-    defaultProps: { text: '按钮' }
-  }
+    defaultProps: { text: '按钮' },
+  },
 ];
 
 // 物料面板
 function MaterialPanel() {
   return (
     <div className="material-panel">
-      {materials.map(material => (
+      {materials.map((material) => (
         <Draggable key={material.type} material={material}>
           <div className="material-item">{material.title}</div>
         </Draggable>
@@ -362,11 +360,11 @@ function MaterialPanel() {
 // 属性面板
 function AttributePanel() {
   const { activeElement, schema, setSchema } = useEditorCore();
-  
+
   if (!activeElement) {
     return <div>请选择元素</div>;
   }
-  
+
   return (
     <div className="attribute-panel">
       <h3>{activeElement.material.title}</h3>
@@ -378,13 +376,9 @@ function AttributePanel() {
 // 主编辑器
 function Editor() {
   const [schema, setSchema] = useState(initialSchema);
-  
+
   return (
-    <EditorProvider
-      schema={schema}
-      materials={materials}
-      onChange={setSchema}
-    >
+    <EditorProvider schema={schema} materials={materials} onChange={setSchema}>
       <div className="editor-layout">
         <MaterialPanel />
         <CanvasEditor className="canvas" />

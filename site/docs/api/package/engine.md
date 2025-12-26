@@ -22,9 +22,9 @@ const engine = createEngine(schema);
 
 ### 参数
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| schema | `Schema` | 否 | 初始化 Schema，不传则使用默认空 Schema |
+| 参数   | 类型     | 必填 | 说明                                   |
+| ------ | -------- | ---- | -------------------------------------- |
+| schema | `Schema` | 否   | 初始化 Schema，不传则使用默认空 Schema |
 
 ### 返回值
 
@@ -36,13 +36,13 @@ const engine = createEngine(schema);
 
 ### 属性
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| elements | `Elements` | 所有元素的映射表，以元素 ID 为键 |
-| layouts | `LayoutTree` | 布局树结构，定义元素层级关系 |
-| extensions | `Record<string, unknown>` | 扩展数据存储 |
-| contextValues | `ContextValues` | 共享的上下文值 |
-| injectionCallback | `Record<string, ListenerMap>` | 注入到元素的回调函数 |
+| 属性              | 类型                          | 说明                             |
+| ----------------- | ----------------------------- | -------------------------------- |
+| elements          | `Elements`                    | 所有元素的映射表，以元素 ID 为键 |
+| layouts           | `LayoutTree`                  | 布局树结构，定义元素层级关系     |
+| extensions        | `Record<string, unknown>`     | 扩展数据存储                     |
+| contextValues     | `ContextValues`               | 共享的上下文值                   |
+| injectionCallback | `Record<string, ListenerMap>` | 注入到元素的回调函数             |
 
 ### 状态管理方法
 
@@ -53,12 +53,12 @@ const engine = createEngine(schema);
 ```typescript
 engine.setState({
   'element-1': { value: 'new value' },
-  'element-2': { checked: true }
+  'element-2': { checked: true },
 });
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数  | 类型    | 说明                       |
+| ----- | ------- | -------------------------- |
 | state | `State` | 元素 ID 到新状态的映射对象 |
 
 #### getState
@@ -73,9 +73,9 @@ const state = engine.getState('element-1');
 const allStates = engine.getState();
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| id | `string` | 可选，元素 ID。不传则返回所有元素状态 |
+| 参数 | 类型     | 说明                                  |
+| ---- | -------- | ------------------------------------- |
+| id   | `string` | 可选，元素 ID。不传则返回所有元素状态 |
 
 **返回值**: 元素的 props 对象，或所有元素状态的映射
 
@@ -89,9 +89,9 @@ const allStates = engine.getState();
 engine.setContextValue('theme', { mode: 'dark' });
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| field | `string` | 字段名称 |
+| 参数  | 类型           | 说明       |
+| ----- | -------------- | ---------- |
+| field | `string`       | 字段名称   |
 | value | `ContextValue` | 要设置的值 |
 
 #### getContextValue
@@ -102,8 +102,8 @@ engine.setContextValue('theme', { mode: 'dark' });
 const theme = engine.getContextValue('theme');
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数  | 类型     | 说明     |
+| ----- | -------- | -------- |
 | field | `string` | 字段名称 |
 
 **返回值**: 上下文值或 `undefined`
@@ -116,10 +116,10 @@ const theme = engine.getContextValue('theme');
 engine.setGlobalVariable('userName', 'John');
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| field | `string` | 变量名称 |
-| value | `unknown` | 变量值 |
+| 参数  | 类型      | 说明     |
+| ----- | --------- | -------- |
+| field | `string`  | 变量名称 |
+| value | `unknown` | 变量值   |
 
 #### getGlobalVariable
 
@@ -129,8 +129,8 @@ engine.setGlobalVariable('userName', 'John');
 const userName = engine.getGlobalVariable('userName');
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数  | 类型     | 说明     |
+| ----- | -------- | -------- |
 | field | `string` | 变量名称 |
 
 **返回值**: 变量值或 `undefined`
@@ -145,10 +145,10 @@ const userName = engine.getGlobalVariable('userName');
 engine.setExtensions('customData', { key: 'value' });
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| field | `string` | 扩展字段名称 |
-| value | `unknown` | 扩展值 |
+| 参数  | 类型      | 说明         |
+| ----- | --------- | ------------ |
+| field | `string`  | 扩展字段名称 |
+| value | `unknown` | 扩展值       |
 
 #### getExtensions
 
@@ -158,8 +158,8 @@ engine.setExtensions('customData', { key: 'value' });
 const customData = engine.getExtensions('customData');
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数  | 类型     | 说明         |
+| ----- | -------- | ------------ |
 | field | `string` | 扩展字段名称 |
 
 **返回值**: 扩展值
@@ -174,9 +174,9 @@ const customData = engine.getExtensions('customData');
 engine.showElements(['element-1', 'element-2']);
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| ids | `string[]` | 要显示的元素 ID 数组 |
+| 参数 | 类型       | 说明                 |
+| ---- | ---------- | -------------------- |
+| ids  | `string[]` | 要显示的元素 ID 数组 |
 
 #### hiddenElements
 
@@ -186,9 +186,9 @@ engine.showElements(['element-1', 'element-2']);
 engine.hiddenElements(['element-1', 'element-2']);
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| ids | `string[]` | 要隐藏的元素 ID 数组 |
+| 参数 | 类型       | 说明                 |
+| ---- | ---------- | -------------------- |
+| ids  | `string[]` | 要隐藏的元素 ID 数组 |
 
 ### 回调注入方法
 
@@ -202,10 +202,10 @@ engine.injectCallback('button-1', 'onClick', () => {
 });
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| id | `string` | 元素 ID |
-| name | `string` | 回调名称 |
+| 参数     | 类型       | 说明     |
+| -------- | ---------- | -------- |
+| id       | `string`   | 元素 ID  |
+| name     | `string`   | 回调名称 |
 | callback | `Listener` | 回调函数 |
 
 ### 事件系统方法
@@ -220,11 +220,11 @@ engine.on('element-1', 'click', (data) => {
 });
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| namespace | `string` | 事件命名空间 |
-| eventName | `string` | 事件名称 |
-| callback | `Listener` | 回调函数 |
+| 参数      | 类型       | 说明         |
+| --------- | ---------- | ------------ |
+| namespace | `string`   | 事件命名空间 |
+| eventName | `string`   | 事件名称     |
+| callback  | `Listener` | 回调函数     |
 
 #### once
 
@@ -236,11 +236,11 @@ engine.once('element-1', 'click', (data) => {
 });
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| namespace | `string` | 事件命名空间 |
-| eventName | `string` | 事件名称 |
-| callback | `Listener` | 回调函数 |
+| 参数      | 类型       | 说明         |
+| --------- | ---------- | ------------ |
+| namespace | `string`   | 事件命名空间 |
+| eventName | `string`   | 事件名称     |
+| callback  | `Listener` | 回调函数     |
 
 #### emit
 
@@ -250,11 +250,11 @@ engine.once('element-1', 'click', (data) => {
 engine.emit('element-1', 'click', { x: 100, y: 200 });
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| namespace | `string` | 事件命名空间 |
-| eventName | `string` | 事件名称 |
-| ...args | `unknown[]` | 传递给监听器的参数 |
+| 参数      | 类型        | 说明               |
+| --------- | ----------- | ------------------ |
+| namespace | `string`    | 事件命名空间       |
+| eventName | `string`    | 事件名称           |
+| ...args   | `unknown[]` | 传递给监听器的参数 |
 
 #### off
 
@@ -264,11 +264,11 @@ engine.emit('element-1', 'click', { x: 100, y: 200 });
 engine.off('element-1', 'click', myCallback);
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| namespace | `string` | 事件命名空间 |
-| eventName | `string` | 事件名称 |
-| callback | `Listener` | 要移除的回调函数 |
+| 参数      | 类型       | 说明             |
+| --------- | ---------- | ---------------- |
+| namespace | `string`   | 事件命名空间     |
+| eventName | `string`   | 事件名称         |
+| callback  | `Listener` | 要移除的回调函数 |
 
 #### offAll
 
@@ -278,10 +278,10 @@ engine.off('element-1', 'click', myCallback);
 engine.offAll('element-1', 'click');
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数      | 类型     | 说明         |
+| --------- | -------- | ------------ |
 | namespace | `string` | 事件命名空间 |
-| eventName | `string` | 事件名称 |
+| eventName | `string` | 事件名称     |
 
 #### subscribe
 
@@ -296,9 +296,9 @@ const unsubscribe = engine.subscribe('VIEW_UPDATE', () => {
 unsubscribe();
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| name | `string` | 事件名称 |
+| 参数     | 类型       | 说明     |
+| -------- | ---------- | -------- |
+| name     | `string`   | 事件名称 |
 | callback | `Listener` | 回调函数 |
 
 **返回值**: 取消订阅函数
@@ -313,8 +313,8 @@ unsubscribe();
 engine.changeSchema(newSchema);
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数   | 类型     | 说明        |
+| ------ | -------- | ----------- |
 | schema | `Schema` | 新的 Schema |
 
 #### getSchema
@@ -344,10 +344,10 @@ const elements = engine.getElements();
 import { VIEW_UPDATE, ELEMENT_UPDATE } from '@tangramino/engine';
 ```
 
-| 常量 | 说明 |
-|------|------|
-| `VIEW_UPDATE` | 视图更新事件，当布局或元素结构变化时触发 |
-| `ELEMENT_UPDATE` | 元素更新事件，当元素状态变化时触发 |
+| 常量             | 说明                                     |
+| ---------------- | ---------------------------------------- |
+| `VIEW_UPDATE`    | 视图更新事件，当布局或元素结构变化时触发 |
+| `ELEMENT_UPDATE` | 元素更新事件，当元素状态变化时触发       |
 
 ## 类型定义
 
@@ -412,20 +412,20 @@ import { createEngine } from '@tangramino/engine';
 const engine = createEngine({
   elements: {
     root: { type: 'Container', props: {} },
-    button1: { type: 'Button', props: { text: 'Click me' } }
+    button1: { type: 'Button', props: { text: 'Click me' } },
   },
   layout: {
     root: 'root',
     structure: {
-      root: ['button1']
-    }
+      root: ['button1'],
+    },
   },
-  extensions: {}
+  extensions: {},
 });
 
 // 更新元素状态
 engine.setState({
-  button1: { text: 'Updated text' }
+  button1: { text: 'Updated text' },
 });
 
 // 监听更新

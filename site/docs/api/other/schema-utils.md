@@ -18,15 +18,15 @@ import { SchemaUtils } from '@tangramino/engine';
 const newSchema = SchemaUtils.insertElement(schema, 'container-1', {
   id: 'button-1',
   type: 'Button',
-  props: { text: 'Click me' }
+  props: { text: 'Click me' },
 });
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| schema | `Schema` | 当前 Schema |
-| originElementId | `string` | 目标父元素 ID |
-| insertElement | `InsertElement` | 要插入的元素 |
+| 参数            | 类型            | 说明          |
+| --------------- | --------------- | ------------- |
+| schema          | `Schema`        | 当前 Schema   |
+| originElementId | `string`        | 目标父元素 ID |
+| insertElement   | `InsertElement` | 要插入的元素  |
 
 **返回值**: 插入后的新 `Schema`
 
@@ -42,18 +42,18 @@ const newSchema = SchemaUtils.insertAdjacentElement(
   {
     id: 'button-2',
     type: 'Button',
-    props: { text: 'New Button' }
+    props: { text: 'New Button' },
   },
-  'after'
+  'after',
 );
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| schema | `Schema` | 当前 Schema |
-| targetElementId | `string` | 目标元素 ID |
-| insertElement | `InsertElement` | 要插入的元素 |
-| position | `'before' \| 'after' \| 'up' \| 'down'` | 插入位置 |
+| 参数            | 类型                                    | 说明         |
+| --------------- | --------------------------------------- | ------------ |
+| schema          | `Schema`                                | 当前 Schema  |
+| targetElementId | `string`                                | 目标元素 ID  |
+| insertElement   | `InsertElement`                         | 要插入的元素 |
+| position        | `'before' \| 'after' \| 'up' \| 'down'` | 插入位置     |
 
 **返回值**: 插入后的新 `Schema`
 
@@ -65,9 +65,9 @@ const newSchema = SchemaUtils.insertAdjacentElement(
 const newSchema = SchemaUtils.removeElement(schema, 'button-1');
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| schema | `Schema` | 当前 Schema |
+| 参数      | 类型     | 说明            |
+| --------- | -------- | --------------- |
+| schema    | `Schema` | 当前 Schema     |
 | elementId | `string` | 要删除的元素 ID |
 
 **返回值**: 删除后的新 `Schema`
@@ -83,18 +83,18 @@ const newSchema = SchemaUtils.moveElement(schema, 'button-1', 'container-2');
 // 同级移动：在同级元素之间移动
 const newSchema = SchemaUtils.moveElement(schema, 'button-1', 'button-3', {
   mode: 'same-level',
-  position: 'before'
+  position: 'before',
 });
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| schema | `Schema` | 当前 Schema |
-| elementId | `string` | 要移动的元素 ID |
-| targetElementId | `string` | 目标元素 ID |
-| options | `object` | 可选配置 |
-| options.mode | `'same-level' \| 'cross-level'` | 移动模式，默认 `'cross-level'` |
-| options.position | `'before' \| 'after' \| 'up' \| 'down'` | 插入位置 |
+| 参数             | 类型                                    | 说明                           |
+| ---------------- | --------------------------------------- | ------------------------------ |
+| schema           | `Schema`                                | 当前 Schema                    |
+| elementId        | `string`                                | 要移动的元素 ID                |
+| targetElementId  | `string`                                | 目标元素 ID                    |
+| options          | `object`                                | 可选配置                       |
+| options.mode     | `'same-level' \| 'cross-level'`         | 移动模式，默认 `'cross-level'` |
+| options.position | `'before' \| 'after' \| 'up' \| 'down'` | 插入位置                       |
 
 **返回值**: 移动后的新 `Schema`
 
@@ -109,10 +109,10 @@ const element = SchemaUtils.getElementById(schema, 'button-1');
 // 返回: { id: 'button-1', type: 'Button', props: {...} }
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数   | 类型     | 说明        |
+| ------ | -------- | ----------- |
 | schema | `Schema` | 当前 Schema |
-| id | `string` | 元素 ID |
+| id     | `string` | 元素 ID     |
 
 **返回值**: 包含 `id` 和元素属性的对象
 
@@ -125,10 +125,10 @@ const buttons = SchemaUtils.getElementsByType(schema, 'Button');
 // 返回: [{ id: 'button-1', type: 'Button', props: {...} }, ...]
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数   | 类型     | 说明        |
+| ------ | -------- | ----------- |
 | schema | `Schema` | 当前 Schema |
-| type | `string` | 元素类型 |
+| type   | `string` | 元素类型    |
 
 **返回值**: 匹配元素的数组
 
@@ -141,10 +141,10 @@ const parents = SchemaUtils.getParents(schema, 'button-1');
 // 返回: ['container-1', 'root']
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| schema | `Schema` | 当前 Schema |
-| elementId | `string` | 元素 ID |
+| 参数      | 类型     | 说明        |
+| --------- | -------- | ----------- |
+| schema    | `Schema` | 当前 Schema |
+| elementId | `string` | 元素 ID     |
 
 **返回值**: 从直接父元素到根节点的元素 ID 数组
 
@@ -157,15 +157,15 @@ const parents = SchemaUtils.getParents(schema, 'button-1');
 ```typescript
 const newSchema = SchemaUtils.setElementProps(schema, 'button-1', {
   text: 'Updated text',
-  disabled: true
+  disabled: true,
 });
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| schema | `Schema` | 当前 Schema |
-| elementId | `string` | 元素 ID |
-| props | `Record<string, unknown>` | 要更新的属性 |
+| 参数      | 类型                      | 说明         |
+| --------- | ------------------------- | ------------ |
+| schema    | `Schema`                  | 当前 Schema  |
+| elementId | `string`                  | 元素 ID      |
+| props     | `Record<string, unknown>` | 要更新的属性 |
 
 **返回值**: 更新后的新 `Schema`
 
@@ -179,9 +179,9 @@ const newSchema = SchemaUtils.setElementProps(schema, 'button-1', {
 const flowGraph = SchemaUtils.getFlowGraph(schema, 'onButtonClick');
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| schema | `Schema` | 当前 Schema |
+| 参数         | 类型     | 说明         |
+| ------------ | -------- | ------------ |
+| schema       | `Schema` | 当前 Schema  |
 | flowGraphKey | `string` | 流程图的键名 |
 
 **返回值**: 流程图数据
@@ -197,11 +197,11 @@ const newSchema = SchemaUtils.setFlowGraph(schema, 'onButtonClick', {
 });
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| schema | `Schema` | 当前 Schema |
+| 参数         | 类型     | 说明         |
+| ------------ | -------- | ------------ |
+| schema       | `Schema` | 当前 Schema  |
 | flowGraphKey | `string` | 流程图的键名 |
-| flowGraph | `T` | 流程图数据 |
+| flowGraph    | `T`      | 流程图数据   |
 
 **返回值**: 更新后的新 `Schema`
 
@@ -219,13 +219,13 @@ const newSchema = SchemaUtils.setEventFlow(
 );
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| schema | `Schema` | 当前 Schema |
-| elementId | `string` | 元素 ID |
-| event | `string` | 事件名称 |
-| flowId | `string` | 流程 ID |
-| flow | `Flow` | 流程数据 |
+| 参数      | 类型     | 说明        |
+| --------- | -------- | ----------- |
+| schema    | `Schema` | 当前 Schema |
+| elementId | `string` | 元素 ID     |
+| event     | `string` | 事件名称    |
+| flowId    | `string` | 流程 ID     |
+| flow      | `Flow`   | 流程数据    |
 
 **返回值**: 更新后的新 `Schema`
 
@@ -240,8 +240,8 @@ const variables = SchemaUtils.getGlobalVariables(schema);
 // 返回: [{ name: 'userName', description: '用户名', defaultValue: '' }, ...]
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数   | 类型     | 说明        |
+| ------ | -------- | ----------- |
 | schema | `Schema` | 当前 Schema |
 
 **返回值**: 全局变量数组（返回副本，避免修改原数据）
@@ -253,13 +253,13 @@ const variables = SchemaUtils.getGlobalVariables(schema);
 ```typescript
 const newSchema = SchemaUtils.setGlobalVariables(schema, [
   { name: 'userName', description: '用户名', defaultValue: '' },
-  { name: 'userAge', description: '用户年龄', type: 'number', defaultValue: 0 }
+  { name: 'userAge', description: '用户年龄', type: 'number', defaultValue: 0 },
 ]);
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| schema | `Schema` | 当前 Schema |
+| 参数      | 类型               | 说明         |
+| --------- | ------------------ | ------------ |
+| schema    | `Schema`           | 当前 Schema  |
 | variables | `GlobalVariable[]` | 全局变量数组 |
 
 **返回值**: 更新后的新 `Schema`
@@ -276,17 +276,17 @@ const schema = SchemaUtils.combineSchema(
   layout,
   extensions,
   flows,
-  bindElements
+  bindElements,
 );
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| elements | `Elements` | 元素映射 |
-| layout | `LayoutTree` | 布局树 |
-| extensions | `Record<string, unknown>` | 扩展数据 |
-| flows | `Flows` | 流程数据 |
-| bindElements | `BindElement[]` | 绑定元素数组 |
+| 参数         | 类型                      | 说明         |
+| ------------ | ------------------------- | ------------ |
+| elements     | `Elements`                | 元素映射     |
+| layout       | `LayoutTree`              | 布局树       |
+| extensions   | `Record<string, unknown>` | 扩展数据     |
+| flows        | `Flows`                   | 流程数据     |
+| bindElements | `BindElement[]`           | 绑定元素数组 |
 
 **返回值**: 组合后的 `Schema`
 
@@ -298,8 +298,8 @@ const schema = SchemaUtils.combineSchema(
 const normalizedSchema = SchemaUtils.normalizeSchema(schema);
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数   | 类型     | 说明        |
+| ------ | -------- | ----------- |
 | schema | `Schema` | 原始 Schema |
 
 **返回值**: 规范化后的 `Schema`
@@ -337,35 +337,40 @@ import { SchemaUtils } from '@tangramino/engine';
 
 let schema = {
   elements: {
-    root: { type: 'Page', props: {} }
+    root: { type: 'Page', props: {} },
   },
   layout: {
     root: 'root',
-    structure: {}
+    structure: {},
   },
-  extensions: {}
+  extensions: {},
 };
 
 // 添加容器
 schema = SchemaUtils.insertElement(schema, 'root', {
   id: 'header',
   type: 'Container',
-  props: { className: 'header' }
+  props: { className: 'header' },
 });
 
 // 添加按钮到容器
 schema = SchemaUtils.insertElement(schema, 'header', {
   id: 'nav-button',
   type: 'Button',
-  props: { text: '导航' }
+  props: { text: '导航' },
 });
 
 // 在按钮后添加另一个按钮
-schema = SchemaUtils.insertAdjacentElement(schema, 'nav-button', {
-  id: 'login-button',
-  type: 'Button',
-  props: { text: '登录' }
-}, 'after');
+schema = SchemaUtils.insertAdjacentElement(
+  schema,
+  'nav-button',
+  {
+    id: 'login-button',
+    type: 'Button',
+    props: { text: '登录' },
+  },
+  'after',
+);
 ```
 
 ### 批量操作
@@ -373,9 +378,9 @@ schema = SchemaUtils.insertAdjacentElement(schema, 'nav-button', {
 ```typescript
 // 查找所有按钮并更新样式
 const buttons = SchemaUtils.getElementsByType(schema, 'Button');
-buttons.forEach(button => {
+buttons.forEach((button) => {
   schema = SchemaUtils.setElementProps(schema, button.id, {
-    style: { borderRadius: '4px' }
+    style: { borderRadius: '4px' },
   });
 });
 
@@ -390,6 +395,6 @@ schema = SchemaUtils.moveElement(schema, 'login-button', 'footer');
 const variables = SchemaUtils.getGlobalVariables(schema);
 schema = SchemaUtils.setGlobalVariables(schema, [
   ...variables,
-  { name: 'token', description: '访问令牌', defaultValue: '' }
+  { name: 'token', description: '访问令牌', defaultValue: '' },
 ]);
 ```

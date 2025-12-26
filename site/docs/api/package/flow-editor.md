@@ -25,24 +25,24 @@ import { FlowEditor } from '@tangramino/flow-editor';
 >
   <NodePanel />
   <AttributePanel />
-</FlowEditor>
+</FlowEditor>;
 ```
 
 ### Props
 
-| 属性 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| nodes | `FlowNode[]` | 否 | 节点定义数组 |
-| value | `FlowGraphData` | 否 | 流程图数据 |
-| onChange | `(data: FlowGraphData) => void` | 否 | 数据变化回调 |
-| readonly | `boolean` | 否 | 是否只读模式，默认 `false` |
-| children | `React.ReactNode` | 否 | 子组件（如面板） |
-| canAddLine | `FreeLayoutProps['canAddLine']` | 否 | 是否允许添加连线 |
-| canDeleteNode | `FreeLayoutProps['canDeleteNode']` | 否 | 是否允许删除节点 |
-| canDeleteLine | `FreeLayoutProps['canDeleteLine']` | 否 | 是否允许删除连线 |
-| canResetLine | `FreeLayoutProps['canResetLine']` | 否 | 是否允许重置连线 |
-| canDropToNode | `FreeLayoutProps['canDropToNode']` | 否 | 是否允许拖拽到节点 |
-| plugins | `Plugin[]` | 否 | 流程编辑器插件 |
+| 属性          | 类型                               | 必填 | 说明                       |
+| ------------- | ---------------------------------- | ---- | -------------------------- |
+| nodes         | `FlowNode[]`                       | 否   | 节点定义数组               |
+| value         | `FlowGraphData`                    | 否   | 流程图数据                 |
+| onChange      | `(data: FlowGraphData) => void`    | 否   | 数据变化回调               |
+| readonly      | `boolean`                          | 否   | 是否只读模式，默认 `false` |
+| children      | `React.ReactNode`                  | 否   | 子组件（如面板）           |
+| canAddLine    | `FreeLayoutProps['canAddLine']`    | 否   | 是否允许添加连线           |
+| canDeleteNode | `FreeLayoutProps['canDeleteNode']` | 否   | 是否允许删除节点           |
+| canDeleteLine | `FreeLayoutProps['canDeleteLine']` | 否   | 是否允许删除连线           |
+| canResetLine  | `FreeLayoutProps['canResetLine']`  | 否   | 是否允许重置连线           |
+| canDropToNode | `FreeLayoutProps['canDropToNode']` | 否   | 是否允许拖拽到节点         |
+| plugins       | `Plugin[]`                         | 否   | 流程编辑器插件             |
 
 ## FlowNode
 
@@ -79,7 +79,7 @@ const conditionNode: FlowNode = {
   defaultProps: {
     condition: '',
     trueLabel: '是',
-    falseLabel: '否'
+    falseLabel: '否',
   },
   renderNode: () => (
     <div className="condition-node">
@@ -88,7 +88,7 @@ const conditionNode: FlowNode = {
     </div>
   ),
   renderForm: ({ data, updateData }) => (
-    <ConditionForm 
+    <ConditionForm
       value={data.condition}
       onChange={(v) => updateData({ condition: v })}
     />
@@ -97,7 +97,7 @@ const conditionNode: FlowNode = {
     const { data, outputs } = ctx;
     const result = evaluateCondition(data.condition);
     return result ? outputs.true : outputs.false;
-  }
+  },
 };
 ```
 
@@ -137,11 +137,11 @@ function AttributePanel() {
 
 ### 返回值
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| activeNode | `ActiveNode \| null` | 当前激活的节点 |
-| nodes | `FlowNode[]` | 所有节点定义 |
-| setActiveNode | `(node: ActiveNode) => void` | 设置激活节点 |
+| 属性          | 类型                         | 说明           |
+| ------------- | ---------------------------- | -------------- |
+| activeNode    | `ActiveNode \| null`         | 当前激活的节点 |
+| nodes         | `FlowNode[]`                 | 所有节点定义   |
+| setActiveNode | `(node: ActiveNode) => void` | 设置激活节点   |
 
 ### ActiveNode 类型
 
@@ -177,14 +177,14 @@ function MyNodeComponent() {
 
 ### 返回值
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| id | `string` | 节点 ID |
-| type | `string` | 节点类型 |
-| data | `Record<string, unknown>` | 节点数据 |
-| form | `object` | 表单对象 |
+| 属性       | 类型                                      | 说明         |
+| ---------- | ----------------------------------------- | ------------ |
+| id         | `string`                                  | 节点 ID      |
+| type       | `string`                                  | 节点类型     |
+| data       | `Record<string, unknown>`                 | 节点数据     |
+| form       | `object`                                  | 表单对象     |
 | updateData | `(data: Record<string, unknown>) => void` | 更新节点数据 |
-| selected | `boolean` | 是否被选中 |
+| selected   | `boolean`                                 | 是否被选中   |
 
 ## useClientContext
 
@@ -284,7 +284,11 @@ import { BaseNode } from '@tangramino/flow-editor';
 ## 完整示例
 
 ```tsx
-import { FlowEditor, useEditorContext, useClientContext } from '@tangramino/flow-editor';
+import {
+  FlowEditor,
+  useEditorContext,
+  useClientContext,
+} from '@tangramino/flow-editor';
 
 // 节点定义
 const nodes: FlowNode[] = [
@@ -292,39 +296,39 @@ const nodes: FlowNode[] = [
     type: 'start',
     title: '开始',
     renderNode: () => <StartNodeIcon />,
-    defaultProps: {}
+    defaultProps: {},
   },
   {
     type: 'condition',
     title: '条件判断',
     renderForm: (props) => <ConditionForm {...props} />,
-    defaultProps: { condition: '' }
+    defaultProps: { condition: '' },
   },
   {
     type: 'action',
     title: '执行动作',
     renderForm: (props) => <ActionForm {...props} />,
-    defaultProps: { action: '' }
+    defaultProps: { action: '' },
   },
   {
     type: 'end',
     title: '结束',
     renderNode: () => <EndNodeIcon />,
-    defaultProps: {}
-  }
+    defaultProps: {},
+  },
 ];
 
 // 节点面板
 function NodePanel() {
   const ctx = useClientContext();
-  
+
   const handleAddNode = (type: string) => {
     ctx.document.addNode({ type });
   };
 
   return (
     <div className="node-panel">
-      {nodes.map(node => (
+      {nodes.map((node) => (
         <div key={node.type} onClick={() => handleAddNode(node.type)}>
           {node.title}
         </div>
@@ -344,9 +348,7 @@ function AttributePanel() {
   return (
     <div className="attribute-panel">
       <h3>{activeNode.title}</h3>
-      <div className="form-content">
-        {activeNode.renderForm?.()}
-      </div>
+      <div className="form-content">{activeNode.renderForm?.()}</div>
     </div>
   );
 }
@@ -370,7 +372,7 @@ function ToolBar() {
 function FlowEditorApp() {
   const [flowData, setFlowData] = useState<FlowGraphData>({
     nodes: [],
-    edges: []
+    edges: [],
   });
 
   return (

@@ -1,8 +1,16 @@
 [
-  "engine",
-  "schema-utils",
-  "react",
-  "base-editor",
-  "flow-editor",
-  "plugin"
+  {
+    "type": "dir",
+    "label": "核心包",
+    "name": "package",
+    "collapsible": true,
+    "collapsed": false
+  },
+  {
+    "type": "dir",
+    "label": "其他",
+    "name": "other",
+    "collapsible": true,
+    "collapsed": false
+  }
 ]

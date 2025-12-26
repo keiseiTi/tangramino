@@ -1,4 +1,4 @@
-# React 渲染器
+# React Renderer
 
 `@tangramino/react` 提供 React 渲染能力，将 Engine 中的 Schema 渲染为 React 组件树。
 
@@ -27,7 +27,7 @@ function App() {
       components={{
         Button: MyButton,
         Input: MyInput,
-        Container: MyContainer
+        Container: MyContainer,
       }}
       plugins={[myPlugin]}
     />
@@ -37,21 +37,21 @@ function App() {
 
 ### Props
 
-| 属性 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| engine | `Engine` | 是 | 引擎实例 |
-| components | `Record<string, React.ComponentType>` | 否 | 组件类型到 React 组件的映射 |
-| plugins | `Plugin[]` | 否 | 渲染时插件数组 |
+| 属性       | 类型                                  | 必填 | 说明                        |
+| ---------- | ------------------------------------- | ---- | --------------------------- |
+| engine     | `Engine`                              | 是   | 引擎实例                    |
+| components | `Record<string, React.ComponentType>` | 否   | 组件类型到 React 组件的映射 |
+| plugins    | `Plugin[]`                            | 否   | 渲染时插件数组              |
 
 ### 组件 Props 注入
 
 通过 `components` 映射的组件会自动接收以下 props：
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| data | `Record<string, unknown>` | 元素的 props 数据 |
-| hidden | `boolean \| undefined` | 元素是否隐藏 |
-| children | `React.ReactNode` | 子元素（如果有） |
+| 属性     | 类型                      | 说明              |
+| -------- | ------------------------- | ----------------- |
+| data     | `Record<string, unknown>` | 元素的 props 数据 |
+| hidden   | `boolean \| undefined`    | 元素是否隐藏      |
+| children | `React.ReactNode`         | 子元素（如果有）  |
 
 ### 使用示例
 
@@ -76,23 +76,18 @@ const Container = ({ data, children }) => (
 const engine = createEngine({
   elements: {
     root: { type: 'Container', props: { style: { padding: 20 } } },
-    btn1: { type: 'Button', props: { text: 'Click me' } }
+    btn1: { type: 'Button', props: { text: 'Click me' } },
   },
   layout: {
     root: 'root',
-    structure: { root: ['btn1'] }
+    structure: { root: ['btn1'] },
   },
-  extensions: {}
+  extensions: {},
 });
 
 // 渲染
 function App() {
-  return (
-    <ReactView
-      engine={engine}
-      components={{ Button, Container }}
-    />
-  );
+  return <ReactView engine={engine} components={{ Button, Container }} />;
 }
 ```
 
@@ -105,7 +100,7 @@ function App() {
   const handleUpdate = () => {
     // 更新元素状态，视图会自动刷新
     engine.setState({
-      btn1: { text: 'Updated!' }
+      btn1: { text: 'Updated!' },
     });
   };
 

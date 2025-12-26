@@ -18,27 +18,23 @@ EditorProvider           // 全局状态管理
 
 ```tsx
 import React from 'react';
-import { 
-  EditorProvider, 
-  DragOverlay, 
-  useEditorCore 
+import {
+  EditorProvider,
+  DragOverlay,
+  useEditorCore,
 } from '@tangramino/base-editor';
 
 const Editor = () => {
   const { dragElement } = useEditorCore();
 
   return (
-    <EditorProvider
-      materials={materials}
-      schema={initialSchema}
-      plugins={[]}
-    >
+    <EditorProvider materials={materials} schema={initialSchema} plugins={[]}>
       <div className="flex flex-col h-screen">
         {/* 顶部操作栏 */}
         <header className="h-12 border-b">
           <Operation />
         </header>
-        
+
         {/* 主体区域 */}
         <div className="flex flex-1 overflow-hidden">
           <Sidebar />
@@ -73,7 +69,7 @@ const MainContent = () => {
           renderDropIndicator={renderDropIndicator}
         />
       </div>
-      
+
       {/* 属性面板 */}
       <AttributePanel className="w-72 border-l" />
     </div>
@@ -90,9 +86,9 @@ import type { EnhancedComponentProps } from '@tangramino/base-editor';
 
 const renderCustomElement = (props: EnhancedComponentProps) => {
   const { children, elementProps, element, isActive } = props;
-  
+
   return (
-    <div 
+    <div
       {...elementProps}
       className={`
         relative group
@@ -100,7 +96,7 @@ const renderCustomElement = (props: EnhancedComponentProps) => {
       `}
     >
       {children}
-      
+
       {/* 选中时显示操作按钮 */}
       {isActive && (
         <div className="absolute -top-8 left-0 flex gap-1">
@@ -118,16 +114,15 @@ const renderCustomElement = (props: EnhancedComponentProps) => {
 ```tsx
 const renderDropIndicator = (props) => {
   const { position, direction } = props;
-  
+
   const style = {
     position: 'absolute',
     backgroundColor: '#3b82f6',
-    ...(direction === 'horizontal' 
+    ...(direction === 'horizontal'
       ? { height: 2, width: '100%', top: position }
-      : { width: 2, height: '100%', left: position }
-    )
+      : { width: 2, height: '100%', left: position }),
   };
-  
+
   return <div style={style} />;
 };
 ```
@@ -135,7 +130,11 @@ const renderDropIndicator = (props) => {
 ## 侧边栏
 
 ```tsx
-import { useEditorContext, MaterialPanel, OutlineTree } from '@tangramino/base-editor';
+import {
+  useEditorContext,
+  MaterialPanel,
+  OutlineTree,
+} from '@tangramino/base-editor';
 
 const Sidebar = () => {
   const [activeTab, setActiveTab] = useState('material');
@@ -144,20 +143,20 @@ const Sidebar = () => {
     <aside className="w-64 border-r bg-gray-50">
       {/* Tab 切换 */}
       <nav className="flex border-b">
-        <button 
+        <button
           className={activeTab === 'material' ? 'active' : ''}
           onClick={() => setActiveTab('material')}
         >
           物料
         </button>
-        <button 
+        <button
           className={activeTab === 'outline' ? 'active' : ''}
           onClick={() => setActiveTab('outline')}
         >
           大纲
         </button>
       </nav>
-      
+
       {/* 面板内容 */}
       <div className="p-3">
         {activeTab === 'material' && <MaterialPanel groups={materialGroups} />}
@@ -177,15 +176,15 @@ import { useActiveElement, AttributeForm } from '@tangramino/base-editor';
 
 const AttributePanel = () => {
   const { activeElement, activeMaterial } = useActiveElement();
-  
+
   if (!activeElement) {
     return <div className="p-4 text-gray-400">请选择元素</div>;
   }
-  
+
   return (
     <div className="p-4">
       <h3 className="font-medium mb-3">{activeMaterial?.title}</h3>
-      <AttributeForm 
+      <AttributeForm
         element={activeElement}
         config={activeMaterial?.editorConfig}
       />
@@ -202,16 +201,20 @@ import { useHistory, useSchema } from '@tangramino/base-editor';
 const Operation = () => {
   const { undo, redo, canUndo, canRedo } = useHistory();
   const { schema, exportSchema, importSchema } = useSchema();
-  
+
   const handleSave = () => {
     const data = exportSchema();
     console.log('保存:', JSON.stringify(data));
   };
-  
+
   return (
     <div className="flex items-center gap-2 px-4 h-full">
-      <button disabled={!canUndo} onClick={undo}>撤销</button>
-      <button disabled={!canRedo} onClick={redo}>重做</button>
+      <button disabled={!canUndo} onClick={undo}>
+        撤销
+      </button>
+      <button disabled={!canRedo} onClick={redo}>
+        重做
+      </button>
       <button onClick={handleSave}>保存</button>
       <button onClick={() => window.open('/preview')}>预览</button>
     </div>

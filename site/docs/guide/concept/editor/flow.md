@@ -20,7 +20,7 @@ contextConfig: {
       params: [{ description: '事件参数' }],
     },
     {
-      name: 'setValue', // 可作为动作调用（假设有此方法）
+      name: 'setValue', // 可Í作为动作调用（假设有此方法）
       description: '设置值',
     }
   ],
@@ -29,8 +29,8 @@ contextConfig: {
 
 - **variables**: 定义了组件对外暴露的状态。在流程编辑器中，这些变量可以被其他节点引用（例如作为条件判断的依据）。
 - **methods**: 定义了组件的方法。
-    - **作为事件**：用户可以将 `onChange` 拖拽为流程的触发器（Start Node）。
-    - **作为动作**：用户可以使用 `EmitElementAction` 节点来调用这些方法。
+  - **作为事件**：用户可以将 `onChange` 拖拽为流程的触发器（Start Node）。
+  - **作为动作**：用户可以使用 `EmitElementAction` 节点来调用这些方法。
 
 ## 节点类型
 

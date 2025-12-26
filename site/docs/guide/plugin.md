@@ -15,13 +15,13 @@ import { definePlugin } from '@tangramino/base-editor';
 
 const myPlugin = definePlugin(() => ({
   id: 'my-plugin',
-  
+
   onInit(ctx) {
     console.log('插件初始化');
     // 返回清理函数（可选）
     return () => console.log('插件清理');
   },
-  
+
   onDispose(ctx) {
     console.log('插件销毁');
   },
@@ -38,7 +38,7 @@ interface MyPluginOptions {
 
 const configPlugin = definePlugin<EditorPlugin, MyPluginOptions>((options) => ({
   id: 'config-plugin',
-  
+
   onInit(ctx) {
     if (options.debug) {
       console.log('Debug mode enabled');
@@ -57,17 +57,17 @@ const plugins = [configPlugin({ debug: true, maxItems: 10 })];
 ```typescript
 interface EditorPlugin {
   // 元数据
-  id: string;                    // 唯一标识
-  dependencies?: string[];       // 依赖的插件
-  priority?: number;             // 优先级（越小越先执行）
-  
+  id: string; // 唯一标识
+  dependencies?: string[]; // 依赖的插件
+  priority?: number; // 优先级（越小越先执行）
+
   // 生命周期
   onInit?: (ctx: PluginContext) => (() => void) | void;
   onDispose?: (ctx: PluginContext) => void;
-  
+
   // 物料转换
   transformMaterials?: (materials: Material[]) => Material[];
-  
+
   // Schema 操作钩子
   onBeforeInsert?: (schema, targetId, element) => boolean | void;
   onAfterInsert?: (schema, insertedId) => void;
@@ -77,7 +77,7 @@ interface EditorPlugin {
   onAfterRemove?: (schema, removedId) => void;
   onBeforeUpdateProps?: (schema, targetId, props) => boolean | void;
   onAfterUpdateProps?: (schema, targetId) => void;
-  
+
   // 编辑器钩子
   onElementActivate?: (element, parentChain) => void;
   onElementDeactivate?: (element) => void;
@@ -91,11 +91,11 @@ interface EditorPlugin {
 
 ```typescript
 interface PluginContext {
-  engine: Engine;                           // 引擎实例
-  getSchema: () => Schema;                  // 获取当前 Schema
-  setSchema: (schema: Schema) => void;      // 更新 Schema
-  getMaterials: () => Material[];           // 获取物料列表
-  getPlugin: <T>(id: string) => T | undefined;  // 获取其他插件
+  engine: Engine; // 引擎实例
+  getSchema: () => Schema; // 获取当前 Schema
+  setSchema: (schema: Schema) => void; // 更新 Schema
+  getMaterials: () => Material[]; // 获取物料列表
+  getPlugin: <T>(id: string) => T | undefined; // 获取其他插件
 }
 ```
 
@@ -138,14 +138,14 @@ const withForm = (Component: React.ComponentType<any>) => {
 
 export const formPlugin = definePlugin(() => ({
   id: 'form',
-  
+
   transformMaterials(materials) {
     return materials.map(material => ({
       ...material,
       Component: withForm(material.Component),
     }));
   },
-  
+
   onElementActivate(element, parentElements) {
     // 当元素在表单中时，动态添加表单项配置
     const isInForm = parentElements.some(p => p.type === 'form');
@@ -165,16 +165,16 @@ import { definePlugin } from '@tangramino/base-editor';
 
 export const materialPlugin = definePlugin(() => ({
   id: 'material',
-  
+
   transformMaterials(materials) {
-    return materials.map(material => {
+    return materials.map((material) => {
       // 注入默认方法
       const methods = material.contextConfig?.methods || [];
       methods.unshift({ name: 'init', description: '初始化' });
 
       // 注入通用属性配置
       const panels = material.editorConfig?.panels || [];
-      const attrPanel = panels.find(p => p.title === '属性');
+      const attrPanel = panels.find((p) => p.title === '属性');
       if (attrPanel?.configs) {
         attrPanel.configs.unshift({
           label: '别名',
@@ -200,7 +200,7 @@ export const materialPlugin = definePlugin(() => ({
 ```typescript
 export const validationPlugin = definePlugin(() => ({
   id: 'validation',
-  
+
   onBeforeRemove(schema, targetId) {
     // 禁止删除根元素
     if (targetId === schema.layout.root) {
@@ -209,7 +209,7 @@ export const validationPlugin = definePlugin(() => ({
     }
     return true;
   },
-  
+
   onBeforeInsert(schema, targetId, element) {
     // 限制嵌套层级
     const parents = SchemaUtils.getParents(schema, targetId);
@@ -255,7 +255,12 @@ const plugins = [modePlugin('edit')]; // 或 'render'
 
 ```tsx
 import { EditorProvider } from '@tangramino/base-editor';
-import { formPlugin, materialPlugin, validationPlugin, historyPlugin } from './plugins';
+import {
+  formPlugin,
+  materialPlugin,
+  validationPlugin,
+  historyPlugin,
+} from './plugins';
 
 const Editor = () => (
   <EditorProvider

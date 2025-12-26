@@ -55,7 +55,7 @@ engine.setState({
 ```tsx
 // packages/react/src/view.tsx
 const render = (nodes: LayoutNode[]) => {
-  return nodes.map(node => {
+  return nodes.map((node) => {
     const element = elements[node.id];
     // ...
     return (
@@ -80,7 +80,7 @@ export const Form = (props: IProps) => {
     // 2. 插件注入的方法，用于同步状态
     tg_setContextValues,
     // 3. 如果绑定了事件，会接收到对应的回调
-    // onValuesChange, 
+    // onValuesChange,
     ...restProps
   } = props;
 

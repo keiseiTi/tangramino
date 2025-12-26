@@ -1,4 +1,4 @@
-# 插件系统
+# Plugin System
 
 `@tangramino/base-editor` 提供了一套完整的插件系统，用于扩展编辑器功能。
 
@@ -18,12 +18,14 @@ const myPlugin = definePlugin(() => ({
 }));
 
 // 带参数插件
-const configPlugin = definePlugin<EditorPlugin, { debug: boolean }>((options) => ({
-  id: 'config-plugin',
-  onInit(ctx) {
-    if (options.debug) console.log('Debug mode');
-  },
-}));
+const configPlugin = definePlugin<EditorPlugin, { debug: boolean }>(
+  (options) => ({
+    id: 'config-plugin',
+    onInit(ctx) {
+      if (options.debug) console.log('Debug mode');
+    },
+  }),
+);
 ```
 
 ## EditorPlugin 接口
@@ -31,12 +33,12 @@ const configPlugin = definePlugin<EditorPlugin, { debug: boolean }>((options) =>
 编辑态插件的完整接口定义。
 
 ```typescript
-interface EditorPlugin 
-  extends PluginMeta, 
-          PluginLifecycle, 
-          MaterialHooks, 
-          SchemaHooks, 
-          EditorHooks {}
+interface EditorPlugin
+  extends PluginMeta,
+    PluginLifecycle,
+    MaterialHooks,
+    SchemaHooks,
+    EditorHooks {}
 ```
 
 ### PluginMeta - 插件元数据
@@ -59,7 +61,7 @@ interface PluginLifecycle {
   // 插件初始化，在 EditorProvider 挂载时调用
   // 可返回清理函数
   onInit?: (ctx: PluginContext) => (() => void) | void;
-  
+
   // 插件销毁，在 EditorProvider 卸载时调用
   onDispose?: (ctx: PluginContext) => void;
 }
@@ -80,12 +82,20 @@ interface MaterialHooks {
 ```typescript
 interface SchemaHooks {
   // 插入前，返回 false 可取消操作
-  onBeforeInsert?: (schema: Schema, targetId: string, element: InsertElement) => boolean | void;
+  onBeforeInsert?: (
+    schema: Schema,
+    targetId: string,
+    element: InsertElement,
+  ) => boolean | void;
   // 插入后
   onAfterInsert?: (schema: Schema, insertedId: string) => void;
 
   // 移动前，返回 false 可取消操作
-  onBeforeMove?: (schema: Schema, sourceId: string, targetId: string) => boolean | void;
+  onBeforeMove?: (
+    schema: Schema,
+    sourceId: string,
+    targetId: string,
+  ) => boolean | void;
   // 移动后
   onAfterMove?: (schema: Schema, movedId: string) => void;
 
@@ -163,14 +173,14 @@ function ToolBar() {
 
   return (
     <div>
-      <button 
-        onClick={() => history?.undo()} 
+      <button
+        onClick={() => history?.undo()}
         disabled={!history?.canUndo()}
       >
         撤销
       </button>
-      <button 
-        onClick={() => history?.redo()} 
+      <button
+        onClick={() => history?.redo()}
         disabled={!history?.canRedo()}
       >
         重做
@@ -182,19 +192,19 @@ function ToolBar() {
 
 #### 配置选项
 
-| 选项 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| limit | `number` | 100 | 历史记录最大数量 |
+| 选项  | 类型     | 默认值 | 说明             |
+| ----- | -------- | ------ | ---------------- |
+| limit | `number` | 100    | 历史记录最大数量 |
 
 #### 扩展方法
 
-| 方法 | 类型 | 说明 |
-|------|------|------|
-| undo | `() => void` | 撤销操作 |
-| redo | `() => void` | 重做操作 |
+| 方法    | 类型            | 说明         |
+| ------- | --------------- | ------------ |
+| undo    | `() => void`    | 撤销操作     |
+| redo    | `() => void`    | 重做操作     |
 | canUndo | `() => boolean` | 是否可以撤销 |
 | canRedo | `() => boolean` | 是否可以重做 |
-| clear | `() => void` | 清空历史记录 |
+| clear   | `() => void`    | 清空历史记录 |
 
 ### modePlugin - 模式插件
 
@@ -212,8 +222,8 @@ const plugins = [modePlugin('render')];
 
 #### 参数
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数 | 类型                 | 说明     |
+| ---- | -------------------- | -------- |
 | mode | `'edit' \| 'render'` | 模式类型 |
 
 ## 创建自定义插件
@@ -229,7 +239,7 @@ const logPlugin = definePlugin(() => ({
 
   onInit(ctx) {
     console.log('Editor initialized');
-    
+
     // 返回清理函数
     return () => {
       console.log('Cleanup');
@@ -287,7 +297,7 @@ const dependentPlugin = definePlugin(() => ({
   onInit(ctx) {
     // 获取依赖的插件
     const history = ctx.getPlugin<HistoryPlugin>('history');
-    
+
     if (history) {
       // 使用 history 插件的功能
     }
@@ -302,13 +312,13 @@ const materialEnhancePlugin = definePlugin(() => ({
   id: 'material-enhance',
 
   transformMaterials(materials) {
-    return materials.map(material => ({
+    return materials.map((material) => ({
       ...material,
       // 为所有物料添加默认的 className
       defaultProps: {
         ...material.defaultProps,
-        className: `tg-${material.type.toLowerCase()}`
-      }
+        className: `tg-${material.type.toLowerCase()}`,
+      },
     }));
   },
 }));
@@ -371,7 +381,11 @@ const plugins = [
 ## 完整示例
 
 ```typescript
-import { definePlugin, type EditorPlugin, type HistoryPlugin } from '@tangramino/base-editor';
+import {
+  definePlugin,
+  type EditorPlugin,
+  type HistoryPlugin,
+} from '@tangramino/base-editor';
 import type { Schema } from '@tangramino/engine';
 
 interface AutoSaveOptions {
@@ -384,73 +398,75 @@ type AutoSavePlugin = EditorPlugin & {
   setEnabled: (enabled: boolean) => void;
 };
 
-export const autoSavePlugin = definePlugin<AutoSavePlugin, AutoSaveOptions>((options) => {
-  const { interval = 30000, onSave } = options;
-  
-  let enabled = true;
-  let timer: number | null = null;
-  let ctx: PluginContext | null = null;
+export const autoSavePlugin = definePlugin<AutoSavePlugin, AutoSaveOptions>(
+  (options) => {
+    const { interval = 30000, onSave } = options;
 
-  const save = async () => {
-    if (!ctx || !onSave) return;
-    try {
-      await onSave(ctx.getSchema());
-      console.log('Auto-saved');
-    } catch (error) {
-      console.error('Auto-save failed:', error);
-    }
-  };
+    let enabled = true;
+    let timer: number | null = null;
+    let ctx: PluginContext | null = null;
 
-  const startTimer = () => {
-    if (timer) clearInterval(timer);
-    if (enabled) {
-      timer = window.setInterval(save, interval);
-    }
-  };
+    const save = async () => {
+      if (!ctx || !onSave) return;
+      try {
+        await onSave(ctx.getSchema());
+        console.log('Auto-saved');
+      } catch (error) {
+        console.error('Auto-save failed:', error);
+      }
+    };
 
-  return {
-    id: 'auto-save',
-    priority: 200, // 较低优先级，在其他插件之后执行
-
-    onInit(_ctx) {
-      ctx = _ctx;
-      startTimer();
-      
-      return () => {
-        if (timer) clearInterval(timer);
-      };
-    },
-
-    onDispose() {
+    const startTimer = () => {
       if (timer) clearInterval(timer);
-      ctx = null;
-    },
+      if (enabled) {
+        timer = window.setInterval(save, interval);
+      }
+    };
 
-    // 任何修改后触发保存
-    onAfterInsert() {
-      if (enabled) save();
-    },
+    return {
+      id: 'auto-save',
+      priority: 200, // 较低优先级，在其他插件之后执行
 
-    onAfterMove() {
-      if (enabled) save();
-    },
+      onInit(_ctx) {
+        ctx = _ctx;
+        startTimer();
 
-    onAfterRemove() {
-      if (enabled) save();
-    },
+        return () => {
+          if (timer) clearInterval(timer);
+        };
+      },
 
-    onAfterUpdateProps() {
-      if (enabled) save();
-    },
+      onDispose() {
+        if (timer) clearInterval(timer);
+        ctx = null;
+      },
 
-    // 对外暴露的方法
-    save,
-    setEnabled(value: boolean) {
-      enabled = value;
-      startTimer();
-    },
-  };
-});
+      // 任何修改后触发保存
+      onAfterInsert() {
+        if (enabled) save();
+      },
+
+      onAfterMove() {
+        if (enabled) save();
+      },
+
+      onAfterRemove() {
+        if (enabled) save();
+      },
+
+      onAfterUpdateProps() {
+        if (enabled) save();
+      },
+
+      // 对外暴露的方法
+      save,
+      setEnabled(value: boolean) {
+        enabled = value;
+        startTimer();
+      },
+    };
+  },
+);
 
 // 使用
 const plugins = [
