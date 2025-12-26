@@ -27,7 +27,7 @@ This demo showcases a full-featured visual page builder with:
 ### Logic Flow Editor
 
 - 🔀 **Workflow Designer**: Visual logic orchestration
-- 🎯 **Logic Nodes**: 
+- 🎯 **Logic Nodes**:
   - Interface requests (HTTP calls)
   - Conditional branching
   - Element state manipulation
@@ -158,10 +158,10 @@ export const materialPlugin = definePlugin({
   name: 'material',
   apply: (context) => {
     // Register materials
-    context.materials.forEach(material => {
+    context.materials.forEach((material) => {
       registerMaterial(material);
     });
-  }
+  },
 });
 ```
 
@@ -177,7 +177,7 @@ export const formPlugin = definePlugin({
     // Inject form context
     // Handle form submission
     // Manage form state
-  }
+  },
 });
 ```
 
@@ -191,7 +191,7 @@ export const portalPlugin = definePlugin({
   name: 'portal',
   apply: (context) => {
     // Handle modal/drawer portals
-  }
+  },
 });
 ```
 
@@ -210,7 +210,7 @@ export const myComponentMaterial = {
   Component: MyComponent,
   props: {
     // Default props
-  }
+  },
 };
 ```
 
@@ -220,7 +220,7 @@ export const myComponentMaterial = {
 // materials/my-component/index.tsx
 export const MyComponent = ({ children, ...props }) => {
   return (
-    <div className="my-component" {...props}>
+    <div className='my-component' {...props}>
       {children}
     </div>
   );
@@ -235,7 +235,7 @@ import { myComponentMaterial } from './my-component/material-config';
 
 export const materials = [
   // ... existing materials
-  myComponentMaterial
+  myComponentMaterial,
 ];
 ```
 
@@ -274,7 +274,7 @@ import { myLogicNode } from './my-node';
 
 export const logicNodes = [
   // ... existing nodes
-  myLogicNode
+  myLogicNode,
 ];
 ```
 
@@ -329,8 +329,8 @@ const dataSources = {
   userList: {
     url: '/api/users',
     method: 'GET',
-    transform: (data) => data.users
-  }
+    transform: (data) => data.users,
+  },
 };
 ```
 
@@ -343,8 +343,8 @@ const contextOptions = {
   cities: {
     url: '/api/cities',
     valueField: 'id',
-    labelField: 'name'
-  }
+    labelField: 'name',
+  },
 };
 ```
 
@@ -383,26 +383,16 @@ const contextOptions = {
 
 ## 🧪 Development
 
-### Running Tests
+### Dev
 
 ```bash
-pnpm test
+pnpm start
 ```
 
 ### Building
 
 ```bash
 pnpm build
-```
-
-### Code Style
-
-```bash
-# Lint
-pnpm lint
-
-# Format
-pnpm format
 ```
 
 ## 📚 Learning Path
@@ -417,7 +407,7 @@ pnpm format
 
 - **[Tangramino Documentation](https://keiseiti.github.io/tangramino/)**
 - **[Ant Design](https://ant.design/)**
-- **[React Flow](https://reactflow.dev/)**
+- **[FlowGram.AI](https://flowgram.ai/)**
 
 ## 🤝 Contributing
 
