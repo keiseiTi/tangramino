@@ -1,103 +1,53 @@
 # Schema 协议
 
-Schema 是 Tangramino 中描述页面结构、状态和逻辑的核心数据结构。它是一个标准的 JSON 对象，便于存储和传输。
+Schema 是 Tangramino 的核心数据结构，用于描述页面结构、状态和逻辑。它是一个标准 JSON 对象，便于存储、传输和版本控制。
 
-## 数据结构
+## 核心结构
 
-Schema 主要由 `elements`（元素集合）和 `layout`（布局关系）两部分组成，实现了数据存储的扁平化。
+Schema 采用**扁平化设计**，主要由 `elements`（元素集合）和 `layout`（布局关系）两部分组成：
 
 ```typescript
-export interface Schema {
-  /**
-   * 元素集合 (扁平化存储)
-   * Key 为元素 ID，Value 为元素状态对象
-   */
+interface Schema {
+  /** 元素集合（扁平化存储，O(1) 查询） */
   elements: Record<string, ElementState>;
 
-  /**
-   * 布局树
-   * 定义元素的层级嵌套关系
-   */
+  /** 布局树（父子关系） */
   layout: {
-    /** 根节点 ID */
-    root: string;
-    /** 
-     * 结构映射表
-     * Key 为父节点 ID，Value 为子节点 ID 数组 
-     */
-    structure: Record<string, string[]>;
+    root: string;                        // 根节点 ID
+    structure: Record<string, string[]>; // 父ID → 子ID数组
   };
 
-  /**
-   * 流程编排数据
-   * 存储流程图的节点和连线信息
-   */
+  /** 流程编排数据（可选） */
   flows?: Record<string, Flow>;
 
-  /**
-   * 事件绑定关系
-   * 定义组件事件触发哪个流程
-   */
+  /** 事件绑定（可选） */
   bindElements?: BindElement[];
 
-  /**
-   * 上下文配置
-   * 如全局变量定义
-   */
+  /** 上下文配置（可选） */
   context?: {
     globalVariables?: GlobalVariable[];
   };
 
-  /**
-   * 扩展字段
-   * 用于存储插件或其他自定义数据
-   */
+  /** 扩展字段（可选） */
   extensions?: Record<string, unknown>;
 }
 ```
 
-## 核心定义
+## ElementState
 
-### ElementState
-
-描述单个组件实例的状态和属性。
+描述单个组件实例：
 
 ```typescript
-export interface ElementState {
-  /** 
-   * 元素类型 (对应 Material.type) 
-   */
-  type: string;
-
-  /** 
-   * 组件属性 
-   * 将直接传递给 React 组件的 props
-   */
-  props: Record<string, unknown>;
-
-  /** 
-   * 是否隐藏
-   */
-  hidden?: boolean;
-}
-```
-
-### GlobalVariable
-
-定义应用级的全局变量。
-
-```typescript
-export interface GlobalVariable {
-  name: string;
-  description: string;
-  type?: string;
-  defaultValue?: string | boolean | number;
+interface ElementState {
+  type: string;                    // 组件类型（对应 Material.type）
+  props: Record<string, unknown>;  // 传递给组件的 props
+  hidden?: boolean;                // 是否隐藏
 }
 ```
 
 ## 示例
 
-一个包含容器和按钮的简单页面 Schema：
+一个包含容器和按钮的简单页面：
 
 ```json
 {
@@ -106,22 +56,96 @@ export interface GlobalVariable {
       "type": "container", 
       "props": { "style": { "padding": 20 } } 
     },
-    "btn_1": { 
+    "btn-1": { 
       "type": "button", 
       "props": { "text": "提交", "type": "primary" } 
+    },
+    "input-1": { 
+      "type": "input", 
+      "props": { "placeholder": "请输入" } 
     }
   },
   "layout": {
     "root": "root",
     "structure": {
-      "root": ["btn_1"]
+      "root": ["input-1", "btn-1"]
     }
   }
 }
 ```
 
+**渲染结果：**
+```
+root (container)
+├── input-1 (input)
+└── btn-1 (button)
+```
+
 ## 设计优势
 
-1.  **查找高效**：通过 `elements` 映射表，可以在 O(1) 时间复杂度内访问任意元素，无需遍历树。
-2.  **更新独立**：修改某个元素的 `props` 只需更新 `elements` 中的对应项，不会影响布局结构，有利于 React 的性能优化。
-3.  **结构灵活**：通过修改 `layout.structure` 即可轻松实现元素的移动、重新排序，而无需操作元素本身的数据。
+| 优势 | 说明 |
+|------|------|
+| **查找高效** | 通过 `elements[id]` 实现 O(1) 访问，无需遍历 |
+| **更新独立** | 修改 props 只需更新对应元素，不影响布局结构 |
+| **结构灵活** | 移动/排序元素只需修改 `layout.structure` |
+| **易于序列化** | 纯 JSON，便于存储、传输、版本对比 |
+
+## Schema 操作
+
+使用 `SchemaUtils` 进行 Schema 操作：
+
+```typescript
+import { SchemaUtils } from '@tangramino/engine';
+
+// 插入元素
+const newSchema = SchemaUtils.insertElement(schema, 'root', {
+  type: 'button',
+  props: { text: '新按钮' }
+}, 0);
+
+// 更新属性
+const updated = SchemaUtils.setElementProps(schema, 'btn-1', {
+  text: '更新文本'
+});
+
+// 移动元素
+const moved = SchemaUtils.moveElement(schema, 'btn-1', 'container-1', 0);
+
+// 删除元素
+const removed = SchemaUtils.removeElement(schema, 'btn-1');
+
+// 获取父级链
+const parents = SchemaUtils.getParents(schema, 'btn-1');
+// → ['root']
+```
+
+## 全局变量
+
+定义应用级变量，可在流程编排中使用：
+
+```typescript
+interface GlobalVariable {
+  name: string;
+  description: string;
+  type?: 'string' | 'number' | 'boolean';
+  defaultValue?: string | boolean | number;
+}
+```
+
+```json
+{
+  "context": {
+    "globalVariables": [
+      { "name": "userName", "description": "当前用户", "defaultValue": "" },
+      { "name": "isLoggedIn", "description": "登录状态", "defaultValue": false }
+    ]
+  }
+}
+```
+
+## 最佳实践
+
+1. **ID 命名规范**：使用 `type-uuid` 格式，如 `button-abc123`
+2. **保持扁平**：避免在 `props` 中嵌套过深的对象
+3. **类型一致**：确保 `type` 与注册的物料类型匹配
+4. **版本管理**：可在 `extensions` 中存储 Schema 版本号

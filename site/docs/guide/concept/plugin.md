@@ -1,94 +1,100 @@
 # 插件系统
 
-Tangramino 提供了基于钩子（Hooks）的插件系统，允许开发者介入编辑器的生命周期、Schema 操作以及物料处理过程。
+Tangramino 提供基于钩子（Hooks）的插件系统，允许开发者介入编辑器的生命周期、Schema 操作以及物料处理过程。
 
-## 核心概念
+## 快速开始
 
-使用 `definePlugin` 工具函数可以创建一个类型安全的插件。
+使用 `definePlugin` 创建类型安全的插件：
 
 ```typescript
 import { definePlugin } from '@tangramino/base-editor';
 
 const myPlugin = definePlugin(() => ({
   id: 'my-plugin',
-  // ... 钩子实现
+  // 钩子实现...
 }));
 ```
 
-## 插件接口 (EditorPlugin)
+## 钩子一览
 
-插件接口主要包含以下几类钩子：
+| 类别 | 钩子 | 描述 |
+|------|------|------|
+| **生命周期** | `onInit` | 编辑器初始化时调用 |
+| | `onDispose` | 编辑器销毁时调用 |
+| **物料转换** | `transformMaterials` | 批量转换/增强物料 |
+| **Schema 操作** | `onBeforeInsert` / `onAfterInsert` | 元素插入前后 |
+| | `onBeforeRemove` / `onAfterRemove` | 元素删除前后 |
+| | `onBeforeMove` / `onAfterMove` | 元素移动前后 |
+| | `onBeforeUpdateProps` / `onAfterUpdateProps` | 属性更新前后 |
+| **编辑器交互** | `onElementActivate` | 元素被选中时 |
+| | `onElementDeactivate` | 元素取消选中时 |
+| | `onCanvasUpdated` | 画布更新后 |
 
-### 1. 生命周期 (Lifecycle)
+> **注意**: `onBefore...` 钩子返回 `false` 可阻止操作执行。
 
-- **`onInit(ctx: PluginContext)`**: 编辑器初始化时调用。可用于初始化状态，返回一个清理函数（cleanup）。
-- **`onDispose(ctx: PluginContext)`**: 编辑器销毁时调用。
-
-### 2. 物料转换 (MaterialHooks)
-
-- **`transformMaterials(materials: Material[])`**: 在物料注册前对其进行转换。常用于批量为物料添加默认配置、包裹高阶组件（HOC）或注入通用属性。
-
-### 3. Schema 操作拦截 (SchemaHooks)
-
-在 Schema 发生变更前（Before）或变更后（After）触发。
-
-- **`onBeforeInsert` / `onAfterInsert`**: 元素插入。
-- **`onBeforeRemove` / `onAfterRemove`**: 元素删除。
-- **`onBeforeMove` / `onAfterMove`**: 元素移动。
-- **`onBeforeUpdateProps` / `onAfterUpdateProps`**: 属性更新。
-
-> **注意**: `onBefore...` 钩子如果返回 `false`，则会阻止该操作的执行。
-
-### 4. 编辑器交互 (EditorHooks)
-
-- **`onElementActivate`**: 元素被选中/激活时触发。
-- **`onElementDeactivate`**: 元素取消选中时触发。
-- **`onCanvasUpdated`**: 画布重新渲染或 Schema 变更后触发。
-
-## 示例：自动添加别名插件
-
-此插件演示了如何使用 `transformMaterials` 为所有物料添加一个必填的“别名”属性配置。
+## 生命周期钩子
 
 ```typescript
-import { definePlugin, type EditorPlugin } from '@tangramino/base-editor';
+definePlugin(() => ({
+  id: 'lifecycle-demo',
+  
+  onInit(ctx) {
+    console.log('编辑器初始化');
+    // 返回清理函数
+    return () => {
+      console.log('清理资源');
+    };
+  },
+  
+  onDispose(ctx) {
+    console.log('编辑器销毁');
+  }
+}));
+```
 
-export const aliasPlugin = definePlugin<EditorPlugin>(() => ({
+## 物料转换
+
+批量为所有物料添加默认配置、包裹 HOC 或注入通用属性：
+
+```typescript
+// 为所有物料添加"别名"配置项
+const aliasPlugin = definePlugin(() => ({
   id: 'alias-plugin',
 
   transformMaterials: (materials) => {
-    return materials.map((material) => {
-      // 深度复制并修改 editorConfig
-      const panels = material.editorConfig?.panels?.map((panel) => {
-        if (panel.title === '属性') {
-          return {
-            ...panel,
-            configs: [
-              { label: '别名', field: 'alias', uiType: 'input', required: true },
-              ...(panel.configs || []),
-            ],
-          };
-        }
-        return panel;
-      }) || [];
-
-      return {
-        ...material,
-        editorConfig: {
-          ...material.editorConfig,
-          panels,
-        },
-      };
-    });
+    return materials.map((material) => ({
+      ...material,
+      editorConfig: {
+        ...material.editorConfig,
+        panels: material.editorConfig?.panels?.map((panel) => {
+          if (panel.title === '属性') {
+            return {
+              ...panel,
+              configs: [
+                { 
+                  label: '别名', 
+                  field: 'alias', 
+                  uiType: 'input', 
+                  required: true 
+                },
+                ...(panel.configs || []),
+              ],
+            };
+          }
+          return panel;
+        }) || [],
+      },
+    }));
   },
 }));
 ```
 
-## 示例：删除保护插件
+## Schema 操作拦截
 
-此插件演示了如何使用 `onBeforeRemove` 拦截删除操作，防止根节点被删除。
+### 阻止删除根节点
 
 ```typescript
-export const protectRootPlugin = definePlugin(() => ({
+const protectRootPlugin = definePlugin(() => ({
   id: 'protect-root',
   
   onBeforeRemove(schema, targetId) {
@@ -99,3 +105,97 @@ export const protectRootPlugin = definePlugin(() => ({
   }
 }));
 ```
+
+### 自动生成 ID
+
+```typescript
+const autoIdPlugin = definePlugin(() => ({
+  id: 'auto-id',
+  
+  onBeforeInsert(schema, element, targetId, position) {
+    // 修改元素属性
+    element.props = {
+      ...element.props,
+      'data-id': `${element.type}-${Date.now()}`
+    };
+    // 返回 true 或 undefined 继续执行
+  },
+  
+  onAfterInsert(schema, elementId, targetId) {
+    console.log(`插入成功: ${elementId}`);
+  }
+}));
+```
+
+### 属性变更追踪
+
+```typescript
+const trackChangesPlugin = definePlugin(() => ({
+  id: 'track-changes',
+  
+  onAfterUpdateProps(schema, elementId, newProps) {
+    console.log(`属性更新: ${elementId}`, newProps);
+    // 可用于撤销/重做、状态同步等
+  }
+}));
+```
+
+## 编辑器交互钩子
+
+```typescript
+const interactionPlugin = definePlugin(() => ({
+  id: 'interaction',
+  
+  onElementActivate(elementId, element) {
+    console.log('选中元素:', elementId);
+    // 可用于显示属性面板、更新工具栏状态等
+  },
+  
+  onElementDeactivate(elementId) {
+    console.log('取消选中:', elementId);
+  },
+  
+  onCanvasUpdated(schema) {
+    console.log('画布已更新');
+    // 可用于自动保存、预览刷新等
+  }
+}));
+```
+
+## 插件上下文
+
+钩子函数接收 `PluginContext`，提供编辑器核心能力：
+
+```typescript
+interface PluginContext {
+  schema: Schema;           // 当前 Schema
+  materials: Material[];    // 已注册物料
+  activeElement?: string;   // 当前选中元素 ID
+  // ... 更多能力
+}
+```
+
+## 使用插件
+
+在编辑器中注册插件：
+
+```tsx
+import { BaseEditor } from '@tangramino/base-editor';
+
+<BaseEditor
+  plugins={[
+    protectRootPlugin(),
+    aliasPlugin(),
+    trackChangesPlugin()
+  ]}
+  // ...
+/>
+```
+
+## 最佳实践
+
+1. **唯一 ID**：确保每个插件有唯一的 `id`
+2. **职责单一**：每个插件专注解决一个问题
+3. **清理资源**：在 `onInit` 中返回清理函数
+4. **避免阻塞**：`onBefore...` 钩子中避免耗时操作
+5. **错误处理**：钩子中添加适当的错误处理逻辑

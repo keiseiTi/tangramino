@@ -6,281 +6,201 @@ English | [简体中文](./README.zh-CN.md)
   <strong>A flexible, schema-driven low-code framework for building visual editors and workflow designers.</strong>
 </p>
 
-Tangramino provides a complete solution for creating low-code platforms, from schema management to visual editing. With its framework-agnostic engine and modular architecture, you can build drag-and-drop page builders, flow designers, and custom low-code tools with ease.
+<p align="center">
+  <a href="https://www.npmjs.com/package/@tangramino/engine"><img src="https://img.shields.io/npm/v/@tangramino/engine" alt="npm version" /></a>
+  <a href="https://github.com/keiseiTi/tangramino/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@tangramino/engine" alt="license" /></a>
+</p>
 
-## ✨ Key Features
+## ✨ Features
 
-- 🎯 **Schema-Driven**: JSONSchema-based architecture for defining UI structure, behavior, and data flow
-- 🔌 **Framework Agnostic**: Core engine is UI-framework independent, with official React bindings provided
-- 🎨 **Visual Editing**: Production-ready drag-and-drop editor and flow diagram designer
-- 🔧 **Plugin System**: Extensible architecture supporting custom plugins and components
-- 📦 **Modular**: Composable packages - use the engine alone or build complete editing experiences
-- 🛡️ **Type-Safe**: Full TypeScript support with comprehensive type definitions
+| Feature | Description |
+|---------|-------------|
+| 🎯 **Schema-Driven** | JSON-based architecture for UI structure, behavior, and data flow |
+| 🔌 **Framework Agnostic** | Core engine is UI-independent, with React bindings provided |
+| 🎨 **Visual Editing** | Production-ready drag-and-drop editor and flow designer |
+| 🔧 **Plugin System** | Extensible architecture for custom plugins |
+| 📦 **Modular** | Use engine alone or build complete editing experiences |
+| 🛡️ **Type-Safe** | Full TypeScript support |
 
-## 📦 Core Packages
+## 📦 Packages
 
 | Package | Description | Version |
-| --- | --- | --- |
-| **[`@tangramino/engine`](./packages/engine)** | Framework-agnostic core engine for schema management, event handling, and data operations | [![npm](https://img.shields.io/npm/v/@tangramino/engine)](https://www.npmjs.com/package/@tangramino/engine) |
-| **[`@tangramino/react`](./packages/react)** | React bindings for the engine with hooks, HOC, and view rendering capabilities | [![npm](https://img.shields.io/npm/v/@tangramino/react)](https://www.npmjs.com/package/@tangramino/react) |
-| **[`@tangramino/base-editor`](./packages/base-editor)** | Visual drag-and-drop editor with material system, canvas management, and dnd-kit integration | [![npm](https://img.shields.io/npm/v/@tangramino/base-editor)](https://www.npmjs.com/package/@tangramino/base-editor) |
-| **[`@tangramino/flow-editor`](./packages/flow-editor)** | Professional flow diagram editor for workflow design and logic orchestration | [![npm](https://img.shields.io/npm/v/@tangramino/flow-editor)](https://www.npmjs.com/package/@tangramino/flow-editor) |
+|---------|-------------|---------|
+| [`@tangramino/engine`](./packages/engine) | Framework-agnostic JSON Schema engine | [![npm](https://img.shields.io/npm/v/@tangramino/engine)](https://www.npmjs.com/package/@tangramino/engine) |
+| [`@tangramino/react`](./packages/react) | React bindings with hooks and view rendering | [![npm](https://img.shields.io/npm/v/@tangramino/react)](https://www.npmjs.com/package/@tangramino/react) |
+| [`@tangramino/base-editor`](./packages/base-editor) | Visual drag-and-drop editor framework | [![npm](https://img.shields.io/npm/v/@tangramino/base-editor)](https://www.npmjs.com/package/@tangramino/base-editor) |
+| [`@tangramino/flow-editor`](./packages/flow-editor) | Professional flow diagram editor | [![npm](https://img.shields.io/npm/v/@tangramino/flow-editor)](https://www.npmjs.com/package/@tangramino/flow-editor) |
+
+## 🎯 Which Package Should I Use?
+
+| Your Goal | Recommended Package |
+|-----------|---------------------|
+| Render schema to React components | `@tangramino/react` |
+| Build a drag-and-drop page editor | `@tangramino/base-editor` |
+| Build a workflow/flow designer | `@tangramino/flow-editor` |
+| Custom implementation with full control | `@tangramino/engine` + `@tangramino/react` |
+| Learn from a complete example | [playground/antd-demo](./playground/antd-demo) |
 
 ## 🏗️ Architecture
-
-Tangramino follows a clean layered architecture that promotes separation of concerns:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  Editor Layer (@tangramino/base-editor, flow-editor)   │
-│  - Drag & Drop UI                                        │
-│  - Material Management                                   │
-│  - Canvas & Selection                                    │
-└────────────────────┬────────────────────────────────────┘
-                     │
-┌────────────────────▼────────────────────────────────────┐
-│         View Layer (@tangramino/react)                   │
-│  - React Component Tree Rendering                        │
-│  - Hooks & HOC                                           │
-│  - Event Listeners                                       │
-└────────────────────┬────────────────────────────────────┘
-                     │
-┌────────────────────▼────────────────────────────────────┐
-│         Engine Layer (@tangramino/engine)                │
-│  - JSONSchema Management                                 │
-│  - Element CRUD Operations                               │
-│  - Event System                                          │
-│  - Framework Agnostic                                    │
+│  • Drag & Drop  • Material System  • Canvas & Selection│
+└────────────────────────────┬────────────────────────────┘
+                             │
+┌────────────────────────────▼────────────────────────────┐
+│         View Layer (@tangramino/react)                  │
+│  • Component Rendering  • Hooks & HOC  • Event Binding │
+└────────────────────────────┬────────────────────────────┘
+                             │
+┌────────────────────────────▼────────────────────────────┐
+│         Engine Layer (@tangramino/engine)               │
+│  • Schema Management  • Event System  • State Control  │
 └─────────────────────────────────────────────────────────┘
 ```
 
-**Layers:**
-
-1. **Engine Layer** (`@tangramino/engine`): Manages JSONSchema, handles events, and provides APIs for data manipulation. Completely UI-agnostic.
-2. **View Layer** (`@tangramino/react`): Binds the engine to React, listens to engine events, and renders the component tree based on schema.
-3. **Editor Layer** (`@tangramino/base-editor`, `@tangramino/flow-editor`): Provides complete editing experiences with drag-and-drop, selection, property panels, and more.
-
 ## 🚀 Quick Start
 
-### Prerequisites
-
-- Node.js >= 16
-- Package manager: npm, yarn, or pnpm
-
-### Installation
-
-Choose the packages based on your use case:
-
-**Building a drag-and-drop page editor:**
+### Drag-and-Drop Editor (30 lines)
 
 ```bash
 npm install @tangramino/base-editor
 ```
 
-**Building a workflow/flow editor:**
-
-```bash
-npm install @tangramino/flow-editor
-```
-
-**Custom implementation (engine + view layer):**
-
-```bash
-# Schema engine (framework-agnostic)
-npm install @tangramino/engine
-
-# React view bindings
-npm install @tangramino/react
-```
-
-### Basic Drag-and-Drop Editor
-
-Create a minimal low-code editor in under 30 lines:
-
 ```tsx
 import React from 'react';
-import { EditorProvider, CanvasEditor } from '@tangramino/base-editor';
-import '@tangramino/base-editor/style';
+import { EditorProvider, CanvasEditor, Draggable, useEditorCore } from '@tangramino/base-editor';
 
-// Define your component materials
 const materials = [
   {
     type: 'button',
     title: 'Button',
-    Component: ({ children, ...props }) => <button {...props}>{children}</button>,
-    props: { children: 'Click Me' }
-  },
-  {
-    type: 'text',
-    title: 'Text',
-    Component: ({ content }) => <p>{content}</p>,
-    props: { content: 'Hello World' }
+    Component: (props) => <button {...props}>{props.children || 'Click'}</button>,
+    defaultProps: { children: 'Button' }
   }
 ];
 
 function App() {
   return (
     <EditorProvider materials={materials}>
-      <div style={{ height: '100vh' }}>
-        <CanvasEditor />
+      <div style={{ display: 'flex', height: '100vh' }}>
+        <MaterialPanel />
+        <CanvasEditor style={{ flex: 1 }} />
       </div>
     </EditorProvider>
   );
 }
 
-export default App;
+function MaterialPanel() {
+  const { materials } = useEditorCore();
+  return (
+    <div style={{ width: 200, padding: 16 }}>
+      {materials.map(m => (
+        <Draggable key={m.type} material={m}>
+          <div style={{ padding: 8, border: '1px solid #ddd', marginBottom: 8, cursor: 'move' }}>
+            {m.title}
+          </div>
+        </Draggable>
+      ))}
+    </div>
+  );
+}
 ```
 
 ### Render-Only Mode
 
-Use `@tangramino/react` to render schemas without editing capabilities:
-
 ```tsx
-import React from 'react';
-import { View } from '@tangramino/react';
 import { createEngine } from '@tangramino/engine';
+import { ReactView } from '@tangramino/react';
 
 const schema = {
   elements: {
-    'btn-1': { 
-      id: 'btn-1', 
-      type: 'button', 
-      props: { children: 'Click Me' } 
-    }
+    root: { type: 'container', props: {} },
+    'btn-1': { type: 'button', props: { children: 'Click Me' } }
   },
-  layout: {
-    root: 'root',
-    structure: { root: ['btn-1'] }
-  }
+  layout: { root: 'root', structure: { root: ['btn-1'] } }
 };
 
-const materials = [
-  { type: 'button', Component: (props) => <button {...props} /> }
-];
+const engine = createEngine(schema);
 
 function App() {
-  const engine = React.useMemo(() => createEngine(schema), []);
-  return <View engine={engine} components={{ button: materials[0].Component }} />;
+  return (
+    <ReactView 
+      engine={engine} 
+      components={{
+        container: ({ children }) => <div>{children}</div>,
+        button: (props) => <button {...props} />
+      }} 
+    />
+  );
 }
 ```
 
-## 💡 Examples & Demos
-
-### Full-Featured Low-Code Editor
-
-Explore our production-ready demo at [`playground/antd-demo`](./playground/antd-demo):
-
-**Features:**
-- 🎨 **Material Panel**: Drag-and-drop component library with 25+ Ant Design components
-- 🖼️ **Visual Canvas**: Real-time editing with element selection and positioning
-- ⚙️ **Property Panel**: Dynamic property configuration for selected elements
-- 🔄 **History**: Full undo/redo support
-- 💾 **Persistence**: Schema import/export (JSON)
-- 📱 **Preview**: Multi-device viewport simulation
-- 🧩 **Logic Designer**: Visual workflow editor for complex interactions
-
-**Run locally:**
-
-```bash
-git clone https://github.com/keiseiTi/tangramino.git
-cd tangramino
-pnpm install
-pnpm dev:antd  # Open http://localhost:5173
-```
-
-### Flow Editor Example
+### Flow Editor
 
 ```tsx
-import React from 'react';
 import { FlowEditor, EditorRenderer } from '@tangramino/flow-editor';
-import '@tangramino/flow-editor/index.css';
 
-const flowNodes = [
+const nodeTypes = [
   {
     type: 'start',
     title: 'Start',
-    nodeMeta: {
-      isStart: true,
-      defaultPorts: [{ type: 'output' }]
-    },
-    renderNode: ({ data }) => <div>{data.title}</div>
+    renderNode: () => <div className="node-start">Start</div>
+  },
+  {
+    type: 'action',
+    title: 'Action',
+    renderNode: ({ data }) => <div className="node-action">{data.name || 'Action'}</div>
   }
 ];
 
-function FlowApp() {
-  const [flowData, setFlowData] = React.useState({ nodes: [], edges: [] });
-
+function App() {
+  const [flowData, setFlowData] = useState({ nodes: [], edges: [] });
+  
   return (
-    <FlowEditor nodes={flowNodes} value={flowData} onChange={setFlowData}>
-      <div style={{ height: '100vh' }}>
-        <EditorRenderer />
-      </div>
+    <FlowEditor nodes={nodeTypes} value={flowData} onChange={setFlowData}>
+      <EditorRenderer />
     </FlowEditor>
   );
 }
 ```
 
+## 💡 Demo
+
+Explore our production-ready demo with 25+ Ant Design components:
+
+```bash
+git clone https://github.com/keiseiTi/tangramino.git
+cd tangramino
+pnpm install
+pnpm dev:antd  # http://localhost:5173
+```
+
+**Features:** Material Panel • Visual Canvas • Property Editor • Undo/Redo • Schema Export • Preview • Flow Designer
+
 ## 📖 Documentation
 
-Comprehensive guides and API references are available at [keiseiti.github.io/tangramino](https://keiseiti.github.io/tangramino/)
-
-**Essential Reading:**
-- **[Getting Started](https://keiseiti.github.io/tangramino/guide/start/introduce.html)** - Installation and first steps
-- **[Schema Concepts](https://keiseiti.github.io/tangramino/guide/concept/schema.html)** - Understanding the data structure
-- **[Custom Editors](https://keiseiti.github.io/tangramino/guide/advanced/custom-editor.html)** - Building tailored editing experiences
-- **[Plugin Development](https://keiseiti.github.io/tangramino/guide/plugin.html)** - Extending functionality
-
-## 🎯 Use Cases
-
-- **Low-Code Platforms**: Build drag-and-drop page builders
-- **Form Builders**: Create dynamic form designers
-- **Workflow Engines**: Design visual workflow and automation tools
-- **Dashboard Builders**: Construct customizable dashboard creators
-- **Mobile App Builders**: Create mobile UI designers
+- **[Getting Started](https://keiseiti.github.io/tangramino/guide/start/introduce.html)**
+- **[Schema Concepts](https://keiseiti.github.io/tangramino/guide/concept/schema.html)**
+- **[Material System](https://keiseiti.github.io/tangramino/guide/concept/material.html)**
+- **[Plugin Development](https://keiseiti.github.io/tangramino/guide/concept/plugin.html)**
+- **[API Reference](https://keiseiti.github.io/tangramino/api/engine.html)**
 
 ## 🛠️ Development
 
 ```bash
-# Clone the repository
-git clone https://github.com/keiseiTi/tangramino.git
-cd tangramino
-
-# Install dependencies
-pnpm install
-
-# Watch all packages in development mode
-pnpm watch
-
-# Run the demo
-pnpm dev:antd
-
-# Build all packages
-pnpm build
-
-# Run documentation site
-pnpm site
+pnpm install     # Install dependencies
+pnpm watch       # Watch mode
+pnpm dev:antd    # Run demo
+pnpm build       # Build all packages
+pnpm test        # Run tests
 ```
 
 ## 🤝 Contributing
 
-We welcome contributions from the community! Whether it's:
-
-- 🐛 Bug reports
-- 💡 Feature requests
-- 📝 Documentation improvements
-- 🔧 Code contributions
-
-Please see our [Contributing Guide](./site/docs/contribution.md) for detailed information on:
-
-- Setting up the development environment
-- Code style and conventions
-- Submitting pull requests
-- Running tests
+We welcome contributions! See [Contributing Guide](./contribution.md).
 
 ## 📄 License
 
 [MIT](LICENSE) © Tangramino
-
----
-
-Made with ❤️ by the Tangramino team

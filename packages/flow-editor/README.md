@@ -1,17 +1,27 @@
 # @tangramino/flow-editor
 
-**Professional flow diagram editor for React**
+[English](#english) | [简体中文](#简体中文)
 
-Build visual workflow designers, logic orchestrators, and node-based editors. Built on React Flow with a powerful node system and extensible architecture.
+---
+
+<a name="english"></a>
+
+**Professional flow diagram editor for workflow design**
+
+Build visual workflow designers, logic orchestrators, and node-based editors. Perfect for business process automation, data pipelines, and event-driven architectures.
+
+[![npm version](https://img.shields.io/npm/v/@tangramino/flow-editor)](https://www.npmjs.com/package/@tangramino/flow-editor)
 
 ## ✨ Features
 
-- **Node System**: Define custom node types with renderers and configuration
-- **Connection Control**: Flexible port and connection validation
-- **Plugin Support**: Extend functionality with custom plugins
-- **State Management**: Built-in state management for nodes and edges
-- **Type-Safe**: Full TypeScript support
-- **Customizable**: Complete control over node rendering and behavior
+| Feature | Description |
+|---------|-------------|
+| 🎯 **Node System** | Define custom node types with renderers |
+| 🔗 **Connection Control** | Flexible port and connection validation |
+| 🔌 **Plugin Support** | Extend with custom plugins |
+| 📊 **State Management** | Built-in flow data management |
+| 🎨 **Customizable** | Complete control over node rendering |
+| 🛡️ **Type-Safe** | Full TypeScript support |
 
 ## 📦 Installation
 
@@ -19,9 +29,9 @@ Build visual workflow designers, logic orchestrators, and node-based editors. Bu
 npm install @tangramino/flow-editor
 ```
 
-> **Peer dependencies:** `react`, `react-dom`, `reactflow`
+> **Peer dependencies:** `react`, `react-dom`
 
-## 🔨 Quick Start
+## 🚀 Quick Start
 
 ### Basic Flow Editor
 
@@ -31,97 +41,118 @@ import { FlowEditor, EditorRenderer } from '@tangramino/flow-editor';
 import '@tangramino/flow-editor/index.css';
 
 // Define node types
-const nodes = [
+const nodeTypes = [
   {
     type: 'start',
     title: 'Start',
-    nodeMeta: {
-      isStart: true,
-      maxConnections: 1,
-      defaultPorts: [{ type: 'output', id: 'out' }]
-    },
-    renderNode: ({ data }) => (
-      <div className="node-start">
-        <strong>{data.title}</strong>
+    nodeMeta: { isStart: true },
+    renderNode: () => (
+      <div style={{ padding: 16, background: '#52c41a', color: '#fff', borderRadius: 8 }}>
+        Start
       </div>
     )
   },
   {
     type: 'action',
     title: 'Action',
-    nodeMeta: {
-      defaultPorts: [
-        { type: 'input', id: 'in' },
-        { type: 'output', id: 'out' }
-      ]
-    },
     renderNode: ({ data }) => (
-      <div className="node-action">
-        <input 
-          value={data.actionName || ''}
-          onChange={(e) => data.onChange?.({ actionName: e.target.value })}
-          placeholder="Action name"
+      <div style={{ padding: 16, background: '#1890ff', color: '#fff', borderRadius: 4 }}>
+        {data.name || 'Action'}
+      </div>
+    ),
+    renderConfig: ({ data, onChange }) => (
+      <div>
+        <label>Name:</label>
+        <input
+          value={data.name || ''}
+          onChange={(e) => onChange({ name: e.target.value })}
         />
+      </div>
+    )
+  },
+  {
+    type: 'end',
+    title: 'End',
+    nodeMeta: { isEnd: true },
+    renderNode: () => (
+      <div style={{ padding: 16, background: '#ff4d4f', color: '#fff', borderRadius: '50%' }}>
+        End
       </div>
     )
   }
 ];
 
 function App() {
-  const [flowData, setFlowData] = useState({
-    nodes: [],
-    edges: []
-  });
+  const [flowData, setFlowData] = useState({ nodes: [], edges: [] });
 
   return (
-    <FlowEditor 
-      nodes={nodes} 
-      value={flowData} 
-      onChange={setFlowData}
-    >
+    <FlowEditor nodes={nodeTypes} value={flowData} onChange={setFlowData}>
       <div style={{ height: '100vh' }}>
         <EditorRenderer />
       </div>
     </FlowEditor>
   );
 }
-
-export default App;
 ```
 
-### With Node Panel
+### With Node Panel & Config Panel
 
 ```tsx
 import { FlowEditor, EditorRenderer, useFlowContext } from '@tangramino/flow-editor';
 
 function NodePanel() {
   const { nodes, addNode } = useFlowContext();
-
+  
   return (
-    <div className="node-panel">
-      <h3>Nodes</h3>
-      {nodes.map(nodeType => (
+    <div style={{ width: 200, padding: 16, borderRight: '1px solid #ddd' }}>
+      <h4>Nodes</h4>
+      {nodes.map(node => (
         <button
-          key={nodeType.type}
-          onClick={() => addNode(nodeType.type)}
+          key={node.type}
+          onClick={() => addNode(node.type)}
+          style={{ display: 'block', width: '100%', marginBottom: 8 }}
         >
-          {nodeType.title}
+          {node.title}
         </button>
       ))}
     </div>
   );
 }
 
-function App() {
+function ConfigPanel() {
+  const { selectedNode, nodes, updateNodeData } = useFlowContext();
+  
+  if (!selectedNode) {
+    return <div style={{ width: 250, padding: 16 }}>Select a node</div>;
+  }
+  
+  const nodeType = nodes.find(n => n.type === selectedNode.type);
+  const ConfigRenderer = nodeType?.renderConfig;
+  
   return (
-    <FlowEditor nodes={nodes} value={flowData} onChange={setFlowData}>
+    <div style={{ width: 250, padding: 16, borderLeft: '1px solid #ddd' }}>
+      <h4>Configuration</h4>
+      {ConfigRenderer && (
+        <ConfigRenderer 
+          data={selectedNode.data} 
+          onChange={(data) => updateNodeData(selectedNode.id, data)}
+        />
+      )}
+    </div>
+  );
+}
+
+function App() {
+  const [flowData, setFlowData] = useState({ nodes: [], edges: [] });
+
+  return (
+    <FlowEditor nodes={nodeTypes} value={flowData} onChange={setFlowData}>
       <div style={{ display: 'flex', height: '100vh' }}>
-        <aside style={{ width: '200px' }}>
-          <NodePanel />
-        </aside>
-        <main style={{ flex: 1 }}>
+        <NodePanel />
+        <div style={{ flex: 1 }}>
           <EditorRenderer />
-        </main>
+        </div>
+        <ConfigPanel />
       </div>
     </FlowEditor>
   );
@@ -130,41 +161,32 @@ function App() {
 
 ## 📘 API Reference
 
-### `FlowEditor`
+### `<FlowEditor />`
 
 Container component providing flow editor context.
 
-**Props:**
-
 | Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `nodes` | `FlowNode[]` | ✓ | Available node type definitions |
-| `value` | `FlowGraphData` | ✓ | Current flow data (nodes & edges) |
-| `onChange` | `(data: FlowGraphData) => void` | ✓ | Callback when flow changes |
-| `canAddLine` | `(source, target) => boolean` |  | Connection validation function |
-| `plugins` | `Plugin[]` |  | Flow editor plugins |
-
-**Example:**
+|------|------|:--------:|-------------|
+| `nodes` | `FlowNode[]` | ✓ | Node type definitions |
+| `value` | `FlowGraphData` | ✓ | Current flow data |
+| `onChange` | `(data) => void` | ✓ | Change callback |
+| `canAddLine` | `(source, target) => boolean` | | Connection validator |
+| `plugins` | `Plugin[]` | | Flow editor plugins |
 
 ```tsx
 <FlowEditor
-  nodes={nodeDefinitions}
+  nodes={nodeTypes}
   value={{ nodes: [], edges: [] }}
-  onChange={(newData) => saveFlow(newData)}
-  canAddLine={(source, target) => {
-    // Prevent cycles
-    return !hasCycle(source, target);
-  }}
+  onChange={setFlowData}
+  canAddLine={(source, target) => source.type !== 'end'}
 >
-  {/* Editor UI */}
+  <EditorRenderer />
 </FlowEditor>
 ```
 
-### `EditorRenderer`
+### `<EditorRenderer />`
 
 Canvas component for rendering the flow diagram.
-
-**Props:**
 
 | Prop | Type | Description |
 |------|------|-------------|
@@ -175,29 +197,40 @@ Canvas component for rendering the flow diagram.
 <EditorRenderer fitView snapToGrid />
 ```
 
-### `FlowNode` Definition
+### `useFlowContext()`
 
-Define custom node types:
+Hook for accessing flow editor state and methods.
+
+```typescript
+const {
+  // State
+  nodes,           // Node type definitions
+  flowData,        // Current nodes & edges
+  selectedNode,    // Selected node
+  
+  // Methods
+  addNode,         // Add new node
+  removeNode,      // Remove node
+  updateNodeData,  // Update node data
+  addEdge,         // Add connection
+  removeEdge,      // Remove connection
+} = useFlowContext();
+```
+
+### `FlowNode` Definition
 
 ```typescript
 interface FlowNode {
-  type: string;                 // Unique node type identifier
-  title: string;                // Display name
-  nodeMeta: {
-    isStart?: boolean;          // Mark as start node
-    isEnd?: boolean;            // Mark as end node
-    maxConnections?: number;    // Max outgoing connections
-    defaultPorts?: Port[];      // Default input/output ports
-    category?: string;          // Organization category
+  type: string;                    // Unique identifier
+  title: string;                   // Display name
+  nodeMeta?: {
+    isStart?: boolean;             // Mark as start node
+    isEnd?: boolean;               // Mark as end node
+    maxConnections?: number;       // Max outgoing connections
+    category?: string;             // Organization category
   };
   renderNode: (props: NodeRenderProps) => ReactNode;
   renderConfig?: (props: ConfigRenderProps) => ReactNode;
-}
-
-interface Port {
-  id: string;
-  type: 'input' | 'output';
-  label?: string;
 }
 
 interface NodeRenderProps {
@@ -205,170 +238,92 @@ interface NodeRenderProps {
   data: Record<string, any>;
   selected: boolean;
 }
+
+interface ConfigRenderProps {
+  data: Record<string, any>;
+  onChange: (data: any) => void;
+}
 ```
 
-**Example:**
+**Example - Condition Node:**
 
 ```tsx
 const conditionNode: FlowNode = {
   type: 'condition',
   title: 'Condition',
-  nodeMeta: {
-    defaultPorts: [
-      { id: 'in', type: 'input' },
-      { id: 'true', type: 'output', label: 'True' },
-      { id: 'false', type: 'output', label: 'False' }
-    ]
-  },
-  renderNode: ({ data, id }) => (
-    <div className="condition-node">
-      <input
-        value={data.expression || ''}
-        onChange={(e) => updateNodeData(id, { expression: e.target.value })}
-        placeholder="Condition expression"
-      />
+  nodeMeta: { category: 'Logic' },
+  
+  renderNode: ({ data, selected }) => (
+    <div style={{ 
+      padding: 16, 
+      background: selected ? '#e6f7ff' : '#fff',
+      border: '1px solid #1890ff',
+      borderRadius: 4
+    }}>
+      <div>If: {data.expression || '(empty)'}</div>
     </div>
   ),
+  
   renderConfig: ({ data, onChange }) => (
-    <div className="config-panel">
+    <div>
       <label>Expression:</label>
-      <textarea
-        value={data.expression}
-        onChange={(e) => onChange({ expression: e.target.value })}
+      <input
+        value={data.expression || ''}
+        onChange={(e) => onChange({ ...data, expression: e.target.value })}
+        placeholder="e.g., x > 10"
       />
     </div>
   )
 };
-```
-
-### `useFlowContext`
-
-Hook for accessing flow editor state and methods.
-
-**Returns:**
-
-```typescript
-{
-  // State
-  nodes: FlowNode[];           // Node type definitions
-  flowData: FlowGraphData;     // Current nodes & edges
-  selectedNode: string | null; // Selected node ID
-  
-  // Methods
-  addNode: (type: string, position?: { x: number, y: number }) => void;
-  removeNode: (id: string) => void;
-  updateNodeData: (id: string, data: any) => void;
-  addEdge: (source: string, target: string) => void;
-  removeEdge: (id: string) => void;
-}
-```
-
-**Example:**
-
-```tsx
-function CustomControls() {
-  const { addNode, removeNode, selectedNode } = useFlowContext();
-
-  return (
-    <div className="controls">
-      <button onClick={() => addNode('start')}>
-        Add Start Node
-      </button>
-      <button 
-        onClick={() => selectedNode && removeNode(selectedNode)}
-        disabled={!selectedNode}
-      >
-        Delete Selected
-      </button>
-    </div>
-  );
-}
 ```
 
 ## 🎯 Advanced Usage
 
 ### Connection Validation
 
-Control which nodes can connect:
-
 ```tsx
 <FlowEditor
-  nodes={nodes}
+  nodes={nodeTypes}
   value={flowData}
   onChange={setFlowData}
   canAddLine={(source, target) => {
-    const sourceNode = findNode(source.nodeId);
-    const targetNode = findNode(target.nodeId);
+    // Prevent self-connection
+    if (source.nodeId === target.nodeId) return false;
     
-    // Prevent connecting start to end directly
-    if (sourceNode.type === 'start' && targetNode.type === 'end') {
-      return false;
-    }
+    // Prevent connecting to start nodes
+    const targetNode = findNode(target.nodeId);
+    if (targetNode?.data.isStart) return false;
     
     // Prevent cycles
-    if (createsCycle(source, target)) {
-      return false;
-    }
+    if (wouldCreateCycle(source, target)) return false;
     
     return true;
   }}
 />
 ```
 
-### Custom Edge Rendering
-
-```tsx
-import { BaseEdge } from 'reactflow';
-
-const customEdgeTypes = {
-  'custom': ({ id, sourceX, sourceY, targetX, targetY, style }) => (
-    <BaseEdge
-      id={id}
-      path={`M ${sourceX} ${sourceY} L ${targetX} ${targetY}`}
-      style={{ ...style, stroke: '#ff0000', strokeWidth: 2 }}
-    />
-  )
-};
-
-// Use in EditorRenderer
-<EditorRenderer edgeTypes={customEdgeTypes} />
-```
-
 ### Node Categories
 
-Organize nodes into categories:
-
 ```tsx
-const nodes = [
-  {
-    type: 'http-request',
-    title: 'HTTP Request',
-    nodeMeta: {
-      category: 'API',
-      // ...
-    }
-  },
-  {
-    type: 'database-query',
-    title: 'Database Query',
-    nodeMeta: {
-      category: 'Database',
-      // ...
-    }
-  }
-];
-
 function NodePanel() {
-  const { nodes } = useFlowContext();
-  const categories = groupBy(nodes, 'nodeMeta.category');
+  const { nodes, addNode } = useFlowContext();
+  
+  // Group by category
+  const categories = nodes.reduce((acc, node) => {
+    const cat = node.nodeMeta?.category || 'Other';
+    (acc[cat] = acc[cat] || []).push(node);
+    return acc;
+  }, {});
 
   return (
     <div>
       {Object.entries(categories).map(([category, categoryNodes]) => (
         <div key={category}>
-          <h4>{category}</h4>
+          <h5>{category}</h5>
           {categoryNodes.map(node => (
-            <NodeButton key={node.type} node={node} />
+            <button key={node.type} onClick={() => addNode(node.type)}>
+              {node.title}
+            </button>
           ))}
         </div>
       ))}
@@ -377,107 +332,155 @@ function NodePanel() {
 }
 ```
 
-### Data Flow Execution
-
-Execute the flow logic:
-
-```tsx
-async function executeFlow(flowData: FlowGraphData) {
-  const { nodes, edges } = flowData;
-  
-  // Find start node
-  const startNode = nodes.find(n => n.data.isStart);
-  if (!startNode) throw new Error('No start node');
-  
-  // Execute recursively
-  const context = {};
-  await executeNode(startNode.id, nodes, edges, context);
-}
-
-async function executeNode(nodeId, nodes, edges, context) {
-  const node = nodes.find(n => n.id === nodeId);
-  
-  // Execute node logic based on type
-  switch (node.type) {
-    case 'http-request':
-      context.response = await fetch(node.data.url);
-      break;
-    case 'condition':
-      const result = eval(node.data.expression);
-      const nextEdge = edges.find(e => 
-        e.source === nodeId && e.sourceHandle === (result ? 'true' : 'false')
-      );
-      if (nextEdge) {
-        await executeNode(nextEdge.target, nodes, edges, context);
-      }
-      break;
-    // ... other node types
-  }
-}
-```
-
-### Plugins
-
-Extend flow editor with plugins:
-
-```tsx
-const autoLayoutPlugin: Plugin = {
-  name: 'autoLayout',
-  apply: (context) => {
-    context.registerAction('autoLayout', () => {
-      const { nodes, edges } = context.flowData;
-      const layoutedNodes = applyDagreLayout(nodes, edges);
-      context.updateFlow({ nodes: layoutedNodes, edges });
-    });
-  }
-};
-
-<FlowEditor plugins={[autoLayoutPlugin]} {...props}>
-  {/* ... */}
-</FlowEditor>
-```
-
-## 🎨 Styling
-
-Import default styles:
-
-```tsx
-import '@tangramino/flow-editor/index.css';
-```
-
-Customize node styles:
+### Custom Node Styles
 
 ```css
 .node-start {
-  background: #52c41a;
+  background: linear-gradient(135deg, #52c41a, #73d13d);
   color: white;
-  padding: 16px;
-  border-radius: 8px;
+  padding: 16px 24px;
+  border-radius: 20px;
+  font-weight: bold;
 }
 
 .node-action {
-  background: #1890ff;
-  color: white;
+  background: #fff;
+  border: 2px solid #1890ff;
+  border-radius: 8px;
   padding: 12px;
+  min-width: 150px;
+}
+
+.node-condition {
+  background: #fff7e6;
+  border: 2px solid #fa8c16;
   border-radius: 4px;
+  padding: 12px;
 }
 
 .node-end {
   background: #ff4d4f;
   color: white;
-  padding: 16px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 ```
 
 ## 📦 Complete Example
 
-See [antd-demo flow-editor](../../playground/antd-demo/src/flow-editor) for a complete implementation with:
-- Multiple node types (start, condition, API call, etc.)
+See [playground/antd-demo/src/flow-editor](../../playground/antd-demo/src/flow-editor) for a complete implementation with:
+- Multiple node types (Start, Condition, API Call, Set Variable, etc.)
 - Node configuration panel
 - Connection validation
-- Flow execution engine
-- Save/load functionality
+- Flow execution
+
+---
+
+<a name="简体中文"></a>
+
+# @tangramino/flow-editor
+
+**专业的流程图编辑器**
+
+构建可视化工作流设计器、逻辑编排器和节点式编辑器。适用于业务流程自动化、数据管道和事件驱动架构。
+
+## ✨ 特性
+
+| 特性 | 描述 |
+|------|------|
+| 🎯 **节点系统** | 定义自定义节点类型 |
+| 🔗 **连接控制** | 灵活的端口和连接验证 |
+| 🔌 **插件支持** | 通过插件扩展功能 |
+| 📊 **状态管理** | 内置流程数据管理 |
+| 🎨 **可定制** | 完全控制节点渲染 |
+| 🛡️ **类型安全** | 完整的 TypeScript 支持 |
+
+## 📦 安装
+
+```bash
+npm install @tangramino/flow-editor
+```
+
+## 🚀 快速开始
+
+```tsx
+import React, { useState } from 'react';
+import { FlowEditor, EditorRenderer } from '@tangramino/flow-editor';
+
+const nodeTypes = [
+  {
+    type: 'start',
+    title: '开始',
+    renderNode: () => <div className="node-start">开始</div>
+  },
+  {
+    type: 'action',
+    title: '动作',
+    renderNode: ({ data }) => <div className="node-action">{data.name || '动作'}</div>,
+    renderConfig: ({ data, onChange }) => (
+      <input
+        value={data.name || ''}
+        onChange={(e) => onChange({ name: e.target.value })}
+        placeholder="动作名称"
+      />
+    )
+  }
+];
+
+function App() {
+  const [flowData, setFlowData] = useState({ nodes: [], edges: [] });
+
+  return (
+    <FlowEditor nodes={nodeTypes} value={flowData} onChange={setFlowData}>
+      <EditorRenderer />
+    </FlowEditor>
+  );
+}
+```
+
+## 📘 API 参考
+
+### `<FlowEditor />`
+
+| 属性 | 类型 | 必填 | 描述 |
+|------|------|:----:|------|
+| `nodes` | `FlowNode[]` | ✓ | 节点类型定义 |
+| `value` | `FlowGraphData` | ✓ | 当前流程数据 |
+| `onChange` | `(data) => void` | ✓ | 变更回调 |
+| `canAddLine` | `(source, target) => boolean` | | 连接验证器 |
+
+### `useFlowContext()`
+
+```typescript
+const {
+  nodes,           // 节点类型定义
+  flowData,        // 当前节点和连线
+  selectedNode,    // 选中的节点
+  addNode,         // 添加节点
+  removeNode,      // 删除节点
+  updateNodeData,  // 更新节点数据
+} = useFlowContext();
+```
+
+### 节点定义
+
+```typescript
+interface FlowNode {
+  type: string;           // 唯一标识符
+  title: string;          // 显示名称
+  nodeMeta?: {
+    isStart?: boolean;    // 是否为起始节点
+    isEnd?: boolean;      // 是否为结束节点
+    category?: string;    // 分类
+  };
+  renderNode: (props) => ReactNode;
+  renderConfig?: (props) => ReactNode;
+}
+```
 
 ## 📄 License
 

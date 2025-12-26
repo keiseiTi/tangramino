@@ -1,29 +1,84 @@
 # 介绍
 
-**Tangramino** 是一个基于 React 的可视化编辑器框架，旨在为低代码平台、表单设计器或营销页面搭建工具提供底层基础设施。
+**Tangramino** 是一个基于 React 的可视化编辑器框架，专为低代码平台、表单设计器或营销页面搭建工具提供底层基础设施。
 
-## 设计理念
-
-Tangramino 采用模块化设计，将核心逻辑、视图渲染和编辑器交互解耦，以便开发者根据需求灵活组合。
+## 核心理念
 
 ### 1. Schema 驱动
 
-应用的核心是一份描述页面结构、属性和逻辑的 JSON 数据（Schema）。Tangramino 通过操作这份 Schema 来驱动视图更新，确保了数据的可序列化和跨平台传输能力。
+应用的核心是一份 JSON 数据（Schema），描述页面结构、属性和逻辑。Tangramino 通过操作 Schema 来驱动视图更新，确保数据可序列化和跨平台传输。
 
-### 2. 逻辑与视图分离
+```typescript
+// Schema 示例
+const schema = {
+  elements: {
+    root: { type: 'container', props: {} },
+    'btn-1': { type: 'button', props: { text: '点击' } }
+  },
+  layout: {
+    root: 'root',
+    structure: { root: ['btn-1'] }
+  }
+};
+```
 
-框架主要分为两层：
+### 2. 分层架构
 
-- **Engine (`@tangramino/engine`)**：纯 JS/TS 实现的核心引擎，负责 Schema 的状态管理、事件分发和数据流转，不依赖具体 UI 框架。
-- **View (`@tangramino/react`)**：视图层，负责订阅 Engine 状态并将 Schema 渲染为 React 组件树。
+| 层级 | 包名 | 职责 |
+|------|------|------|
+| **引擎层** | `@tangramino/engine` | Schema 管理、事件分发、数据流转（框架无关） |
+| **视图层** | `@tangramino/react` | 订阅引擎状态，渲染 React 组件树 |
+| **编辑器层** | `@tangramino/base-editor` | 拖拽交互、选中状态、插件系统、物料注册 |
+| **流程编辑器** | `@tangramino/flow-editor` | 可视化工作流设计 |
 
-### 3. 编辑器与运行时
+### 3. 插件优先
 
-- **Base Editor (`@tangramino/base-editor`)**：提供编辑态的基础能力，包括拖拽上下文 (`dnd-kit`)、选中状态管理、插件系统和物料注册机制。
-- **Flow Editor (`@tangramino/flow-editor`)**：独立的流程图编辑器，用于可视化编排业务逻辑。
+通过插件系统扩展功能，而非修改核心代码：
+
+```typescript
+import { definePlugin } from '@tangramino/base-editor';
+
+const myPlugin = definePlugin(() => ({
+  id: 'my-plugin',
+  onInit(ctx) {
+    console.log('编辑器已初始化');
+  },
+  transformMaterials(materials) {
+    // 批量修改物料
+    return materials;
+  }
+}));
+```
 
 ## 适用场景
 
-- **页面搭建系统**：通过拖拽组件构建静态或动态页面。
-- **动态表单配置**：可视化配置表单结构及校验规则。
-- **逻辑流程编排**：设计工作流或业务规则链。
+| 场景 | 描述 |
+|------|------|
+| **页面搭建** | 通过拖拽组件构建静态或动态页面 |
+| **动态表单** | 可视化配置表单结构及校验规则 |
+| **逻辑编排** | 设计工作流或业务规则链 |
+| **仪表盘** | 自定义数据可视化面板 |
+
+## 快速选择
+
+```
+你想做什么？
+│
+├─ 渲染 Schema（无编辑）
+│   └→ @tangramino/react
+│
+├─ 构建页面编辑器
+│   └→ @tangramino/base-editor
+│
+├─ 构建流程编辑器
+│   └→ @tangramino/flow-editor
+│
+└─ 完全自定义
+    └→ @tangramino/engine + @tangramino/react
+```
+
+## 下一步
+
+- [快速开始](./quick-start.md) - 5 分钟搭建第一个编辑器
+- [Schema 协议](../concept/schema.md) - 理解数据结构
+- [物料体系](../concept/material.md) - 定义可用组件

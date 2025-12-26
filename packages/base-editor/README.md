@@ -1,17 +1,27 @@
 # @tangramino/base-editor
 
+[English](#english) | [简体中文](#简体中文)
+
+---
+
+<a name="english"></a>
+
 **Production-ready drag-and-drop visual editor framework**
 
-Build powerful low-code editors with drag-and-drop, canvas management, and real-time editing. Built on `@tangramino/engine` and `@tangramino/react` with `dnd-kit` for smooth interactions.
+Build powerful low-code editors with drag-and-drop, canvas management, material system, and plugin architecture. Built on `dnd-kit` for smooth interactions.
+
+[![npm version](https://img.shields.io/npm/v/@tangramino/base-editor)](https://www.npmjs.com/package/@tangramino/base-editor)
 
 ## ✨ Features
 
-- **Drag & Drop**: Built-in dnd-kit integration for materials and canvas elements
-- **Canvas Management**: Visual editing canvas with selection, positioning, and overlays
-- **Material System**: Define reusable component materials with props
-- **Plugin Architecture**: Extend editor capabilities with custom plugins
-- **UI Agnostic**: Not tied to any UI library - use any React components
-- **History Support**: Built-in undo/redo via plugin system
+| Feature | Description |
+|---------|-------------|
+| 🎯 **Drag & Drop** | Built-in dnd-kit integration |
+| 🎨 **Material System** | Define reusable component materials |
+| 🔌 **Plugin Architecture** | Extend with custom plugins |
+| 📜 **History Support** | Built-in undo/redo capability |
+| 🖼️ **Canvas Management** | Selection, positioning, overlays |
+| 🛡️ **Type-Safe** | Full TypeScript support |
 
 ## 📦 Installation
 
@@ -21,252 +31,249 @@ npm install @tangramino/base-editor
 
 > **Peer dependencies:** `react`, `react-dom`, `@tangramino/engine`, `@tangramino/react`, `@dnd-kit/core`
 
-## 🔨 Quick Start
+## 🚀 Quick Start
 
-### Minimal Editor (30 lines)
+### Minimal Editor (20 lines)
 
 ```tsx
 import React from 'react';
-import { EditorProvider, CanvasEditor } from '@tangramino/base-editor';
-import '@tangramino/base-editor/style.css';
+import { EditorProvider, CanvasEditor, Draggable, useEditorCore } from '@tangramino/base-editor';
 
-// Define materials
 const materials = [
   {
     type: 'button',
     title: 'Button',
-    Component: (props) => <button {...props} />,
-    props: { children: 'Click Me' }
-  },
-  {
-    type: 'text',
-    title: 'Text',
-    Component: ({ content }) => <p>{content}</p>,
-    props: { content: 'Hello' }
+    Component: (props) => <button {...props}>{props.children || 'Click'}</button>,
+    defaultProps: { children: 'Button' }
   }
 ];
 
 function App() {
   return (
     <EditorProvider materials={materials}>
-      <div style={{ height: '100vh' }}>
-        <CanvasEditor />
+      <div style={{ display: 'flex', height: '100vh' }}>
+        <MaterialPanel />
+        <CanvasEditor style={{ flex: 1 }} />
       </div>
     </EditorProvider>
   );
 }
 
-export default App;
-```
-
-### Full Editor with Panels
-
-```tsx
-import React from 'react';
-import {
-  EditorProvider,
-  CanvasEditor,
-  DragOverlay,
-  Draggable,
-  useEditorCore
-} from '@tangramino/base-editor';
-
 function MaterialPanel() {
   const { materials } = useEditorCore();
-  
   return (
-    <div className="material-panel">
-      <h3>Components</h3>
-      {materials.map(material => (
-        <Draggable key={material.type} material={material}>
-          <div className="material-item">
-            {material.title}
+    <div style={{ width: 200, padding: 16 }}>
+      {materials.map(m => (
+        <Draggable key={m.type} material={m}>
+          <div style={{ padding: 8, border: '1px solid #ddd', marginBottom: 8, cursor: 'move' }}>
+            {m.title}
           </div>
         </Draggable>
       ))}
     </div>
   );
 }
+```
 
+### Complete Editor
+
+```tsx
+import React, { useState } from 'react';
+import {
+  EditorProvider,
+  CanvasEditor,
+  DragOverlay,
+  Draggable,
+  useEditorCore,
+  historyPlugin
+} from '@tangramino/base-editor';
+
+// Materials
+const materials = [
+  {
+    type: 'container',
+    title: 'Container',
+    isContainer: true,
+    Component: ({ children, ...props }) => <div {...props}>{children}</div>,
+    defaultProps: { style: { padding: 16, border: '1px dashed #ccc', minHeight: 100 } }
+  },
+  {
+    type: 'button',
+    title: 'Button',
+    Component: (props) => <button {...props}>{props.children}</button>,
+    defaultProps: { children: 'Click Me' },
+    editorConfig: {
+      panels: [{
+        title: 'Props',
+        configs: [
+          { field: 'children', label: 'Text', uiType: 'input' }
+        ]
+      }]
+    }
+  }
+];
+
+// Property Panel
 function PropertyPanel() {
   const { activeId, schema, updateElement } = useEditorCore();
-  const activeElement = activeId ? schema.elements[activeId] : null;
+  const element = activeId ? schema.elements[activeId] : null;
   
-  if (!activeElement) return <div>Select an element</div>;
+  if (!element) return <div style={{ padding: 16 }}>Select an element</div>;
   
   return (
-    <div className="property-panel">
-      <h3>Properties</h3>
+    <div style={{ width: 250, padding: 16, borderLeft: '1px solid #ddd' }}>
+      <h4>Properties</h4>
+      <label>Text:</label>
       <input
-        value={activeElement.props.children || ''}
+        value={element.props.children || ''}
         onChange={(e) => updateElement(activeId, { 
-          props: { ...activeElement.props, children: e.target.value }
+          props: { ...element.props, children: e.target.value }
         })}
       />
     </div>
   );
 }
 
-function App() {
+export default function Editor() {
+  const [schema, setSchema] = useState({
+    elements: {},
+    layout: { root: 'root', structure: { root: [] } }
+  });
+
   return (
-    <EditorProvider materials={materials}>
-      <div className="editor-layout">
-        <aside className="sidebar"><MaterialPanel /></aside>
-        <main className="canvas-container"><CanvasEditor /></main>
-        <aside className="properties"><PropertyPanel /></aside>
+    <EditorProvider
+      materials={materials}
+      schema={schema}
+      onChange={setSchema}
+      plugins={[historyPlugin()]}
+    >
+      <div style={{ display: 'flex', height: '100vh' }}>
+        <MaterialPanel />
+        <CanvasEditor style={{ flex: 1, background: '#f5f5f5' }} />
+        <PropertyPanel />
       </div>
       <DragOverlay />
     </EditorProvider>
+  );
+}
+
+function MaterialPanel() {
+  const { materials } = useEditorCore();
+  return (
+    <div style={{ width: 200, padding: 16, borderRight: '1px solid #ddd' }}>
+      <h4>Components</h4>
+      {materials.map(m => (
+        <Draggable key={m.type} material={m}>
+          <div style={{ padding: 8, border: '1px solid #eee', marginBottom: 8, cursor: 'move' }}>
+            {m.title}
+          </div>
+        </Draggable>
+      ))}
+    </div>
   );
 }
 ```
 
 ## 📘 API Reference
 
-### `EditorProvider`
+### `<EditorProvider />`
 
 Root component providing editor context.
 
-**Props:**
-
 | Prop | Type | Required | Description |
-|------|------|----------|-------------|
+|------|------|:--------:|-------------|
 | `materials` | `Material[]` | ✓ | Available component materials |
-| `schema` | `Schema` |  | Initial schema (optional) |
-| `plugins` | `Plugin[]` |  | Editor plugins |
-| `onChange` | `(schema: Schema) => void` |  | Callback on schema change |
-
-**Example:**
+| `schema` | `Schema` | | Initial schema |
+| `plugins` | `Plugin[]` | | Editor plugins |
+| `onChange` | `(schema) => void` | | Schema change callback |
 
 ```tsx
 <EditorProvider
   materials={materials}
   schema={initialSchema}
-  plugins={[historyPlugin, customPlugin]}
-  onChange={(newSchema) => {
-    console.log('Schema updated:', newSchema);
-  }}
+  plugins={[historyPlugin()]}
+  onChange={(newSchema) => console.log('Updated:', newSchema)}
 >
   {/* Editor UI */}
 </EditorProvider>
 ```
 
-### `CanvasEditor`
+### `<CanvasEditor />`
 
 Visual editing canvas component.
-
-**Props:**
 
 | Prop | Type | Description |
 |------|------|-------------|
 | `renderElement` | `(element, children) => ReactNode` | Custom element renderer |
-| `renderPlaceholder` | `() => ReactNode` | Custom empty state |
-
-**Example:**
+| `renderPlaceholder` | `() => ReactNode` | Empty state renderer |
 
 ```tsx
 <CanvasEditor
-  renderElement={(element, children) => {
-    const Component = getMaterialComponent(element.type);
-    return (
-      <div className={`element-wrapper ${element.type}`}>
-        <Component {...element.props}>{children}</Component>
-      </div>
-    );
-  }}
   renderPlaceholder={() => (
-    <div className="empty-state">
-      Drag components here to start building
-    </div>
+    <div className="empty">Drag components here</div>
   )}
 />
 ```
 
-### `useEditorCore`
+### `useEditorCore()`
 
 Hook for accessing editor state and methods.
 
-**Returns:**
-
 ```typescript
-{
+const {
   // State
-  schema: Schema;              // Current schema
-  activeId: string | null;     // Selected element ID
-  dragElement: Material | null; // Currently dragging material
-  materials: Material[];       // Registered materials
-  engine: Engine;              // Engine instance
+  schema,           // Current schema
+  activeId,         // Selected element ID
+  materials,        // Registered materials
+  engine,           // Engine instance
+  dragElement,      // Currently dragging material
   
   // Methods
-  setSchema: (schema: Schema) => void;
-  setActiveId: (id: string | null) => void;
-  updateElement: (id: string, updates: Partial<Element>) => void;
-  deleteElement: (id: string) => void;
-  insertElement: (parentId: string, element: Element, index?: number) => void;
-}
+  setSchema,        // Update schema
+  setActiveId,      // Set selection
+  updateElement,    // Update element props
+  deleteElement,    // Delete element
+  insertElement,    // Insert new element
+} = useEditorCore();
 ```
 
-**Example:**
+### `<Draggable />`
 
-```tsx
-function MyComponent() {
-  const { 
-    schema, 
-    activeId, 
-    setActiveId,
-    updateElement 
-  } = useEditorCore();
-
-  const handleSelect = (id: string) => {
-    setActiveId(id);
-  };
-
-  return (/* ... */);
-}
-```
-
-### `Draggable`
-
-Make materials draggable from the material panel.
-
-**Props:**
-
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `material` | `Material` | ✓ | Material definition |
-| `children` | `ReactNode` | ✓ | Drag handle element |
-
-**Example:**
+Make materials draggable from the panel.
 
 ```tsx
 <Draggable material={buttonMaterial}>
   <div className="material-item">
-    <ButtonIcon />
-    <span>Button</span>
+    <Icon /> Button
   </div>
 </Draggable>
 ```
 
-### `DragOverlay`
+### `<DragOverlay />`
 
 Render drag preview overlay.
 
 ```tsx
-<DragOverlay />
+<DragOverlay>
+  <div className="drag-preview">Dragging...</div>
+</DragOverlay>
 ```
 
 ## 🎨 Material Definition
-
-Materials define the components available in your editor:
 
 ```typescript
 interface Material {
   type: string;                    // Unique identifier
   title: string;                   // Display name
   Component: ComponentType;        // React component
-  props?: Record<string, any>;     // Default props
-  category?: string;               // Organization category
-  icon?: ReactNode;                // Optional icon
+  defaultProps?: Record<string, any>;
+  icon?: ReactNode;
+  category?: string;
+  isContainer?: boolean;           // Can contain children
+  isBlock?: boolean;               // Block-level element
+  dropTypes?: string[];            // Allowed parent types
+  editorConfig?: EditorConfig;     // Property panel config
+  contextConfig?: ContextConfig;   // Flow context config
 }
 ```
 
@@ -278,162 +285,203 @@ const buttonMaterial: Material = {
   title: 'Button',
   category: 'Basic',
   icon: <ButtonIcon />,
-  Component: ({ children, ...props }) => (
-    <button {...props}>{children}</button>
+  Component: ({ children, type, ...props }) => (
+    <button className={`btn btn-${type}`} {...props}>
+      {children}
+    </button>
   ),
-  props: {
+  defaultProps: {
     children: 'Click Me',
     type: 'primary'
+  },
+  editorConfig: {
+    panels: [{
+      title: 'Properties',
+      configs: [
+        { field: 'children', label: 'Text', uiType: 'input' },
+        { field: 'type', label: 'Type', uiType: 'select', 
+          props: { options: ['primary', 'default', 'danger'] } }
+      ]
+    }]
   }
 };
 ```
 
 ## 🔌 Plugin System
 
-Extend editor functionality with plugins:
-
 ```typescript
-interface Plugin {
-  name: string;
-  apply: (context: EditorContext) => void | (() => void);
-}
-```
+import { definePlugin } from '@tangramino/base-editor';
 
-**Example - History Plugin:**
-
-```tsx
-const historyPlugin: Plugin = {
-  name: 'history',
-  apply: (context) => {
-    const history: Schema[] = [];
-    let currentIndex = -1;
-
-    context.engine.on('history', 'ELEMENT_UPDATE', () => {
-      history.push(context.schema);
-      currentIndex++;
-    });
-
-    context.registerAction('undo', () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        context.setSchema(history[currentIndex]);
-      }
-    });
-
-    context.registerAction('redo', () => {
-      if (currentIndex < history.length - 1) {
-        currentIndex++;
-        context.setSchema(history[currentIndex]);
-      }
-    });
+const myPlugin = definePlugin(() => ({
+  id: 'my-plugin',
+  
+  // Lifecycle
+  onInit(ctx) {
+    console.log('Editor initialized');
+    return () => console.log('Cleanup');
+  },
+  
+  // Transform materials
+  transformMaterials(materials) {
+    return materials.map(m => ({
+      ...m,
+      defaultProps: { ...m.defaultProps, 'data-editor': true }
+    }));
+  },
+  
+  // Schema hooks
+  onBeforeInsert(schema, parentId, element) {
+    console.log('Inserting:', element);
+    return true; // return false to prevent
+  },
+  
+  onAfterRemove(schema, elementId) {
+    console.log('Removed:', elementId);
   }
-};
+}));
 ```
 
-## 🎯 Advanced Usage
-
-### Custom Overlays
-
-Add custom UI overlays to the canvas:
+### Built-in History Plugin
 
 ```tsx
-import { CanvasOverlay } from '@tangramino/base-editor';
+import { historyPlugin } from '@tangramino/base-editor';
 
-function CustomOverlay() {
-  return (
-    <CanvasOverlay>
-      <div className="custom-toolbar">
-        {/* Custom tools */}
-      </div>
-    </CanvasOverlay>
-  );
-}
-```
-
-### Element Wrapper Customization
-
-Wrap elements with custom UI:
-
-```tsx
-import { ElementWrapper } from '@tangramino/base-editor';
-
-<CanvasEditor
-  renderElement={(element, children) => (
-    <ElementWrapper
-      element={element}
-      onSelect={() => setActiveId(element.id)}
-      onDelete={() => deleteElement(element.id)}
-    >
-      {children}
-    </ElementWrapper>
-  )}
-/>
-```
-
-### Validation
-
-Add validation to prevent invalid operations:
-
-```tsx
-const validationPlugin: Plugin = {
-  name: 'validation',
-  apply: (context) => {
-    const originalInsert = context.insertElement;
-    
-    context.insertElement = (parentId, element, index) => {
-      // Validate before insert
-      if (!isValidParent(parentId, element.type)) {
-        console.error('Invalid parent-child relationship');
-        return;
-      }
-      originalInsert(parentId, element, index);
-    };
-  }
-};
-```
-
-## 🎨 Styling
-
-Import the default styles:
-
-```tsx
-import '@tangramino/base-editor/style.css';
-```
-
-Or provide custom styles:
-
-```css
-.canvas-editor {
-  background: #f5f5f5;
-  min-height: 600px;
-}
-
-.element-wrapper {
-  border: 2px dashed transparent;
-  transition: border-color 0.2s;
-}
-
-.element-wrapper.selected {
-  border-color: #1890ff;
-}
+<EditorProvider plugins={[historyPlugin()]}>
+  {/* ... */}
+</EditorProvider>
 ```
 
 ## 📦 Complete Example
 
-See the [antd-demo](../../playground/antd-demo) for a production-ready implementation with:
-- Material panel with categories
-- Property configuration
-- Undo/redo
-- Schema import/export
-- Preview mode
+See [playground/antd-demo](../../playground/antd-demo) for a production-ready implementation.
+
+---
+
+<a name="简体中文"></a>
+
+# @tangramino/base-editor
+
+**生产级拖拽可视化编辑器框架**
+
+构建强大的低代码编辑器：拖拽交互、画布管理、物料系统和插件架构。基于 `dnd-kit` 构建，交互流畅。
+
+## ✨ 特性
+
+| 特性 | 描述 |
+|------|------|
+| 🎯 **拖拽功能** | 内置 dnd-kit 集成 |
+| 🎨 **物料系统** | 定义可复用的组件物料 |
+| 🔌 **插件架构** | 通过插件扩展功能 |
+| 📜 **历史记录** | 内置撤销/重做支持 |
+| 🖼️ **画布管理** | 选中、定位、覆盖层 |
+| 🛡️ **类型安全** | 完整的 TypeScript 支持 |
+
+## 📦 安装
+
+```bash
+npm install @tangramino/base-editor
+```
+
+## 🚀 快速开始
+
+```tsx
+import React from 'react';
+import { EditorProvider, CanvasEditor, Draggable, useEditorCore } from '@tangramino/base-editor';
+
+const materials = [
+  {
+    type: 'button',
+    title: '按钮',
+    Component: (props) => <button {...props}>{props.children || '点击'}</button>,
+    defaultProps: { children: '按钮' }
+  }
+];
+
+function App() {
+  return (
+    <EditorProvider materials={materials}>
+      <div style={{ display: 'flex', height: '100vh' }}>
+        <MaterialPanel />
+        <CanvasEditor style={{ flex: 1 }} />
+      </div>
+    </EditorProvider>
+  );
+}
+
+function MaterialPanel() {
+  const { materials } = useEditorCore();
+  return (
+    <div style={{ width: 200, padding: 16 }}>
+      {materials.map(m => (
+        <Draggable key={m.type} material={m}>
+          <div style={{ padding: 8, border: '1px solid #ddd', marginBottom: 8, cursor: 'move' }}>
+            {m.title}
+          </div>
+        </Draggable>
+      ))}
+    </div>
+  );
+}
+```
+
+## 📘 API 参考
+
+### `<EditorProvider />`
+
+| 属性 | 类型 | 必填 | 描述 |
+|------|------|:----:|------|
+| `materials` | `Material[]` | ✓ | 可用的组件物料 |
+| `schema` | `Schema` | | 初始 Schema |
+| `plugins` | `Plugin[]` | | 编辑器插件 |
+| `onChange` | `(schema) => void` | | Schema 变更回调 |
+
+### `useEditorCore()`
+
+```typescript
+const {
+  schema,           // 当前 Schema
+  activeId,         // 选中的元素 ID
+  materials,        // 注册的物料
+  setActiveId,      // 设置选中
+  updateElement,    // 更新元素属性
+  deleteElement,    // 删除元素
+  insertElement,    // 插入新元素
+} = useEditorCore();
+```
+
+### 物料定义
+
+```typescript
+interface Material {
+  type: string;              // 唯一标识符
+  title: string;             // 显示名称
+  Component: ComponentType;  // React 组件
+  defaultProps?: object;     // 默认属性
+  isContainer?: boolean;     // 是否为容器
+  editorConfig?: EditorConfig;
+}
+```
+
+## 🔌 插件系统
+
+```typescript
+import { definePlugin } from '@tangramino/base-editor';
+
+const myPlugin = definePlugin(() => ({
+  id: 'my-plugin',
+  
+  transformMaterials(materials) {
+    // 转换物料
+    return materials;
+  },
+  
+  onBeforeInsert(schema, parentId, element) {
+    // 插入前校验
+    return true;
+  }
+}));
+```
 
 ## 📄 License
 
-MIT 
-  schema,       // 当前 Schema
-  setSchema,    // 更新 Schema
-  activeId,     // 当前选中元素 ID
-  setActiveId,  // 设置选中元素
-  dragElement,  // 当前拖拽的元素
-} = useEditorCore();
-```
+MIT

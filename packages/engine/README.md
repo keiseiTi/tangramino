@@ -1,50 +1,95 @@
 # @tangramino/engine
 
-**Framework-agnostic schema engine for low-code platforms**
+[English](#english) | [简体中文](#简体中文)
 
-The core of Tangramino - a pure TypeScript engine for managing JSONSchema-based page definitions, event handling, and state management. Use it as the foundation for building visual editors across any UI framework.
+---
+
+<a name="english"></a>
+
+**Framework-agnostic JSON Schema engine for low-code platforms**
+
+The foundation of Tangramino — a lightweight, pure TypeScript engine for managing page structures, event handling, and state synchronization. Zero UI dependencies, works with React, Vue, or any frontend framework.
+
+[![npm version](https://img.shields.io/npm/v/@tangramino/engine)](https://www.npmjs.com/package/@tangramino/engine)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@tangramino/engine)](https://bundlephobia.com/package/@tangramino/engine)
 
 ## ✨ Features
 
-- **Schema Management**: Complete CRUD operations for elements and layouts
-- **Event System**: Powerful pub/sub mechanism for state synchronization
-- **Framework Independent**: Zero UI dependencies - pure data layer
-- **Type-Safe**: Full TypeScript support with comprehensive type definitions
-- **Immutable Updates**: Built on Immer for efficient state management
+| Feature | Description |
+|---------|-------------|
+| 🎯 **Schema-Driven** | JSON-based page structure definition |
+| 📦 **Framework Agnostic** | Zero UI dependencies — pure data layer |
+| 🔄 **Event System** | Pub/sub mechanism for state synchronization |
+| 🛡️ **Type-Safe** | Full TypeScript support with comprehensive types |
+| ⚡ **Immutable Updates** | Built on Immer for efficient state management |
+| 🔧 **Schema Utils** | Built-in utilities for CRUD operations |
 
 ## 📦 Installation
 
 ```bash
 npm install @tangramino/engine
+# or
+pnpm add @tangramino/engine
+# or
+yarn add @tangramino/engine
+```
+
+## 🚀 Quick Start
+
+```typescript
+import { createEngine, SchemaUtils } from '@tangramino/engine';
+
+// 1. Define your schema
+const schema = {
+  elements: {
+    root: { type: 'container', props: {} },
+    'btn-1': { type: 'button', props: { text: 'Click Me' } }
+  },
+  layout: {
+    root: 'root',
+    structure: { root: ['btn-1'] }
+  }
+};
+
+// 2. Create engine instance
+const engine = createEngine(schema);
+
+// 3. Subscribe to changes
+engine.on('app', 'ELEMENT_UPDATE', () => {
+  console.log('Schema updated:', engine.elements);
+});
+
+// 4. Update state
+engine.setState({ 'btn-1': { text: 'Updated!' } });
 ```
 
 ## 📖 Core Concepts
 
 ### Schema Structure
 
-A Schema defines your entire page structure in JSON format:
+Schema is a flat JSON structure optimized for efficient lookups:
 
 ```typescript
 interface Schema {
-  // Element definitions (flat structure for efficient lookup)
-  elements: Record<string, Element>;
+  // Flat element storage (O(1) access)
+  elements: Record<string, ElementState>;
   
-  // Layout tree structure
+  // Layout tree (parent-child relationships)
   layout: {
-    root: string;                        // Root element ID
-    structure: Record<string, string[]>; // Parent -> Children mapping
+    root: string;
+    structure: Record<string, string[]>;
   };
   
-  // Optional metadata and extensions
-  meta?: Record<string, unknown>;
+  // Optional extensions
   extensions?: Record<string, unknown>;
+  flows?: Record<string, Flow>;        // Flow orchestration
+  context?: { globalVariables?: GlobalVariable[] };
 }
 
-interface Element {
-  id: string;                    // Unique identifier
-  type: string;                  // Component type (e.g., 'button', 'input')
-  props: Record<string, unknown>; // Component props
-  hidden?: boolean;              // Visibility flag
+interface ElementState {
+  type: string;                    // Component type
+  props: Record<string, unknown>;  // Component props
+  hidden?: boolean;                // Visibility
 }
 ```
 
@@ -53,132 +98,114 @@ interface Element {
 ```typescript
 const schema = {
   elements: {
-    'root': { id: 'root', type: 'container', props: {} },
-    'btn-1': { id: 'btn-1', type: 'button', props: { children: 'Click' } },
-    'input-1': { id: 'input-1', type: 'input', props: { placeholder: 'Enter text' } }
+    root: { type: 'page', props: { title: 'My App' } },
+    header: { type: 'container', props: { className: 'header' } },
+    'btn-1': { type: 'button', props: { children: 'Click' } }
   },
   layout: {
     root: 'root',
     structure: {
-      'root': ['btn-1', 'input-1']
+      root: ['header'],
+      header: ['btn-1']
     }
   }
 };
 ```
 
-### Schema Utilities
+### SchemaUtils
 
-The `SchemaUtils` module provides utility functions for manipulating schemas:
+Built-in utilities for schema manipulation:
 
 ```typescript
 import { SchemaUtils } from '@tangramino/engine';
 
-// Insert an element
-const newSchema = SchemaUtils.insertElement(
-  schema,
-  parentId,
-  newElement,
-  position // optional index
-);
+// Insert element
+const newSchema = SchemaUtils.insertElement(schema, 'root', {
+  type: 'input',
+  props: { placeholder: 'Enter...' }
+}, 0);
 
-// Remove an element
-const updatedSchema = SchemaUtils.removeElement(schema, elementId);
-
-// Move an element
-const movedSchema = SchemaUtils.moveElement(
-  schema,
-  elementId,
-  newParentId,
-  newIndex
-);
-
-// Update element props
-const propsSchema = SchemaUtils.setElementProps(
-  schema,
-  elementId,
-  { children: 'New Text' }
-);
-
-// Get parent chain
-const parents = SchemaUtils.getParents(schema, elementId);
-```
-
-## 🔨 Usage
-
-### Creating an Engine Instance
-
-```typescript
-import { createEngine } from '@tangramino/engine';
-
-const engine = createEngine(initialSchema);
-
-// Access current state
-const elements = engine.elements;
-const layout = engine.layouts;
-
-// Update element state
-engine.setState({
-  'btn-1': { disabled: true }
+// Update props
+const updated = SchemaUtils.setElementProps(schema, 'btn-1', {
+  text: 'New Text'
 });
 
-// Get element state
-const btnState = engine.getState('btn-1');
+// Move element
+const moved = SchemaUtils.moveElement(schema, 'btn-1', 'header', 0);
 
-// Show/hide elements
-engine.hiddenElements(['btn-1']);
-engine.showElements(['btn-1']);
+// Remove element
+const removed = SchemaUtils.removeElement(schema, 'btn-1');
+
+// Get parent chain
+const parents = SchemaUtils.getParents(schema, 'btn-1');
+// → ['root', 'header']
 ```
 
-### Event System
+## 🔨 API Reference
 
-Subscribe to changes and coordinate updates across your application:
+### Engine Instance
+
+```typescript
+const engine = createEngine(schema);
+```
+
+| Method | Description |
+|--------|-------------|
+| `engine.elements` | Get all elements |
+| `engine.layouts` | Get layout structure |
+| `engine.setState(state)` | Update element props |
+| `engine.getState(id?)` | Get element state |
+| `engine.showElements(ids)` | Show hidden elements |
+| `engine.hiddenElements(ids)` | Hide elements |
+| `engine.setGlobalVariable(key, value)` | Set global variable |
+| `engine.getGlobalVariable(key)` | Get global variable |
+| `engine.setExtensions(field, value)` | Store extension data |
+| `engine.getExtensions(field)` | Retrieve extension data |
+
+### Event System
 
 ```typescript
 import { ELEMENT_UPDATE, VIEW_UPDATE } from '@tangramino/engine';
 
-// Listen to element updates
-engine.on('namespace', ELEMENT_UPDATE, () => {
-  console.log('Elements changed');
+// Subscribe to events
+engine.on('myApp', ELEMENT_UPDATE, (data) => {
+  console.log('Elements changed:', data);
 });
 
 // One-time listener
-engine.once('namespace', VIEW_UPDATE, () => {
+engine.once('myApp', VIEW_UPDATE, () => {
   console.log('View updated once');
 });
 
 // Emit custom events
-engine.emit('namespace', 'customEvent', data);
+engine.emit('myApp', 'customEvent', { foo: 'bar' });
 ```
 
 ### Global Variables
 
-Manage global state across your application:
-
 ```typescript
-// Set a global variable
+// Set
 engine.setGlobalVariable('userName', 'John');
 
-// Get a global variable
+// Get
 const userName = engine.getGlobalVariable('userName');
 ```
 
-### Extensions
+### Callback Injection
 
-Store custom data in the schema:
+Inject dynamic callbacks for runtime behavior:
 
 ```typescript
-// Set extension data
-engine.setExtensions('myPlugin', { setting: 'value' });
-
-// Get extension data
-const pluginData = engine.getExtensions('myPlugin');
+engine.injectCallback('btn-1', 'onClick', () => {
+  console.log('Button clicked!');
+});
 ```
 
 ## 🔗 Integration
 
-The engine is designed to work with view layers. Here's how it integrates with React:
+### With React
 
-```typescript
+```tsx
 import { createEngine } from '@tangramino/engine';
 import { ReactView } from '@tangramino/react';
 
@@ -190,61 +217,137 @@ function App() {
       engine={engine}
       components={{
         button: MyButton,
-        input: MyInput
+        input: MyInput,
+        container: MyContainer
       }}
     />
   );
 }
 ```
 
-## 📘 API Reference
+### With Base Editor
 
-### Engine Instance Methods
+```tsx
+import { createEngine } from '@tangramino/engine';
+import { EditorProvider, CanvasEditor } from '@tangramino/base-editor';
 
-| Method | Description |
-|--------|-------------|
-| `setState(state)` | Update element props |
-| `getState(id?)` | Get element state (all or specific) |
-| `setExtensions(field, value)` | Store extension data |
-| `getExtensions(field)` | Retrieve extension data |
-| `showElements(ids)` | Show hidden elements |
-| `hiddenElements(ids)` | Hide elements |
-| `setGlobalVariable(key, value)` | Set global variable |
-| `getGlobalVariable(key)` | Get global variable |
-| `on(namespace, event, listener)` | Subscribe to events |
-| `once(namespace, event, listener)` | Subscribe once |
-| `emit(namespace, event, ...args)` | Emit events |
-
-### SchemaUtils Static Methods
-
-| Method | Description |
-|--------|-------------|
-| `insertElement(schema, parentId, element, index?)` | Insert element into schema |
-| `removeElement(schema, elementId)` | Remove element from schema |
-| `moveElement(schema, elementId, newParentId, index?)` | Move element to new parent |
-| `setElementProps(schema, elementId, props)` | Update element props |
-| `getParents(schema, elementId)` | Get parent chain |
-
-## 🔍 Advanced
-
-### Custom Event Namespaces
-
-Organize events by namespace to prevent conflicts:
-
-```typescript
-engine.on('myPlugin', 'dataChange', handleDataChange);
-engine.emit('myPlugin', 'dataChange', newData);
+function Editor() {
+  return (
+    <EditorProvider materials={materials} schema={schema}>
+      <CanvasEditor />
+    </EditorProvider>
+  );
+}
 ```
 
-### Callback Injection
+---
 
-Inject callbacks that can be triggered from the schema:
+<a name="简体中文"></a>
+
+# @tangramino/engine
+
+**框架无关的 JSON Schema 引擎**
+
+Tangramino 的核心基础 —— 轻量级纯 TypeScript 引擎，用于管理页面结构、事件处理和状态同步。零 UI 依赖，可与 React、Vue 或任何前端框架配合使用。
+
+## ✨ 特性
+
+| 特性 | 描述 |
+|------|------|
+| 🎯 **Schema 驱动** | 基于 JSON 的页面结构定义 |
+| 📦 **框架无关** | 零 UI 依赖 —— 纯数据层 |
+| 🔄 **事件系统** | 发布/订阅机制实现状态同步 |
+| 🛡️ **类型安全** | 完整的 TypeScript 类型支持 |
+| ⚡ **不可变更新** | 基于 Immer 的高效状态管理 |
+| 🔧 **Schema 工具** | 内置 CRUD 操作工具函数 |
+
+## 📦 安装
+
+```bash
+npm install @tangramino/engine
+```
+
+## 🚀 快速开始
 
 ```typescript
-engine.injectCallback('btn-1', 'onClick', () => {
-  console.log('Button clicked');
+import { createEngine, SchemaUtils } from '@tangramino/engine';
+
+// 1. 定义 Schema
+const schema = {
+  elements: {
+    root: { type: 'container', props: {} },
+    'btn-1': { type: 'button', props: { text: '点击我' } }
+  },
+  layout: {
+    root: 'root',
+    structure: { root: ['btn-1'] }
+  }
+};
+
+// 2. 创建引擎实例
+const engine = createEngine(schema);
+
+// 3. 订阅变更
+engine.on('app', 'ELEMENT_UPDATE', () => {
+  console.log('Schema 已更新:', engine.elements);
 });
+
+// 4. 更新状态
+engine.setState({ 'btn-1': { text: '已更新!' } });
 ```
+
+## 📖 核心概念
+
+### Schema 结构
+
+```typescript
+interface Schema {
+  elements: Record<string, ElementState>;  // 扁平化元素存储
+  layout: {
+    root: string;                          // 根节点 ID
+    structure: Record<string, string[]>;   // 父子关系映射
+  };
+  extensions?: Record<string, unknown>;    // 扩展数据
+  flows?: Record<string, Flow>;            // 流程编排
+  context?: { globalVariables?: GlobalVariable[] };
+}
+```
+
+### SchemaUtils 工具
+
+```typescript
+import { SchemaUtils } from '@tangramino/engine';
+
+// 插入元素
+SchemaUtils.insertElement(schema, parentId, element, index?);
+
+// 更新属性
+SchemaUtils.setElementProps(schema, elementId, props);
+
+// 移动元素
+SchemaUtils.moveElement(schema, elementId, newParentId, index?);
+
+// 删除元素
+SchemaUtils.removeElement(schema, elementId);
+
+// 获取父级链
+SchemaUtils.getParents(schema, elementId);
+```
+
+## 🔨 API 参考
+
+### 引擎实例方法
+
+| 方法 | 描述 |
+|------|------|
+| `setState(state)` | 更新元素属性 |
+| `getState(id?)` | 获取元素状态 |
+| `showElements(ids)` | 显示元素 |
+| `hiddenElements(ids)` | 隐藏元素 |
+| `setGlobalVariable(key, value)` | 设置全局变量 |
+| `getGlobalVariable(key)` | 获取全局变量 |
+| `on(namespace, event, listener)` | 订阅事件 |
+| `emit(namespace, event, data)` | 发布事件 |
 
 ## 📄 License
 
