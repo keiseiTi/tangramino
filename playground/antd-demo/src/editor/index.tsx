@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
-import { EditorProvider, DragOverlay, useEditorCore, historyPlugin } from '@tangramino/base-editor';
+import { EditorProvider, DragOverlay, useEditorCore, historyPlugin, collaborationPlugin } from '@tangramino/base-editor';
+import { LoroDoc } from 'loro-crdt';
+import { io } from 'socket.io-client';
 import { materialGroups } from '@/materials/group';
 import BasicPage from '@/materials/basic-page/material-config';
 import { materialPlugin } from '@/plugins/material';
@@ -16,6 +18,12 @@ const materials = materialGroups.flatMap((group) => group.children).concat(Basic
 
 export interface EditorPageProps {
   schema?: Schema;
+  /** Enable collaboration mode */
+  enableCollab?: boolean;
+  /** Collaboration server URL */
+  collabServerUrl?: string;
+  /** Room ID for collaboration */
+  collabRoomId?: string;
 }
 
 const getLocalSchema = (): Schema | undefined => {
@@ -67,16 +75,34 @@ const EditorLayout = () => {
 };
 
 const EditorPage = (props: EditorPageProps) => {
-  const { schema } = props;
+  const {
+    schema,
+    enableCollab = false,
+    collabServerUrl = 'http://localhost:3001',
+    collabRoomId = 'demo-room',
+  } = props;
 
   const initialSchema = useMemo(() => {
     return schema || getLocalSchema() || defaultSchema;
   }, [schema]);
 
-  const plugins = useMemo(
-    () => [historyPlugin({}), materialPlugin(), formPlugin(), portalPlugin()],
-    [],
-  );
+  const plugins = useMemo(() => {
+    const basePlugins = [historyPlugin({}), materialPlugin(), formPlugin(), portalPlugin()];
+
+    // Add collaboration plugin if enabled
+    if (enableCollab) {
+      basePlugins.push(
+        collaborationPlugin({
+          serverUrl: collabServerUrl,
+          roomId: collabRoomId,
+          loro: { LoroDoc },
+          socketIO: io,
+        }),
+      );
+    }
+
+    return basePlugins;
+  }, [enableCollab, collabServerUrl, collabRoomId]);
 
   return (
     <EditorProvider materials={materials} schema={initialSchema} plugins={plugins}>

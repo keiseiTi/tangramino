@@ -17,6 +17,10 @@ const router = createBrowserRouter(
       element: <Editor />,
     },
     {
+      path: '/collab',
+      element: <Editor enableCollab collabServerUrl="http://localhost:3001" collabRoomId="demo-room" />,
+    },
+    {
       path: '/preview',
       element: <Preview />,
     },
