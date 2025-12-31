@@ -1,8 +1,8 @@
 import type { Schema } from '@tangramino/engine';
 import type { EditorPlugin, PluginContext } from '../interface/plugin';
 import { definePlugin } from '../utils/define-plugin';
+import { LoroDoc as LoroDocClass } from 'loro-crdt';
 
-// Type definitions for Socket.IO client (peer dependency)
 interface Socket {
   connected: boolean;
   id: string;
@@ -15,12 +15,13 @@ interface Socket {
 }
 
 interface SocketIOClient {
-  (url: string, options?: Record<string, unknown>): Socket;
+  (uri?: string, options?: Record<string, unknown>): Socket;
+  (options?: Record<string, unknown>): Socket;
 }
 
 // Type definitions for Loro (peer dependency)
 interface LoroDoc {
-  setPeerId(id: bigint | string): void;
+  setPeerId(id: bigint | number | `${number}`): void;
   getMap(id: string): LoroMap;
   subscribe(callback: (event: LoroEvent) => void): () => void;
   export(options: { mode: 'snapshot' } | { mode: 'update'; from?: Uint8Array }): Uint8Array;
@@ -56,10 +57,12 @@ export interface CollaborationOptions {
   peerId?: string | bigint;
   /** Auto-connect on init (default: true) */
   autoConnect?: boolean;
-  /** Loro CRDT library instance (must be provided) */
-  loro: { LoroDoc: new () => LoroDoc };
   /** Socket.IO client instance (must be provided) */
   socketIO: SocketIOClient;
+  /** Max retry attempts for sync (default: 5) */
+  maxRetries?: number;
+  /** Initial retry delay in ms (default: 1000) */
+  retryDelay?: number;
 }
 
 /**
@@ -91,23 +94,34 @@ const generatePeerId = (): bigint => {
   return BigInt(randomInt);
 };
 
+// Helper: Validate peer ID format
+const isValidPeerId = (peerId: unknown): peerId is string => {
+  return typeof peerId === 'string' && peerId.length > 0 && /^[a-zA-Z0-9_-]+$/.test(peerId);
+};
+
 /**
  * Collaboration plugin - provides real-time collaborative editing using Loro CRDT
  *
  * @example
- * import { LoroDoc } from 'loro-crdt';
  * import { io } from 'socket.io-client';
  *
  * const collab = collaborationPlugin({
  *   serverUrl: 'http://localhost:3001',
  *   roomId: 'my-document',
- *   loro: { LoroDoc },
  *   socketIO: io,
  * });
  */
 export const collaborationPlugin = definePlugin<CollaborationPlugin, CollaborationOptions>(
   (options) => {
-    const { serverUrl, roomId, peerId: userPeerId, autoConnect = true, loro, socketIO } = options;
+    const {
+      serverUrl,
+      roomId,
+      peerId: userPeerId,
+      autoConnect = true,
+      socketIO,
+      maxRetries = 5,
+      retryDelay = 1000,
+    } = options;
 
     // State
     let loroDoc: LoroDoc | null = null;
@@ -115,12 +129,15 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
     let ctx: PluginContext | null = null;
     let isRemoteUpdate = false;
     let isInitialSync = true;
+    let retryCount = 0;
+    let retryTimeoutId: ReturnType<typeof setTimeout> | null = null;
     // Convert peerId to BigInt for Loro, keep string version for Socket.IO
-    const loroPeerId: bigint = typeof userPeerId === 'bigint'
-      ? userPeerId
-      : typeof userPeerId === 'string'
-        ? BigInt(parseInt(userPeerId, 10) || Date.now())
-        : generatePeerId();
+    const loroPeerId: bigint =
+      typeof userPeerId === 'bigint'
+        ? userPeerId
+        : typeof userPeerId === 'string'
+          ? BigInt(parseInt(userPeerId, 10) || Date.now())
+          : generatePeerId();
     const socketPeerId: string = loroPeerId.toString();
     const peers: Set<string> = new Set();
     let unsubscribeLoro: (() => void) | null = null;
@@ -158,14 +175,6 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
 
     // Sync local changes to server
     const syncToServer = (targetSchema?: Schema): void => {
-      console.log('[collaborationPlugin] syncToServer called', {
-        socketConnected: socket?.connected,
-        hasLoroDoc: !!loroDoc,
-        isRemoteUpdate,
-        isInitialSync,
-        hasTargetSchema: !!targetSchema,
-      });
-
       if (!socket?.connected || !loroDoc || isRemoteUpdate || isInitialSync) return;
 
       try {
@@ -178,7 +187,6 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
 
         // Only send if there are actual updates
         if (update.length > 0) {
-          console.log('[collaborationPlugin] Sending update to server, size:', update.length);
           socket.emit('update', {
             roomId,
             update: Array.from(update),
@@ -190,9 +198,39 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
       }
     };
 
+    // Exponential backoff retry
+    const retryConnect = (): void => {
+      if (retryCount >= maxRetries) {
+        console.error(
+          `[collaborationPlugin] Max retry attempts (${maxRetries}) reached. Giving up.`,
+        );
+        return;
+      }
+
+      const delay = retryDelay * Math.pow(2, retryCount);
+      retryCount++;
+
+      console.log(
+        `[collaborationPlugin] Retrying connection in ${delay}ms (attempt ${retryCount}/${maxRetries})...`,
+      );
+
+      retryTimeoutId = setTimeout(() => {
+        connect().catch((error) => {
+          console.error('[collaborationPlugin] Retry failed:', error);
+          retryConnect();
+        });
+      }, delay);
+    };
+
     // Connect to server
     const connect = async (): Promise<void> => {
       if (socket?.connected) return;
+
+      // Clear any pending retry
+      if (retryTimeoutId) {
+        clearTimeout(retryTimeoutId);
+        retryTimeoutId = null;
+      }
 
       return new Promise((resolve, reject) => {
         try {
@@ -201,14 +239,12 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
           });
 
           socket.on('connect', () => {
-            console.log('[collaborationPlugin] Connected to server');
             socket!.emit('join-room', { roomId, peerId: socketPeerId });
           });
 
           socket.on('room-joined', (data: { roomId: string; peers: string[] }) => {
             peers.clear();
             data.peers.forEach((p) => peers.add(p));
-            console.log('[collaborationPlugin] Joined room:', data.roomId, 'Peers:', data.peers);
 
             // Request sync after joining
             socket!.emit('sync-request', { roomId });
@@ -217,7 +253,11 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
           socket.on(
             'sync-response',
             (data: { roomId: string; snapshot: number[]; isSnapshot: boolean }) => {
-              if (!loroDoc) return;
+              if (!loroDoc) {
+                console.error('[collaborationPlugin] Loro document not initialized');
+                reject(new Error('Loro document not initialized'));
+                return;
+              }
 
               try {
                 const snapshotBytes = new Uint8Array(data.snapshot);
@@ -228,6 +268,8 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
                     isRemoteUpdate = true;
                     ctx.setSchema(schema);
                     isRemoteUpdate = false;
+                  } else if (!schema) {
+                    console.warn('[collaborationPlugin] Failed to parse schema from sync response');
                   }
                 } else if (ctx) {
                   // Server document is empty, initialize with our schema
@@ -240,49 +282,85 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
                   });
                 }
                 isInitialSync = false;
+                retryCount = 0; // Reset retry count on success
                 resolve();
               } catch (error) {
                 console.error('[collaborationPlugin] Sync error:', error);
+                // Retry on sync error
+                retryConnect();
                 reject(error);
               }
             },
           );
 
-          socket.on('remote-update', (data: { roomId: string; update: number[]; peerId: string }) => {
-            if (!loroDoc || data.peerId === socketPeerId) return;
+          socket.on(
+            'remote-update',
+            (data: { roomId: string; update: number[]; peerId: string }) => {
+              if (!loroDoc || data.peerId === socketPeerId) return;
 
-            try {
-              const updateBytes = new Uint8Array(data.update);
-              loroDoc.import(updateBytes);
-
-              const schema = loroToSchema();
-              if (schema && ctx) {
-                isRemoteUpdate = true;
-                ctx.setSchema(schema);
-                isRemoteUpdate = false;
+              // Validate peerId format
+              if (!isValidPeerId(data.peerId)) {
+                console.warn(
+                  `[collaborationPlugin] Invalid peerId format received: ${data.peerId}`,
+                );
+                return;
               }
-            } catch (error) {
-              console.error('[collaborationPlugin] Remote update error:', error);
-            }
-          });
+
+              // Validate roomId matches
+              if (data.roomId !== roomId) {
+                console.warn(
+                  `[collaborationPlugin] Received update for different room: ${data.roomId}`,
+                );
+                return;
+              }
+
+              // Validate update data
+              if (!Array.isArray(data.update) || data.update.length === 0) {
+                console.warn('[collaborationPlugin] Invalid update data received');
+                return;
+              }
+
+              try {
+                const updateBytes = new Uint8Array(data.update);
+                loroDoc.import(updateBytes);
+
+                const schema = loroToSchema();
+                if (schema && ctx) {
+                  isRemoteUpdate = true;
+                  ctx.setSchema(schema);
+                  isRemoteUpdate = false;
+                } else if (!schema) {
+                  console.warn('[collaborationPlugin] Failed to parse schema from remote update');
+                }
+              } catch (error) {
+                console.error('[collaborationPlugin] Remote update error:', error);
+              }
+            },
+          );
 
           socket.on('peer-joined', (data: { peerId: string }) => {
             peers.add(data.peerId);
-            console.log('[collaborationPlugin] Peer joined:', data.peerId);
           });
 
           socket.on('peer-left', (data: { peerId: string }) => {
             peers.delete(data.peerId);
-            console.log('[collaborationPlugin] Peer left:', data.peerId);
           });
 
           socket.on('connect_error', (error: Error) => {
             console.error('[collaborationPlugin] Connection error:', error.message);
             reject(error);
+            // Trigger retry on connection error
+            retryConnect();
           });
 
-          socket.on('disconnect', () => {
-            console.log('[collaborationPlugin] Disconnected from server');
+          socket.on('disconnect', (reason: string) => {
+            console.log(`[collaborationPlugin] Disconnected: ${reason}`);
+            // Auto-reconnect on unexpected disconnection
+            if (reason === 'io server disconnect') {
+              // Server initiated disconnect, retry connection
+              retryConnect();
+            }
+            // For other reasons, Socket.IO handles auto-reconnect
           });
         } catch (error) {
           reject(error);
@@ -292,10 +370,29 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
 
     // Disconnect from server
     const disconnect = (): void => {
+      // Clear retry timeout
+      if (retryTimeoutId) {
+        clearTimeout(retryTimeoutId);
+        retryTimeoutId = null;
+      }
+
+      // Reset retry count
+      retryCount = 0;
+
+      // Disconnect socket and remove all listeners
       if (socket) {
+        socket.off('connect');
+        socket.off('room-joined');
+        socket.off('sync-response');
+        socket.off('remote-update');
+        socket.off('peer-joined');
+        socket.off('peer-left');
+        socket.off('connect_error');
+        socket.off('disconnect');
         socket.disconnect();
         socket = null;
       }
+
       peers.clear();
       isInitialSync = true;
     };
@@ -305,29 +402,31 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
       priority: 10, // Run after history plugin
 
       onInit(context: PluginContext) {
-        console.log('[collaborationPlugin] onInit called, peerId:', loroPeerId.toString());
         ctx = context;
 
         // Initialize Loro document
-        loroDoc = new loro.LoroDoc();
-        loroDoc.setPeerId(loroPeerId);
+        const _loroDoc = new LoroDocClass();
+        loroDoc = _loroDoc as unknown as LoroDoc;
+        if (loroDoc) {
+          loroDoc.setPeerId(loroPeerId);
 
-        // Subscribe to loro changes
-        unsubscribeLoro = loroDoc.subscribe((event: LoroEvent) => {
-          // Handle only imports from remote
-          if (event.origin === 'import' && !event.local) {
-            const schema = loroToSchema();
-            if (schema && ctx) {
-              isRemoteUpdate = true;
-              ctx.setSchema(schema);
-              isRemoteUpdate = false;
+          // Subscribe to loro changes
+          unsubscribeLoro = loroDoc.subscribe((event: LoroEvent) => {
+            // Handle only imports from remote
+            if (event.origin === 'import' && !event.local) {
+              const schema = loroToSchema();
+              if (schema && ctx) {
+                isRemoteUpdate = true;
+                ctx.setSchema(schema);
+                isRemoteUpdate = false;
+              }
             }
-          }
-        });
+          });
 
-        // Initialize loro with current schema
-        const initialSchema = context.getSchema();
-        schemaToLoro(initialSchema);
+          // Initialize loro with current schema
+          const initialSchema = context.getSchema();
+          schemaToLoro(initialSchema);
+        }
 
         // Auto-connect if enabled
         if (autoConnect) {
@@ -337,7 +436,6 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
         }
 
         return () => {
-          console.log('[collaborationPlugin] onDispose called');
           disconnect();
           if (unsubscribeLoro) {
             unsubscribeLoro();
@@ -349,39 +447,27 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
       },
 
       // Hook schema changes to sync
-      onBeforeInsert() {
-        console.log('[collaborationPlugin] onBeforeInsert called');
-      },
+      onBeforeInsert() {},
 
       onAfterInsert(schema: Schema) {
-        console.log('[collaborationPlugin] onAfterInsert calling syncToServer');
         syncToServer(schema);
       },
 
-      onBeforeMove() {
-        console.log('[collaborationPlugin] onBeforeMove called');
-      },
+      onBeforeMove() {},
 
       onAfterMove(schema: Schema) {
-        console.log('[collaborationPlugin] onAfterMove calling syncToServer');
         syncToServer(schema);
       },
 
-      onBeforeRemove() {
-        console.log('[collaborationPlugin] onBeforeRemove called');
-      },
+      onBeforeRemove() {},
 
       onAfterRemove(schema: Schema) {
-        console.log('[collaborationPlugin] onAfterRemove calling syncToServer');
         syncToServer(schema);
       },
 
-      onBeforeUpdateProps() {
-        console.log('[collaborationPlugin] onBeforeUpdateProps called');
-      },
+      onBeforeUpdateProps() {},
 
       onAfterUpdateProps(schema: Schema) {
-        console.log('[collaborationPlugin] onAfterUpdateProps calling syncToServer');
         syncToServer(schema);
       },
 

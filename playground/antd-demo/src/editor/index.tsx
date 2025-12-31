@@ -1,6 +1,11 @@
 import React, { useMemo } from 'react';
-import { EditorProvider, DragOverlay, useEditorCore, historyPlugin, collaborationPlugin } from '@tangramino/base-editor';
-import { LoroDoc } from 'loro-crdt';
+import {
+  EditorProvider,
+  DragOverlay,
+  useEditorCore,
+  historyPlugin,
+  collaborationPlugin,
+} from '@tangramino/base-editor';
 import { io } from 'socket.io-client';
 import { materialGroups } from '@/materials/group';
 import BasicPage from '@/materials/basic-page/material-config';
@@ -89,14 +94,13 @@ const EditorPage = (props: EditorPageProps) => {
   const plugins = useMemo(() => {
     const basePlugins = [historyPlugin({}), materialPlugin(), formPlugin(), portalPlugin()];
 
-    // Add collaboration plugin if enabled
     if (enableCollab) {
       basePlugins.push(
         collaborationPlugin({
           serverUrl: collabServerUrl,
           roomId: collabRoomId,
-          loro: { LoroDoc },
-          socketIO: io,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          socketIO: io as any,
         }),
       );
     }

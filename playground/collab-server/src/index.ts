@@ -101,7 +101,7 @@ io.on('connection', (socket) => {
   });
 
   // Handle sync request (initial load)
-  socket.on('sync-request', (data: { roomId: string; version?: Uint8Array }) => {
+  socket.on('sync-request', (data: { roomId: string; version?: number[] }) => {
     const { roomId, version } = data;
     const room = rooms.get(roomId);
 
@@ -114,7 +114,9 @@ io.on('connection', (socket) => {
       let snapshot: Uint8Array;
       if (version && version.length > 0) {
         // Send only updates since the given version
-        snapshot = room.doc.export({ mode: 'update', from: version });
+        const versionBytes = new Uint8Array(version);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        snapshot = room.doc.export({ mode: 'update', from: versionBytes as any });
       } else {
         // Send full snapshot
         snapshot = room.doc.export({ mode: 'snapshot' });
