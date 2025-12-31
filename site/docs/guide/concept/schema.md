@@ -426,7 +426,7 @@ const schema: Schema = {
 
 ## Schema 操作
 
-使用 `SchemaUtils` 进行 Schema 操作：
+使用 `SchemaUtils` 进行 Schema 操作。所有修改操作都返回包含 `schema` 和 `operation` 的结果对象：
 
 ### 基础操作
 
@@ -434,13 +434,15 @@ const schema: Schema = {
 import { SchemaUtils } from '@tangramino/engine';
 
 // 插入元素（作为子元素）
-const newSchema = SchemaUtils.insertElement(schema, 'root', {
+const result = SchemaUtils.insertElement(schema, 'root', {
   type: 'button',
   props: { text: '新按钮' },
 });
+// result.schema: 更新后的 Schema
+// result.operation: { elementId, parentId, index, element }
 
 // 插入元素（指定位置）
-const inserted = SchemaUtils.insertAdjacentElement(
+const insertResult = SchemaUtils.insertAdjacentElement(
   schema,
   'btn-1',
   { type: 'button', props: { text: '新按钮' } },
@@ -448,21 +450,23 @@ const inserted = SchemaUtils.insertAdjacentElement(
 );
 
 // 更新元素属性
-const updated = SchemaUtils.setElementProps(schema, 'btn-1', {
+const updateResult = SchemaUtils.setElementProps(schema, 'btn-1', {
   text: '更新文本',
   type: 'primary',
 });
+// updateResult.operation: { elementId, props, oldProps }
 
 // 移动元素
-const moved = SchemaUtils.moveElement(
+const moveResult = SchemaUtils.moveElement(
   schema,
   'btn-1', // 要移动的元素
   'container-1', // 目标容器
-  0, // 位置索引
 );
+// moveResult.operation: { elementId, oldParentId, oldIndex, newParentId, newIndex, mode }
 
 // 删除元素（会同时删除子元素）
-const removed = SchemaUtils.removeElement(schema, 'btn-1');
+const removeResult = SchemaUtils.removeElement(schema, 'btn-1');
+// removeResult.operation: { elementId, parentId, index, element }
 ```
 
 ### 查询操作

@@ -1,5 +1,12 @@
 import type { Schema } from '@tangramino/engine';
-import type { EditorPlugin, PluginContext } from '../interface/plugin';
+import type {
+  EditorPlugin,
+  PluginContext,
+  InsertOperation,
+  MoveOperation,
+  RemoveOperation,
+  UpdatePropsOperation,
+} from '../interface/plugin';
 import { definePlugin } from '../utils/define-plugin';
 import { LoroDoc as LoroDocClass } from 'loro-crdt';
 
@@ -35,14 +42,25 @@ interface LoroMap {
   set(key: string, value: unknown): void;
   get(key: string): unknown;
   delete(key: string): void;
-  getOrCreateContainer(key: string, type: 'Map'): LoroMap;
+  getOrCreateContainer(key: string, type: 'Map' | 'List'): LoroMap | LoroList;
   toJSON(): Record<string, unknown>;
   entries(): IterableIterator<[string, unknown]>;
+  length: number;
+}
+
+interface LoroList {
+  insert(index: number, value: unknown): void;
+  delete(index: number, len: number): void;
+  get(index: number): unknown;
+  clear(): void;
+  toJSON(): unknown[];
+  length: number;
 }
 
 interface LoroEvent {
-  origin: 'local' | 'import' | 'checkout';
-  local: boolean;
+  by: 'local' | 'import' | 'checkout';
+  origin: string;
+  events: unknown[];
 }
 
 /**
@@ -79,6 +97,26 @@ export interface CollaborationPluginExtension {
   getPeers: () => string[];
   /** Get current room ID */
   getRoomId: () => string;
+
+  // Incremental update methods (for advanced usage)
+  /** Update element properties incrementally */
+  updateElementProps?: (elementId: string, props: Record<string, unknown>) => void;
+  /** Insert element incrementally */
+  insertElement?: (
+    elementId: string,
+    element: { type: string; props: Record<string, unknown>; hidden?: boolean },
+    parentId: string,
+    index?: number,
+  ) => void;
+  /** Remove element incrementally */
+  removeElement?: (elementId: string, parentId: string) => void;
+  /** Move element incrementally */
+  moveElement?: (
+    elementId: string,
+    oldParentId: string,
+    newParentId: string,
+    newIndex?: number,
+  ) => void;
 }
 
 /**
@@ -102,6 +140,29 @@ const isValidPeerId = (peerId: unknown): peerId is string => {
 /**
  * Collaboration plugin - provides real-time collaborative editing using Loro CRDT
  *
+ * This plugin implements incremental synchronization using Loro's structured CRDT containers:
+ * - Schema elements are mapped to nested Loro Maps and Lists
+ * - Each operation generates minimal update patches automatically
+ * - Loro handles conflict resolution and consistency across peers
+ *
+ * Architecture:
+ * ```
+ * LoroMap (root)
+ * ├─ LoroMap (elements) → { [id]: LoroMap(ElementState) }
+ * ├─ LoroMap (layout)
+ * │  ├─ String (root)
+ * │  └─ LoroMap (structure) → { [parentId]: LoroList([childIds]) }
+ * ├─ LoroMap (flows) → nested structure
+ * └─ LoroList (imports, bindElements)
+ * ```
+ *
+ * Note: Current hook API (onAfterInsert, onAfterMove, etc.) only provides final schema.
+ * For true per-operation incremental sync, use the exported incremental methods:
+ * - updateElementProps()
+ * - insertElement()
+ * - removeElement()
+ * - moveElement()
+ *
  * @example
  * import { io } from 'socket.io-client';
  *
@@ -110,6 +171,9 @@ const isValidPeerId = (peerId: unknown): peerId is string => {
  *   roomId: 'my-document',
  *   socketIO: io,
  * });
+ *
+ * // Use incremental methods for fine-grained sync (advanced)
+ * collab.insertElement?.('elem-1', { type: 'button', props: {} }, 'root', 0);
  */
 export const collaborationPlugin = definePlugin<CollaborationPlugin, CollaborationOptions>(
   (options) => {
@@ -127,7 +191,9 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
     let loroDoc: LoroDoc | null = null;
     let socket: Socket | null = null;
     let ctx: PluginContext | null = null;
+
     let isRemoteUpdate = false;
+
     let isInitialSync = true;
     let retryCount = 0;
     let retryTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -142,15 +208,63 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
     const peers: Set<string> = new Set();
     let unsubscribeLoro: (() => void) | null = null;
 
-    // Convert Schema to Loro document structure
-    // Store the entire schema as a JSON string to avoid Loro Map nesting issues
+    // Convert Schema to Loro document structure (structured mapping)
     const schemaToLoro = (schema: Schema): void => {
       if (!loroDoc) return;
 
-      const rootMap = loroDoc.getMap('root');
-      // Serialize entire schema as JSON string
-      rootMap.set('schema', JSON.stringify(schema));
-      loroDoc.commit();
+      try {
+        const rootMap = loroDoc.getMap('root');
+
+        // Map elements: flatten to avoid nested container issues
+        Object.entries(schema.elements).forEach(([id, element]) => {
+          rootMap.set(`element_${id}_type`, element.type);
+          rootMap.set(`element_${id}_props`, JSON.stringify(element.props));
+          if (element.hidden !== undefined) {
+            rootMap.set(`element_${id}_hidden`, element.hidden);
+          }
+        });
+
+        // Store element IDs list
+        rootMap.set('elementIds', JSON.stringify(Object.keys(schema.elements)));
+
+        // Map layout
+        rootMap.set('layout_root', schema.layout.root);
+
+        // Map layout structure: flatten structure
+        Object.entries(schema.layout.structure).forEach(([parentId, children]) => {
+          rootMap.set(`structure_${parentId}`, JSON.stringify(children));
+        });
+
+        // Map flows (if exists)
+        if (schema.flows) {
+          rootMap.set('flows', JSON.stringify(schema.flows));
+        }
+
+        // Map bindElements (if exists)
+        if (schema.bindElements) {
+          rootMap.set('bindElements', JSON.stringify(schema.bindElements));
+        }
+
+        // Map imports (if exists)
+        if (schema.imports) {
+          rootMap.set('imports', JSON.stringify(schema.imports));
+        }
+
+        // Map context (if exists)
+        if (schema.context) {
+          rootMap.set('context', JSON.stringify(schema.context));
+        }
+
+        // Map extensions
+        if (schema.extensions) {
+          rootMap.set('extensions', JSON.stringify(schema.extensions));
+        }
+
+        loroDoc.commit();
+      } catch (error) {
+        console.error('[collaborationPlugin] Error in schemaToLoro:', error);
+        throw error;
+      }
     };
 
     // Convert Loro document to Schema
@@ -159,13 +273,69 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
 
       try {
         const rootMap = loroDoc.getMap('root');
-        const schemaJson = rootMap.get('schema');
+        const rootData = rootMap.toJSON() as Record<string, unknown>;
 
-        if (!schemaJson || typeof schemaJson !== 'string') {
-          return null;
+        // Reconstruct elements from flattened format
+        const elementIds = rootData.elementIds
+          ? JSON.parse(rootData.elementIds as string)
+          : [];
+        const elements: Schema['elements'] = {};
+
+        for (const id of elementIds) {
+          const type = rootData[`element_${id}_type`] as string;
+          const propsStr = rootData[`element_${id}_props`] as string;
+          const hidden = rootData[`element_${id}_hidden`] as boolean | undefined;
+
+          elements[id] = {
+            type,
+            props: propsStr ? JSON.parse(propsStr) : {},
+            ...(hidden !== undefined && { hidden }),
+          };
         }
 
-        const schema = JSON.parse(schemaJson) as Schema;
+        // Extract layout
+        const root = (rootData.layout_root as string) || '';
+        const structure: Schema['layout']['structure'] = {};
+
+        // Reconstruct structure from flattened format
+        Object.keys(rootData).forEach((key) => {
+          if (key.startsWith('structure_')) {
+            const parentId = key.substring('structure_'.length);
+            structure[parentId] = JSON.parse(rootData[key] as string);
+          }
+        });
+
+        const schema: Schema = {
+          elements,
+          layout: { root, structure },
+          extensions: {},
+        };
+
+        // Extract flows (if exists)
+        if (rootData.flows) {
+          schema.flows = JSON.parse(rootData.flows as string);
+        }
+
+        // Extract bindElements (if exists)
+        if (rootData.bindElements) {
+          schema.bindElements = JSON.parse(rootData.bindElements as string);
+        }
+
+        // Extract imports (if exists)
+        if (rootData.imports) {
+          schema.imports = JSON.parse(rootData.imports as string);
+        }
+
+        // Extract context (if exists)
+        if (rootData.context) {
+          schema.context = JSON.parse(rootData.context as string);
+        }
+
+        // Extract extensions (if exists)
+        if (rootData.extensions) {
+          schema.extensions = JSON.parse(rootData.extensions as string);
+        }
+
         return schema;
       } catch (error) {
         console.error('[collaborationPlugin] Failed to convert Loro to Schema:', error);
@@ -173,220 +343,326 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
       }
     };
 
-    // Sync local changes to server
-    const syncToServer = (targetSchema?: Schema): void => {
-      if (!socket?.connected || !loroDoc || isRemoteUpdate || isInitialSync) return;
+    // Incremental update functions for specific operations
 
-      try {
-        const schemaToSync = targetSchema || ctx?.getSchema();
-        if (schemaToSync) {
-          schemaToLoro(schemaToSync);
-        }
+    // Update a single element's properties incrementally
+    const updateElementProps = (elementId: string, props: Record<string, unknown>): void => {
+      if (!loroDoc) return;
 
-        const update = loroDoc.export({ mode: 'update' });
-
-        // Only send if there are actual updates
-        if (update.length > 0) {
-          socket.emit('update', {
-            roomId,
-            update: Array.from(update),
-            peerId: socketPeerId,
-          });
-        }
-      } catch (error) {
-        console.error('[collaborationPlugin] Failed to sync to server:', error);
-      }
+      const rootMap = loroDoc.getMap('root');
+      rootMap.set(`element_${elementId}_props`, JSON.stringify(props));
+      loroDoc.commit();
     };
 
-    // Exponential backoff retry
-    const retryConnect = (): void => {
-      if (retryCount >= maxRetries) {
-        console.error(
-          `[collaborationPlugin] Max retry attempts (${maxRetries}) reached. Giving up.`,
-        );
-        return;
+    // Insert a new element incrementally
+    const insertElement = (
+      elementId: string,
+      element: { type: string; props: Record<string, unknown>; hidden?: boolean },
+      parentId: string,
+      index?: number,
+    ): void => {
+      if (!loroDoc) return;
+
+      console.log('[collaboration] insertElement:', { elementId, element, parentId, index });
+
+      const rootMap = loroDoc.getMap('root');
+
+      // Add to elements (flattened)
+      rootMap.set(`element_${elementId}_type`, element.type);
+      rootMap.set(`element_${elementId}_props`, JSON.stringify(element.props));
+      if (element.hidden !== undefined) {
+        rootMap.set(`element_${elementId}_hidden`, element.hidden);
       }
 
-      const delay = retryDelay * Math.pow(2, retryCount);
-      retryCount++;
+      // Update elementIds list
+      const elementIdsStr = rootMap.get('elementIds') as string | undefined;
+      const elementIds = elementIdsStr ? JSON.parse(elementIdsStr) : [];
+      if (!elementIds.includes(elementId)) {
+        elementIds.push(elementId);
+        rootMap.set('elementIds', JSON.stringify(elementIds));
+      }
 
-      console.log(
-        `[collaborationPlugin] Retrying connection in ${delay}ms (attempt ${retryCount}/${maxRetries})...`,
-      );
+      // Update layout structure
+      const structureKey = `structure_${parentId}`;
+      const childrenStr = rootMap.get(structureKey) as string | undefined;
+      const children = childrenStr ? JSON.parse(childrenStr) : [];
 
-      retryTimeoutId = setTimeout(() => {
-        connect().catch((error) => {
-          console.error('[collaborationPlugin] Retry failed:', error);
-          retryConnect();
-        });
-      }, delay);
+      if (index !== undefined && index >= 0 && index <= children.length) {
+        children.splice(index, 0, elementId);
+      } else {
+        children.push(elementId);
+      }
+
+      rootMap.set(structureKey, JSON.stringify(children));
+
+      console.log('[collaboration] Before commit, calling loroDoc.commit()');
+      loroDoc.commit();
+      console.log('[collaboration] After commit');
     };
 
-    // Connect to server
-    const connect = async (): Promise<void> => {
-      if (socket?.connected) return;
+    // Remove an element incrementally
+    const removeElement = (elementId: string, parentId: string): void => {
+      if (!loroDoc) return;
 
-      // Clear any pending retry
-      if (retryTimeoutId) {
-        clearTimeout(retryTimeoutId);
-        retryTimeoutId = null;
+      const rootMap = loroDoc.getMap('root');
+
+      // Remove from elements (delete flattened keys)
+      rootMap.delete(`element_${elementId}_type`);
+      rootMap.delete(`element_${elementId}_props`);
+      rootMap.delete(`element_${elementId}_hidden`);
+
+      // Update elementIds list
+      const elementIdsStr = rootMap.get('elementIds') as string | undefined;
+      const elementIds = elementIdsStr ? JSON.parse(elementIdsStr) : [];
+      const newElementIds = elementIds.filter((id: string) => id !== elementId);
+      rootMap.set('elementIds', JSON.stringify(newElementIds));
+
+      // Remove from layout structure
+      const structureKey = `structure_${parentId}`;
+      const childrenStr = rootMap.get(structureKey) as string | undefined;
+      const children = childrenStr ? JSON.parse(childrenStr) : [];
+      const newChildren = children.filter((id: string) => id !== elementId);
+      rootMap.set(structureKey, JSON.stringify(newChildren));
+
+      loroDoc.commit();
+    };
+
+    // Move an element incrementally
+    const moveElement = (
+      elementId: string,
+      oldParentId: string,
+      newParentId: string,
+      newIndex?: number,
+    ): void => {
+      if (!loroDoc) return;
+
+      const rootMap = loroDoc.getMap('root');
+
+      // Remove from old parent
+      const oldStructureKey = `structure_${oldParentId}`;
+      const oldChildrenStr = rootMap.get(oldStructureKey) as string | undefined;
+      const oldChildren = oldChildrenStr ? JSON.parse(oldChildrenStr) : [];
+      const newOldChildren = oldChildren.filter((id: string) => id !== elementId);
+      rootMap.set(oldStructureKey, JSON.stringify(newOldChildren));
+
+      // Add to new parent
+      const newStructureKey = `structure_${newParentId}`;
+      const newChildrenStr = rootMap.get(newStructureKey) as string | undefined;
+      const newChildren = newChildrenStr ? JSON.parse(newChildrenStr) : [];
+
+      if (newIndex !== undefined && newIndex >= 0 && newIndex <= newChildren.length) {
+        newChildren.splice(newIndex, 0, elementId);
+      } else {
+        newChildren.push(elementId);
       }
 
+      rootMap.set(newStructureKey, JSON.stringify(newChildren));
+
+      loroDoc.commit();
+    };
+
+    // Connection management
+    const connect = (): Promise<void> => {
       return new Promise((resolve, reject) => {
-        try {
-          socket = socketIO(serverUrl, {
-            transports: ['websocket', 'polling'],
-          });
+        if (!socketIO) {
+          reject(new Error('[collaborationPlugin] SocketIO client not provided'));
+          return;
+        }
 
-          socket.on('connect', () => {
-            socket!.emit('join-room', { roomId, peerId: socketPeerId });
-          });
+        if (socket?.connected) {
+          console.warn('[collaborationPlugin] Socket already connected');
+          resolve();
+          return;
+        }
 
-          socket.on('room-joined', (data: { roomId: string; peers: string[] }) => {
-            peers.clear();
-            data.peers.forEach((p) => peers.add(p));
+        // Create Socket instance
+        socket = socketIO(serverUrl, {
+          reconnection: true,
+          reconnectionDelay: retryDelay,
+          reconnectionAttempts: maxRetries,
+          transports: ['websocket'],
+          upgrade: false,
+        });
 
-            // Request sync after joining
-            socket!.emit('sync-request', { roomId });
-          });
+        // Set Loro peer ID
+        if (loroDoc) {
+          loroDoc.setPeerId(loroPeerId);
+        }
 
-          socket.on(
-            'sync-response',
-            (data: { roomId: string; snapshot: number[]; isSnapshot: boolean }) => {
-              if (!loroDoc) {
-                console.error('[collaborationPlugin] Loro document not initialized');
-                reject(new Error('Loro document not initialized'));
-                return;
+        // Handle connection errors
+        socket.on('connect_error', (error) => {
+          console.error('[collaborationPlugin] Connection error:', error);
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            reject(error);
+          }
+        });
+
+        // Handle disconnection
+        socket.on('disconnect', (reason) => {
+          console.warn('[collaborationPlugin] Disconnected:', reason);
+          if (reason === 'io server disconnect') {
+            // Server disconnected us, try to reconnect
+            if (retryCount < maxRetries) {
+              retryTimeoutId = setTimeout(() => {
+                socket?.connect();
+              }, retryDelay * Math.pow(2, retryCount));
+              retryCount++;
+            }
+          }
+        });
+
+        // Handle messages from other peers
+        socket.on(
+          'remote-update',
+          (data: { roomId: string; update: number[]; peerId: string }) => {
+            console.log('[collaboration] Remote update received:', {
+              fromPeer: data.peerId,
+              updateLength: data.update.length,
+              ourPeerId: socketPeerId,
+            });
+
+            if (!loroDoc || data.peerId === socketPeerId) {
+              console.log('[collaboration] Ignoring update from self');
+              return;
+            }
+
+            // Validate peerId format
+            if (!isValidPeerId(data.peerId)) {
+              console.warn(
+                `[collaborationPlugin] Invalid peerId format received: ${data.peerId}`,
+              );
+              return;
+            }
+
+            // Validate roomId matches
+            if (data.roomId !== roomId) {
+              console.warn(
+                `[collaborationPlugin] Received update for different room: ${data.roomId}`,
+              );
+              return;
+            }
+
+            // Validate update data
+            if (!Array.isArray(data.update) || data.update.length === 0) {
+              console.warn('[collaborationPlugin] Invalid update data received');
+              return;
+            }
+
+            try {
+              const updateBytes = new Uint8Array(data.update);
+              console.log('[collaboration] Importing remote update into Loro');
+              loroDoc.import(updateBytes);
+
+              // Automatically update schema after remote import
+              const schema = loroToSchema();
+              if (schema && ctx) {
+                isRemoteUpdate = true;
+                ctx.setSchema(schema);
+                isRemoteUpdate = false;
+                console.log('[collaboration] Schema parsed from remote update: success');
+                console.log('[collaboration] Schema updated from remote update');
+              } else if (!schema) {
+                console.error('[collaboration] Schema parsed from remote update: failed');
               }
+            } catch (error) {
+              console.error('[collaborationPlugin] Failed to apply remote update:', error);
+            }
+          },
+        );
 
-              try {
-                const snapshotBytes = new Uint8Array(data.snapshot);
-                if (snapshotBytes.length > 0) {
-                  loroDoc.import(snapshotBytes);
-                  const schema = loroToSchema();
-                  if (schema && ctx) {
-                    isRemoteUpdate = true;
-                    ctx.setSchema(schema);
-                    isRemoteUpdate = false;
-                  } else if (!schema) {
-                    console.warn('[collaborationPlugin] Failed to parse schema from sync response');
-                  }
-                } else if (ctx) {
-                  // Server document is empty, initialize with our schema
-                  const currentSchema = ctx.getSchema();
-                  schemaToLoro(currentSchema);
-                  const snapshot = loroDoc!.export({ mode: 'snapshot' });
-                  socket!.emit('init-schema', {
-                    roomId,
-                    snapshot: Array.from(snapshot),
-                  });
-                }
-                isInitialSync = false;
-                retryCount = 0; // Reset retry count on success
-                resolve();
-              } catch (error) {
-                console.error('[collaborationPlugin] Sync error:', error);
-                // Retry on sync error
-                retryConnect();
-                reject(error);
-              }
-            },
-          );
+        socket.on('connect', () => {
+          console.log('[collaboration] Socket connected, joining room:', roomId);
+          socket!.emit('join-room', { roomId, peerId: socketPeerId });
+        });
 
-          socket.on(
-            'remote-update',
-            (data: { roomId: string; update: number[]; peerId: string }) => {
-              if (!loroDoc || data.peerId === socketPeerId) return;
+        socket.on('room-joined', (data: { roomId: string; peers: string[] }) => {
+          console.log('[collaboration] Room joined:', data);
+          peers.clear();
+          data.peers.forEach((p) => peers.add(p));
 
-              // Validate peerId format
-              if (!isValidPeerId(data.peerId)) {
-                console.warn(
-                  `[collaborationPlugin] Invalid peerId format received: ${data.peerId}`,
-                );
-                return;
-              }
+          // Request sync after joining
+          console.log('[collaboration] Requesting sync from server');
+          socket!.emit('sync-request', { roomId });
+        });
 
-              // Validate roomId matches
-              if (data.roomId !== roomId) {
-                console.warn(
-                  `[collaborationPlugin] Received update for different room: ${data.roomId}`,
-                );
-                return;
-              }
+        socket.on(
+          'sync-response',
+          (data: { snapshot: number[]; isSnapshot: boolean }) => {
+            console.log('[collaboration] Sync response received:', {
+              snapshotLength: data.snapshot.length,
+              isSnapshot: data.isSnapshot,
+            });
 
-              // Validate update data
-              if (!Array.isArray(data.update) || data.update.length === 0) {
-                console.warn('[collaborationPlugin] Invalid update data received');
-                return;
-              }
+            if (!loroDoc) {
+              console.error('[collaborationPlugin] Loro document not initialized');
+              reject(new Error('Loro document not initialized'));
+              return;
+            }
 
-              try {
-                const updateBytes = new Uint8Array(data.update);
-                loroDoc.import(updateBytes);
-
+            try {
+              const snapshotBytes = new Uint8Array(data.snapshot);
+              if (snapshotBytes.length > 0) {
+                console.log('[collaboration] Importing snapshot into Loro');
+                loroDoc.import(snapshotBytes);
                 const schema = loroToSchema();
                 if (schema && ctx) {
                   isRemoteUpdate = true;
                   ctx.setSchema(schema);
                   isRemoteUpdate = false;
+                  console.log('[collaboration] Schema updated from sync response');
                 } else if (!schema) {
-                  console.warn('[collaborationPlugin] Failed to parse schema from remote update');
+                  console.warn(
+                    '[collaborationPlugin] Failed to parse schema from sync response',
+                  );
                 }
-              } catch (error) {
-                console.error('[collaborationPlugin] Remote update error:', error);
+              } else if (ctx) {
+                console.log(
+                  '[collaboration] Server document is empty, initializing with our schema',
+                );
+                // Server document is empty, initialize with our schema
+                const currentSchema = ctx.getSchema();
+                schemaToLoro(currentSchema);
+                const snapshot = loroDoc!.export({ mode: 'snapshot' });
+                console.log(
+                  '[collaboration] Sending initial snapshot to server:',
+                  snapshot.length,
+                  'bytes',
+                );
+                socket!.emit('init-schema', {
+                  roomId,
+                  snapshot: Array.from(snapshot),
+                });
               }
-            },
-          );
-
-          socket.on('peer-joined', (data: { peerId: string }) => {
-            peers.add(data.peerId);
-          });
-
-          socket.on('peer-left', (data: { peerId: string }) => {
-            peers.delete(data.peerId);
-          });
-
-          socket.on('connect_error', (error: Error) => {
-            console.error('[collaborationPlugin] Connection error:', error.message);
-            reject(error);
-            // Trigger retry on connection error
-            retryConnect();
-          });
-
-          socket.on('disconnect', (reason: string) => {
-            console.log(`[collaborationPlugin] Disconnected: ${reason}`);
-            // Auto-reconnect on unexpected disconnection
-            if (reason === 'io server disconnect') {
-              // Server initiated disconnect, retry connection
-              retryConnect();
+              isInitialSync = false;
+              console.log('[collaboration] Initial sync completed, isInitialSync = false');
+              retryCount = 0; // Reset retry count on success
+              resolve();
+            } catch (error) {
+              console.error('[collaborationPlugin] Failed to handle sync response:', error);
+              reject(error);
             }
-            // For other reasons, Socket.IO handles auto-reconnect
-          });
-        } catch (error) {
-          reject(error);
-        }
+          },
+        );
       });
     };
 
-    // Disconnect from server
     const disconnect = (): void => {
-      // Clear retry timeout
+      isRemoteUpdate = false;
+
       if (retryTimeoutId) {
         clearTimeout(retryTimeoutId);
         retryTimeoutId = null;
       }
 
-      // Reset retry count
-      retryCount = 0;
+      if (unsubscribeLoro) {
+        unsubscribeLoro();
+        unsubscribeLoro = null;
+      }
 
-      // Disconnect socket and remove all listeners
       if (socket) {
         socket.off('connect');
-        socket.off('room-joined');
-        socket.off('sync-response');
         socket.off('remote-update');
-        socket.off('peer-joined');
-        socket.off('peer-left');
         socket.off('connect_error');
         socket.off('disconnect');
         socket.disconnect();
@@ -407,76 +683,141 @@ export const collaborationPlugin = definePlugin<CollaborationPlugin, Collaborati
         // Initialize Loro document
         const _loroDoc = new LoroDocClass();
         loroDoc = _loroDoc as unknown as LoroDoc;
-        if (loroDoc) {
-          loroDoc.setPeerId(loroPeerId);
 
-          // Subscribe to loro changes
-          unsubscribeLoro = loroDoc.subscribe((event: LoroEvent) => {
-            // Handle only imports from remote
-            if (event.origin === 'import' && !event.local) {
-              const schema = loroToSchema();
-              if (schema && ctx) {
-                isRemoteUpdate = true;
-                ctx.setSchema(schema);
-                isRemoteUpdate = false;
-              }
-            }
+        // Subscribe to Loro changes
+        unsubscribeLoro = loroDoc.subscribe((event) => {
+          console.log('[collaboration] Loro subscribe event:', {
+            by: event.by,
+            origin: event.origin,
+            isRemoteUpdate,
+            isInitialSync,
+            socketConnected: socket?.connected,
           });
 
-          // Initialize loro with current schema
-          const initialSchema = context.getSchema();
-          schemaToLoro(initialSchema);
-        }
+          // Handle imports from remote (other users' changes)
+          if (event.by === 'import') {
+            console.log('[collaboration] Handling remote import');
+            const schema = loroToSchema();
+            if (schema && ctx) {
+              isRemoteUpdate = true;
+              ctx.setSchema(schema);
+              isRemoteUpdate = false;
+              console.log('[collaboration] Schema updated from remote import');
+            }
+          }
+
+          // Handle local commits (our changes) - send to server
+          if (event.by === 'local' && socket?.connected && !isRemoteUpdate && !isInitialSync) {
+            console.log('[collaboration] Handling local commit, exporting update');
+            try {
+              const update = loroDoc!.export({ mode: 'update' });
+              console.log('[collaboration] Update exported:', {
+                length: update.length,
+                bytes: Array.from(update.slice(0, 20)),
+              });
+
+              if (update.length > 0) {
+                console.log('[collaboration] Sending local update:', update.length, 'bytes');
+                socket!.emit('update', {
+                  roomId,
+                  update: Array.from(update),
+                  peerId: socketPeerId,
+                });
+                console.log('[collaboration] Update sent to server');
+              } else {
+                console.warn('[collaboration] Update is empty, not sending');
+              }
+            } catch (error) {
+              console.error('[collaboration] Failed to send local update:', error);
+            }
+          } else if (event.by === 'local') {
+            console.log('[collaboration] Local commit detected but not sending:', {
+              socketConnected: socket?.connected,
+              isRemoteUpdate,
+              isInitialSync,
+            });
+          }
+        });
+
+        // Initialize loro with current schema
+        const initialSchema = context.getSchema();
+        console.log('[collaboration] Initializing Loro with schema:', {
+          elementCount: Object.keys(initialSchema.elements).length,
+          layoutRoot: initialSchema.layout.root,
+        });
+        schemaToLoro(initialSchema);
+        console.log('[collaboration] Loro initialized');
 
         // Auto-connect if enabled
         if (autoConnect) {
+          console.log('[collaboration] Auto-connecting to server...');
           connect().catch((error) => {
-            console.error('[collaborationPlugin] Auto-connect failed:', error);
+            console.error('[collaborationPlugin] Failed to auto-connect:', error);
           });
         }
-
-        return () => {
-          disconnect();
-          if (unsubscribeLoro) {
-            unsubscribeLoro();
-            unsubscribeLoro = null;
-          }
-          loroDoc = null;
-          ctx = null;
-        };
       },
 
-      // Hook schema changes to sync
       onBeforeInsert() {},
 
-      onAfterInsert(schema: Schema) {
-        syncToServer(schema);
+      onAfterInsert(schema: Schema, operation: InsertOperation) {
+        console.log('[collaboration] onAfterInsert called:', {
+          elementId: operation.elementId,
+          type: operation.element.type,
+          parentId: operation.parentId,
+          index: operation.index,
+          isRemoteUpdate,
+        });
+
+        if (isRemoteUpdate || !loroDoc) return;
+
+        const elementData: { type: string; props: Record<string, unknown>; hidden?: boolean } =
+          {
+            type: operation.element.type,
+            props: operation.element.props || {},
+          };
+
+        if (operation.element.hidden !== undefined) {
+          elementData.hidden = operation.element.hidden;
+        }
+
+        insertElement(operation.elementId, elementData, operation.parentId, operation.index);
       },
 
       onBeforeMove() {},
 
-      onAfterMove(schema: Schema) {
-        syncToServer(schema);
+      onAfterMove(schema: Schema, operation: MoveOperation) {
+        if (isRemoteUpdate || !loroDoc) return;
+        moveElement(
+          operation.elementId,
+          operation.oldParentId,
+          operation.newParentId,
+          operation.newIndex,
+        );
       },
 
       onBeforeRemove() {},
 
-      onAfterRemove(schema: Schema) {
-        syncToServer(schema);
+      onAfterRemove(schema: Schema, operation: RemoveOperation) {
+        if (isRemoteUpdate || !loroDoc) return;
+        removeElement(operation.elementId, operation.parentId);
       },
 
       onBeforeUpdateProps() {},
 
-      onAfterUpdateProps(schema: Schema) {
-        syncToServer(schema);
+      onAfterUpdateProps(schema: Schema, operation: UpdatePropsOperation) {
+        if (isRemoteUpdate || !loroDoc) return;
+        updateElementProps(operation.elementId, operation.props);
       },
 
-      // Extension methods
       connect,
       disconnect,
       isConnected: () => socket?.connected ?? false,
       getPeers: () => Array.from(peers),
       getRoomId: () => roomId,
+      updateElementProps,
+      insertElement,
+      removeElement,
+      moveElement,
     };
   },
 );

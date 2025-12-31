@@ -34,17 +34,22 @@ describe('SchemaUtils', () => {
       props: { content: 'hello' }
     };
 
-    const newSchema = SchemaUtils.insertElement(initialSchema, 'root', newElement);
+    const result = SchemaUtils.insertElement(initialSchema, 'root', newElement);
 
-    expect(newSchema.elements['child2']).toBeDefined();
-    expect(newSchema.layout.structure['root']).toContain('child2');
-    expect(newSchema.layout.structure['root']).toHaveLength(2);
+    expect(result.schema.elements['child2']).toBeDefined();
+    expect(result.schema.layout.structure['root']).toContain('child2');
+    expect(result.schema.layout.structure['root']).toHaveLength(2);
+    expect(result.operation.elementId).toBe('child2');
+    expect(result.operation.parentId).toBe('root');
+    expect(result.operation.element.type).toBe('text');
   });
 
   it('should remove element correctly', () => {
-    const newSchema = SchemaUtils.removeElement(initialSchema, 'child1');
+    const result = SchemaUtils.removeElement(initialSchema, 'child1');
 
-    expect(newSchema.elements['child1']).toBeUndefined();
-    expect(newSchema.layout.structure['root']).not.toContain('child1');
+    expect(result.schema.elements['child1']).toBeUndefined();
+    expect(result.schema.layout.structure['root']).not.toContain('child1');
+    expect(result.operation.elementId).toBe('child1');
+    expect(result.operation.element.type).toBe('button');
   });
 });

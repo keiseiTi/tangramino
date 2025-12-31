@@ -12,12 +12,113 @@
 
 ## 核心特性
 
+- **增量同步**：使用 Loro 的结构化 CRDT 容器，每次操作仅同步变更部分
 - **实时同步**：基于 Loro CRDT 库实现的强一致性数据同步
 - **离线支持**：用户离线时可继续编辑，重新连接后自动同步
 - **冲突解决**：CRDT 算法自动解决并发编辑冲突
 - **房间隔离**：支持多个独立的协同编辑会话
 - **Peer 管理**：实时显示在线用户列表
 - **自动重试**：连接失败时自动进行指数退避重试
+
+## 增量同步架构
+
+协同编辑插件将 Schema 结构映射到 Loro 的**扁平化键值存储**，利用**操作级钩子**实现真正的细粒度同步：
+
+```
+LoroMap (root)
+├─ element_{id}_type: string
+├─ element_{id}_props: JSON string
+├─ element_{id}_hidden: boolean (可选)
+├─ elementIds: JSON string (元素ID列表)
+├─ layout_root: string
+├─ structure_{parentId}: JSON string (子元素ID数组)
+├─ flows: JSON string (可选)
+└─ bindElements: JSON string (可选)
+```
+
+**扁平化设计理由**：Loro 的 `getOrCreateContainer()` 方法在嵌套使用时会返回 JsValue 容器引用而非普通对象，导致无法调用方法。扁平化键值存储避免了这个问题，所有值都直接存储在根 Map 中。
+
+### 操作级钩子实现增量同步
+
+从 v0.1.0 开始，插件系统的 Schema 钩子接收**操作级详细信息**而非仅最终 schema，使插件能够精确执行增量更新：
+
+```typescript
+// ❌ 旧版本（整体同步）
+onAfterInsert(schema, insertedId) {
+  // 只知道元素被插入了，需要重新序列化整个 schema
+  schemaToLoro(schema);
+}
+
+// ✅ 新版本（增量同步，扁平化存储）
+onAfterInsert(schema, operation: InsertOperation) {
+  // operation 包含：{ elementId, parentId, index, element }
+  // 直接更新对应的扁平化键
+  const rootMap = loroDoc.getMap('root');
+
+  // 添加元素属性（扁平化键）
+  rootMap.set(`element_${operation.elementId}_type`, operation.element.type);
+  rootMap.set(`element_${operation.elementId}_props`, JSON.stringify(operation.element.props));
+  if (operation.element.hidden !== undefined) {
+    rootMap.set(`element_${operation.elementId}_hidden`, operation.element.hidden);
+  }
+
+  // 更新元素ID列表
+  const elementIds = JSON.parse(rootMap.get('elementIds') || '[]');
+  elementIds.push(operation.elementId);
+  rootMap.set('elementIds', JSON.stringify(elementIds));
+
+  // 更新结构（父子关系）
+  const structureKey = `structure_${operation.parentId}`;
+  const children = JSON.parse(rootMap.get(structureKey) || '[]');
+  children.splice(operation.index, 0, operation.elementId);
+  rootMap.set(structureKey, JSON.stringify(children));
+
+  loroDoc.commit(); // 提交变更，触发增量同步
+}
+```
+
+**优势：**
+- 每次操作（insert/move/remove/updateProps）只更新对应的 Map/List 容器
+- 避免全量序列化和差异计算的性能开销
+- Loro 自动计算最小化的增量更新补丁（通常只有几十字节）
+- 大幅减少网络传输和处理开销，支持高频编辑场景
+
+**操作详情类型：**
+
+```typescript
+// 插入操作
+interface InsertOperation {
+  elementId: string;
+  parentId: string;
+  index: number;
+  element: { type: string; props: Record<string, unknown>; hidden?: boolean };
+}
+
+// 移动操作
+interface MoveOperation {
+  elementId: string;
+  oldParentId: string;
+  oldIndex: number;
+  newParentId: string;
+  newIndex: number;
+  mode: 'same-level' | 'cross-level';
+}
+
+// 删除操作
+interface RemoveOperation {
+  elementId: string;
+  parentId: string;
+  index: number;
+  element: Element; // 完整快照，用于撤销
+}
+
+// 属性更新操作
+interface UpdatePropsOperation {
+  elementId: string;
+  props: Record<string, unknown>;
+  oldProps: Record<string, unknown>;
+}
+```
 
 ## 快速开始
 
@@ -74,8 +175,8 @@ const EditorPage = () => {
 | `roomId`      | string           | ✅   | -        | 协同编辑房间 ID            |
 | `peerId`      | string \| bigint | ❌   | 随机生成 | 用户的唯一标识符           |
 | `autoConnect` | boolean          | ❌   | true     | 初始化时是否自动连接服务器 |
-| `loro`        | { LoroDoc }      | ✅   | -        | Loro CRDT 库实例           |
 | `socketIO`    | SocketIOClient   | ✅   | -        | Socket.IO 客户端工厂函数   |
+| `maxRetries`  | number           | ❌   | 5        | 最大重试次数               |
 | `retryDelay`  | number           | ❌   | 1000     | 初始重试延迟（毫秒）       |
 
 ## 插件 API
@@ -98,6 +199,36 @@ if (isConnected()) {
   console.log('已连接到协同服务器');
 }
 ```
+
+### 增量更新方法（高级用法）
+
+插件导出了细粒度的增量更新方法，允许直接操作 Loro 容器：
+
+```typescript
+const collab = collaborationPlugin({ /* ... */ });
+
+// 增量更新元素属性（仅同步属性变更）
+collab.updateElementProps?.('elem-1', { width: 200, height: 100 });
+
+// 增量插入元素（仅同步新元素）
+collab.insertElement?.(
+  'elem-2',
+  { type: 'button', props: { text: 'Click me' } },
+  'root',
+  0 // 插入位置
+);
+
+// 增量移动元素（仅同步位置变更）
+collab.moveElement?.('elem-1', 'old-parent', 'new-parent', 2);
+
+// 增量删除元素（仅同步删除操作）
+collab.removeElement?.('elem-1', 'parent-id');
+```
+
+:::tip 使用场景
+默认情况下，插件会在 `onAfterInsert`、`onAfterMove` 等钩子中自动同步。
+增量更新方法适用于需要精确控制同步时机和粒度的高级场景。
+:::
 
 ### 信息查询
 
@@ -179,20 +310,33 @@ CORS_ORIGIN=http://localhost:7901
 ### 本地编辑同步
 
 1. 用户在编辑器中进行操作（插入、移动、删除、更新属性）
-2. 插件检测到 schema 变化后自动调用 `syncToServer()`
-3. Schema 序列化为 JSON 并写入 Loro 文档
-4. Loro 文档导出为二进制 update 并通过 `update` 事件发送
-5. 服务器接收 update，导入到房间的 Loro 文档
-6. 服务器广播 `remote-update` 给其他在线客户端
-7. 其他客户端导入 update 并更新本地编辑器 schema
+2. SchemaUtils 方法返回 `{ schema, operation }` 对象
+3. 插件的 `onAfterInsert/Move/Remove/UpdateProps` 钩子接收 operation 参数
+4. **增量更新**：根据 operation 详情直接更新 Loro 扁平化键（而非全量序列化）
+   - Insert: 设置 `element_{id}_*` 键，更新 `elementIds` 和 `structure_{parentId}`
+   - Move: 从旧父的 `structure_{oldParentId}` 删除，在新父的 `structure_{newParentId}` 插入
+   - Remove: 删除 `element_{id}_*` 键，从 `elementIds` 和 `structure_{parentId}` 删除
+   - UpdateProps: 仅更新 `element_{id}_props`
+5. 调用 `loroDoc.commit()` 提交变更
+6. Loro 订阅回调触发，检测到 `event.by === 'local'`
+7. Loro 文档自动导出为最小化的二进制 update（通常几十字节）
+8. Update 通过 `update` 事件发送到服务器
+9. 服务器接收 update，导入到房间的 Loro 文档
+10. 服务器广播 `remote-update` 给其他在线客户端
+11. 其他客户端导入 update 并更新本地编辑器 schema
 
 ### 远程更新接收
 
 1. 客户端接收服务器的 `remote-update` 事件
 2. **验证消息**：检查 peerId 格式、roomId 匹配、update 数据有效性
-3. 提取更新数据并导入到本地 Loro 文档
-4. Loro 订阅回调触发，调用 `ctx.setSchema()` 更新编辑器
-5. 编辑器 UI 自动重新渲染，展示其他用户的编辑结果
+3. 提取更新数据并导入到本地 Loro 文档：`loroDoc.import(updateBytes)`
+4. Loro 订阅回调触发，检测到 `event.by === 'import'`
+5. 从扁平化键重建完整 schema：
+   - 读取 `elementIds` 获取所有元素ID
+   - 对每个ID读取 `element_{id}_type`、`element_{id}_props`、`element_{id}_hidden`
+   - 读取所有 `structure_*` 键重建父子关系
+6. 调用 `ctx.setSchema(schema)` 更新编辑器
+7. 编辑器 UI 自动重新渲染，展示其他用户的编辑结果
 
 ### 错误恢复
 
@@ -273,16 +417,48 @@ useEffect(() => {
 
 ## 技术栈
 
-- **CRDT 库**：Loro（支持冲突自由复制，内部集成）
-- **通信**：Socket.IO内部集成，自动管理）
+- **CRDT 库**：Loro v1.x（支持冲突自由复制，内部集成）
 - **通信**：Socket.IO WebSocket（外部传入，可替换）
 - **后端框架**：Fastify + Node.js
 - **编辑器**：Tangramino Base Editor
+
+### Loro 事件结构
+
+Loro 订阅回调接收的事件对象结构如下：
+
+```typescript
+interface LoroEvent {
+  by: 'local' | 'import' | 'checkout';  // 变更来源
+  origin: string;                        // 来源标识（通常为空字符串）
+  events: Array<{                        // 详细变更列表
+    target: string;                      // 容器ID
+    diff: {                              // 变更差异
+      type: 'map' | 'list';
+      updated?: Record<string, unknown>; // Map更新的键值
+      // ... 其他字段
+    };
+    path: string[];                      // 容器路径
+  }>;
+  from: Array<{ peer: string; counter: number }>;  // 起始版本
+  to: Array<{ peer: string; counter: number }>;    // 结束版本
+}
+```
+
+**关键字段**：
+- `event.by === 'local'`：本地提交的变更，需要发送到服务器
+- `event.by === 'import'`：远程导入的变更，需要更新本地UI
+- `event.by === 'checkout'`：版本切换（历史记录相关）
+
+:::warning 注意
+早期版本的文档可能提到 `event.origin` 和 `event.local` 字段。在 Loro v1.x 中，应使用 `event.by` 字段判断变更来源。
+:::
 
 :::info 为什么 Loro 内部集成而 Socket.IO 外部传入？
 
 - **Loro CRDT**：不同 CRDT 库的 API 差异巨大（Loro、Yjs、Automerge），应用层无法通过简单配置替换。因此直接内置 Loro，简化使用流程。
 - **Socket.IO**：通信层接口相对标准，应用层可以用 WebSocket、WebRTC、HTTP 轮询等方案替换。保持外部传入提供最大灵活性。
+
+:::
 
 ## 使用场景
 
@@ -333,9 +509,18 @@ useEffect(() => {
 
 1. 检查 `isConnected()` 是否为 true
 2. 查看浏览器网络标签，确认 Socket.IO 消息是否正常发送/接收
-3. 检查服务器日志中是否有 import 错误
-4. 验证所有客户端连接的是同一个 `roomId`
-5. 尝试手动调用 `disconnect()` 后重新 `connect()`
+3. **检查事件名称**：客户端监听 `remote-update`，服务器广播 `remote-update`
+4. 检查浏览器控制台中的 Loro 订阅日志：
+   - 本地操作应显示 `event.by === 'local'`
+   - 远程更新应显示 `event.by === 'import'`
+5. 检查服务器日志中是否有 import 错误
+6. 验证所有客户端连接的是同一个 `roomId`
+7. 尝试手动调用 `disconnect()` 后重新 `connect()`
+
+**常见问题**：
+- **事件名不匹配**：确保客户端监听 `remote-update` 而非 `update`
+- **Loro事件判断错误**：检查是否使用 `event.by` 而非 `event.origin` 或 `event.local`
+- **初始同步标志**：确保 `isInitialSync` 在同步完成后设为 `false`
 
 ### 频繁重连
 

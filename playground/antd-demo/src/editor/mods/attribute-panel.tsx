@@ -9,7 +9,6 @@ import type {
   AttributeConfig,
   CheckboxAttributeConfig,
   CustomAttributeConfig,
-  PanelConfig,
 } from '@/interfaces/material';
 import { useLogicEvent } from '@/hooks/use-logic-event';
 
@@ -77,10 +76,21 @@ export const AttributePanel = () => {
   const onValuesChange = useCallback(
     (changedFields: Record<string, unknown>) => {
       if (!activeElement) return;
-      callSchemaHook('onBeforeUpdateProps', schema, activeElement.id, changedFields);
-      const newSchema = SchemaUtils.setElementProps(schema, activeElement.id, changedFields);
-      callSchemaHook('onAfterUpdateProps', newSchema, activeElement.id);
-      setSchema(newSchema);
+
+      // 创建临时 operation 用于 before hook
+      const tempOperation = {
+        elementId: activeElement.id,
+        props: changedFields,
+        oldProps: {},
+      };
+
+      if (callSchemaHook('onBeforeUpdateProps', schema, tempOperation) === false) {
+        return;
+      }
+
+      const setPropsResult = SchemaUtils.setElementProps(schema, activeElement.id, changedFields);
+      callSchemaHook('onAfterUpdateProps', setPropsResult.schema, setPropsResult.operation);
+      setSchema(setPropsResult.schema);
     },
     [activeElement, schema, callSchemaHook, setSchema],
   );

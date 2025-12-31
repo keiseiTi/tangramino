@@ -8,7 +8,12 @@ import {
   type DragStartEvent,
   type CollisionDetection,
 } from '@dnd-kit/core';
-import { SchemaUtils, type Schema } from '@tangramino/engine';
+import {
+  SchemaUtils,
+  type Schema,
+  type MoveElementResult,
+  type InsertElementResult,
+} from '@tangramino/engine';
 import { useShallow } from 'zustand/react/shallow';
 import { useEditorCore, type DragElement } from './hooks/use-editor-core';
 import { usePluginCore } from './hooks/use-plugin-core';
@@ -330,23 +335,36 @@ export const EditorProvider = (props: EditorProviderProps) => {
           return;
         }
 
-        if (callSchemaHook('onBeforeMove', schema, dragElement.id, dropData.id) === false) {
+        // 准备移动操作（暂时创建一个临时的 operation 用于 onBeforeMove）
+        const tempMoveOp = {
+          elementId: dragElement.id,
+          oldParentId: '', // 将在实际移动时填充
+          oldIndex: -1,
+          newParentId: position ? '' : dropData.id,
+          newIndex: -1,
+          mode: (position ? 'same-level' : 'cross-level') as 'same-level' | 'cross-level',
+        };
+
+        if (callSchemaHook('onBeforeMove', schema, tempMoveOp) === false) {
           onDragCancel();
           return;
         }
+
+        let moveResult: MoveElementResult;
         if (position) {
           // 有位置信息时，使用同级移动（before/after/up/down）
-          newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
+          moveResult = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
             mode: 'same-level',
             position: position,
           });
         } else {
           // 没有位置信息时，使用跨级移动（插入到容器内部）
-          newSchema = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
+          moveResult = SchemaUtils.moveElement(schema, dragElement.id, dropData.id, {
             mode: 'cross-level',
           });
         }
-        callSchemaHook('onAfterMove', newSchema, dragElement.id);
+        newSchema = moveResult.schema;
+        callSchemaHook('onAfterMove', newSchema, moveResult.operation);
       } else {
         // 插入元素
         const dragMaterial = dragData as Material;
@@ -363,22 +381,32 @@ export const EditorProvider = (props: EditorProviderProps) => {
           return;
         }
 
-        if (callSchemaHook('onBeforeInsert', schema, dropData.id, newElement) === false) {
+        // 准备插入操作
+        const tempInsertOp = {
+          elementId: newElement.id,
+          parentId: position ? '' : dropData.id,
+          index: -1,
+          element: newElement,
+        };
+
+        if (callSchemaHook('onBeforeInsert', schema, tempInsertOp) === false) {
           onDragCancel();
           return;
         }
 
+        let insertResult: InsertElementResult;
         if (position) {
-          newSchema = SchemaUtils.insertAdjacentElement(
+          insertResult = SchemaUtils.insertAdjacentElement(
             schema,
             dropData.id,
             newElement,
             position as 'before' | 'after' | 'up' | 'down',
           );
         } else {
-          newSchema = SchemaUtils.insertElement(schema, dropData.id, newElement);
+          insertResult = SchemaUtils.insertElement(schema, dropData.id, newElement);
         }
-        callSchemaHook('onAfterInsert', newSchema, newElement.id);
+        newSchema = insertResult.schema;
+        callSchemaHook('onAfterInsert', newSchema, insertResult.operation);
       }
 
       setSchema(newSchema);
