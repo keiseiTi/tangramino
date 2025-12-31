@@ -63,6 +63,8 @@ jobs:
         run: |
           mkdir -p ./site/doc_build/playground
           cp -r ./playground/antd-demo/dist/* ./site/doc_build/playground/
+          # MPA 模式: index.html, collab.html, preview.html 都会被复制
+          echo "Copied MPA files: index.html, collab.html, preview.html"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

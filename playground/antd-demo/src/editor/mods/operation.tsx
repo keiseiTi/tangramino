@@ -28,7 +28,10 @@ export const Operation = (props: OperationProps) => {
   };
 
   const onPreview = () => {
-    window.open('/preview', '_blank');
+    // MPA 模式：直接访问 preview.html
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    const previewUrl = baseUrl.endsWith('/') ? `${baseUrl}preview.html` : `${baseUrl}/preview.html`;
+    window.open(previewUrl, '_blank');
   };
 
   const onModeChange = (e: RadioChangeEvent) => {
