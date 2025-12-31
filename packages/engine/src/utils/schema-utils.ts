@@ -727,7 +727,7 @@ const setGlobalVariables = (schema: Schema, variables: GlobalVariable[]): Schema
 };
 
 /**
- * 规范 schema，确保所有字段都有默认值
+ * 规范 schema,确保所有字段都有默认值
  * @param schema
  * @returns
  */
