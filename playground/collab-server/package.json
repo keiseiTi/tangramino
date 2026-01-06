@@ -1,0 +1,22 @@
+{
+  "name": "playground-collab-server",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.2",
+    "fastify": "^5.2.1",
+    "loro-crdt": "^1.4.11",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "~5.8.3"
+  }
+}

@@ -8,3 +8,11 @@ export * from './interfaces/engine';
 export * from './interfaces/schema';
 export * from './interfaces/event';
 export * from './interfaces/flow';
+
+// Export operation result types
+export type {
+  InsertElementResult,
+  RemoveElementResult,
+  MoveElementResult,
+  SetElementPropsResult,
+} from './utils/schema-utils';

@@ -1,4 +1,11 @@
-import { SchemaUtils, type Schema } from '@tangramino/engine';
+import {
+  SchemaUtils,
+  type Schema,
+  type RemoveElementResult,
+  type SetElementPropsResult,
+  type InsertElementResult,
+  type MoveElementResult,
+} from '@tangramino/engine';
 import type { EditorPlugin, PluginContext } from '../interface/plugin';
 import { definePlugin } from '../utils/define-plugin';
 
@@ -219,7 +226,11 @@ export const historyPlugin = definePlugin<HistoryPlugin, HistoryOptions | undefi
       switch (operation.type) {
         case 'insert': {
           // 撤销插入：移除刚插入的元素
-          nextSchema = SchemaUtils.removeElement(nextSchema, operation.insertElement.id);
+          const removeResult: RemoveElementResult = SchemaUtils.removeElement(
+            nextSchema,
+            operation.insertElement.id,
+          );
+          nextSchema = removeResult.schema;
           redos.push(operation);
           if (limit > 0 && redos.length > limit) redos.shift();
           break;
@@ -248,11 +259,12 @@ export const historyPlugin = definePlugin<HistoryPlugin, HistoryOptions | undefi
           break;
         }
         case 'setProps': {
-          nextSchema = SchemaUtils.setElementProps(
+          const setPropsResult: SetElementPropsResult = SchemaUtils.setElementProps(
             nextSchema,
             operation.targetId,
             operation.prevProps || {},
           );
+          nextSchema = setPropsResult.schema;
           redos.push(operation);
           if (limit > 0 && redos.length > limit) redos.shift();
           break;
@@ -279,7 +291,7 @@ export const historyPlugin = definePlugin<HistoryPlugin, HistoryOptions | undefi
         case 'insert': {
           // 重做插入：根据 targetId 是否有父节点选择相邻插入或追加插入
           const hasParent = findParentId(nextSchema, operation.targetId) != null;
-          nextSchema = hasParent
+          const insertResult: InsertElementResult = hasParent
             ? SchemaUtils.insertAdjacentElement(
                 nextSchema,
                 operation.targetId,
@@ -287,30 +299,34 @@ export const historyPlugin = definePlugin<HistoryPlugin, HistoryOptions | undefi
                 'after',
               )
             : SchemaUtils.insertElement(nextSchema, operation.targetId, operation.insertElement);
+          nextSchema = insertResult.schema;
           undos.push(operation);
           if (limit > 0 && undos.length > limit) undos.shift();
           break;
         }
         case 'remove': {
           // 重做删除：移除快照对应子树
-          nextSchema = SchemaUtils.removeElement(nextSchema, operation.removeElement.id);
+          const removeResult: RemoveElementResult = SchemaUtils.removeElement(nextSchema, operation.removeElement.id);
+          nextSchema = removeResult.schema;
           undos.push(operation);
           if (limit > 0 && undos.length > limit) undos.shift();
           break;
         }
         case 'move': {
           // 重做移动：将元素移到 targetId（跨级追加）
-          nextSchema = SchemaUtils.moveElement(nextSchema, operation.sourceId, operation.targetId);
+          const moveResult: MoveElementResult = SchemaUtils.moveElement(nextSchema, operation.sourceId, operation.targetId);
+          nextSchema = moveResult.schema;
           undos.push(operation);
           if (limit > 0 && undos.length > limit) undos.shift();
           break;
         }
         case 'setProps': {
-          nextSchema = SchemaUtils.setElementProps(
+          const setPropsResult: SetElementPropsResult = SchemaUtils.setElementProps(
             nextSchema,
             operation.targetId,
             operation.props || {},
           );
+          nextSchema = setPropsResult.schema;
           undos.push(operation);
           if (limit > 0 && undos.length > limit) undos.shift();
           break;
@@ -333,44 +349,46 @@ export const historyPlugin = definePlugin<HistoryPlugin, HistoryOptions | undefi
         };
       },
 
-      onBeforeInsert(schema, targetId, element) {
-        undos.push({ type: 'insert', targetId, insertElement: element });
-        if (limit > 0 && undos.length > limit) undos.shift();
-        redos.length = 0;
-      },
-
-      onBeforeMove(schema, sourceId, targetId) {
-        const prevParentId = findParentId(schema, sourceId) ?? undefined;
-        const prevIndex =
-          prevParentId != null
-            ? (schema.layout.structure[prevParentId]?.indexOf(sourceId) ?? -1)
-            : -1;
+      onBeforeInsert(schema, operation) {
         undos.push({
-          type: 'move',
-          sourceId,
-          targetId,
-          prevParentId,
-          prevIndex,
+          type: 'insert',
+          targetId: operation.parentId,
+          insertElement: operation.element,
         });
         if (limit > 0 && undos.length > limit) undos.shift();
         redos.length = 0;
       },
 
-      onBeforeRemove(schema, targetId) {
-        const parentId = findParentId(schema, targetId);
-        const removeElement = buildRemoveElement(schema, targetId, parentId);
+      onBeforeMove(schema, operation) {
+        undos.push({
+          type: 'move',
+          sourceId: operation.elementId,
+          targetId: operation.newParentId,
+          prevParentId: operation.oldParentId,
+          prevIndex: operation.oldIndex,
+        });
+        if (limit > 0 && undos.length > limit) undos.shift();
+        redos.length = 0;
+      },
+
+      onBeforeRemove(schema, operation) {
+        const removeElement = buildRemoveElement(schema, operation.elementId, operation.parentId);
         undos.push({ type: 'remove', removeElement });
         if (limit > 0 && undos.length > limit) undos.shift();
         redos.length = 0;
       },
 
-      onBeforeUpdateProps(schema, targetId, props) {
-        const prevState = schema.elements[targetId]?.props || {};
+      onBeforeUpdateProps(schema, operation) {
         const prevProps: Record<string, unknown> = {};
-        Object.keys(props || {}).forEach((k) => {
-          prevProps[k] = prevState[k];
+        Object.keys(operation.props || {}).forEach((k) => {
+          prevProps[k] = operation.oldProps[k];
         });
-        undos.push({ type: 'setProps', targetId, props, prevProps });
+        undos.push({
+          type: 'setProps',
+          targetId: operation.elementId,
+          props: operation.props,
+          prevProps,
+        });
         if (limit > 0 && undos.length > limit) undos.shift();
         redos.length = 0;
       },

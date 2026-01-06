@@ -38,10 +38,27 @@ export const CustomOverlay = () => {
   };
 
   const deleteElement = () => {
-    callSchemaHook('onBeforeRemove', schema!, id);
-    const nextSchema = SchemaUtils.removeElement(schema!, id);
-    callSchemaHook('onAfterRemove', nextSchema, id);
-    setSchema(nextSchema);
+    // removeElement 会自动查找 parentId 和 index
+    const element = schema!.elements[id];
+    if (!element) return;
+
+    const tempOperation = {
+      elementId: id,
+      parentId: '', // removeElement 会计算
+      index: -1,
+      element: {
+        id: id,
+        ...element,
+      },
+    };
+
+    if (callSchemaHook('onBeforeRemove', schema!, tempOperation) === false) {
+      return;
+    }
+
+    const removeResult = SchemaUtils.removeElement(schema!, id);
+    callSchemaHook('onAfterRemove', removeResult.schema, removeResult.operation);
+    setSchema(removeResult.schema);
     setActiveElement(null);
   };
 

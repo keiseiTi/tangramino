@@ -21,6 +21,12 @@ export { PluginManager } from './plugins/plugin-manager';
 export { historyPlugin } from './plugins/history';
 export { modePlugin } from './plugins/mode';
 export { contextValuePlugin } from './plugins/context-value';
+export {
+  collaborationPlugin,
+  type CollaborationPlugin,
+  type CollaborationOptions,
+  type CollaborationPluginExtension,
+} from './plugins/collaboration';
 
 export type { EditorConfig, AttributeConfig, PanelConfig } from './interface/editor-config';
 export type { Material, MaterialComponentProps } from './interface/material';

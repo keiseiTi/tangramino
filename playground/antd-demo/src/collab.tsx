@@ -9,6 +9,6 @@ import './main.css';
 
 createRoot(document.getElementById('root')!).render(
   <ConfigProvider locale={zhCN}>
-    <Editor />
+    <Editor enableCollab collabServerUrl='http://localhost:3001' collabRoomId='demo-room' />
   </ConfigProvider>,
 );

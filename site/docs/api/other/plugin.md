@@ -79,40 +79,104 @@ interface MaterialHooks {
 
 ### SchemaHooks - Schema 操作钩子
 
+Schema 操作钩子接收操作级别的详细信息，而不仅是最终的 schema 状态。这使得插件能够获取操作的具体细节（如元素 ID、父元素、索引等），实现增量同步等高级功能。
+
 ```typescript
+// 插入操作详情
+interface InsertOperation {
+  elementId: string;
+  parentId: string;
+  index: number;
+  element: { type: string; props: Record<string, unknown>; hidden?: boolean };
+}
+
+// 移动操作详情
+interface MoveOperation {
+  elementId: string;
+  oldParentId: string;
+  oldIndex: number;
+  newParentId: string;
+  newIndex: number;
+  mode: 'same-level' | 'cross-level';
+}
+
+// 删除操作详情
+interface RemoveOperation {
+  elementId: string;
+  parentId: string;
+  index: number;
+  element: Element; // 被删除元素的完整快照（包含子元素）
+}
+
+// 属性更新操作详情
+interface UpdatePropsOperation {
+  elementId: string;
+  props: Record<string, unknown>; // 新属性
+  oldProps: Record<string, unknown>; // 旧属性
+}
+
 interface SchemaHooks {
   // 插入前，返回 false 可取消操作
-  onBeforeInsert?: (
-    schema: Schema,
-    targetId: string,
-    element: InsertElement,
-  ) => boolean | void;
+  onBeforeInsert?: (schema: Schema, operation: InsertOperation) => boolean | void;
   // 插入后
-  onAfterInsert?: (schema: Schema, insertedId: string) => void;
+  onAfterInsert?: (schema: Schema, operation: InsertOperation) => void;
 
   // 移动前，返回 false 可取消操作
-  onBeforeMove?: (
-    schema: Schema,
-    sourceId: string,
-    targetId: string,
-  ) => boolean | void;
+  onBeforeMove?: (schema: Schema, operation: MoveOperation) => boolean | void;
   // 移动后
-  onAfterMove?: (schema: Schema, movedId: string) => void;
+  onAfterMove?: (schema: Schema, operation: MoveOperation) => void;
 
   // 删除前，返回 false 可取消操作
-  onBeforeRemove?: (schema: Schema, targetId: string) => boolean | void;
+  onBeforeRemove?: (schema: Schema, operation: RemoveOperation) => boolean | void;
   // 删除后
-  onAfterRemove?: (schema: Schema, removedId: string) => void;
+  onAfterRemove?: (schema: Schema, operation: RemoveOperation) => void;
 
   // 属性更新前，返回 false 可取消操作
-  onBeforeUpdateProps?: (
-    schema: Schema,
-    targetId: string,
-    props: Record<string, unknown>,
-  ) => boolean | void;
+  onBeforeUpdateProps?: (schema: Schema, operation: UpdatePropsOperation) => boolean | void;
   // 属性更新后
-  onAfterUpdateProps?: (schema: Schema, targetId: string) => void;
+  onAfterUpdateProps?: (schema: Schema, operation: UpdatePropsOperation) => void;
 }
+```
+
+**使用示例**：
+
+```typescript
+const myPlugin = definePlugin(() => ({
+  id: 'my-plugin',
+  
+  onAfterInsert(schema, operation) {
+    console.log('元素已插入:', {
+      elementId: operation.elementId,
+      parentId: operation.parentId,
+      index: operation.index,
+      elementType: operation.element.type,
+    });
+  },
+  
+  onAfterMove(schema, operation) {
+    console.log('元素已移动:', {
+      elementId: operation.elementId,
+      from: `${operation.oldParentId}[${operation.oldIndex}]`,
+      to: `${operation.newParentId}[${operation.newIndex}]`,
+    });
+  },
+  
+  onAfterRemove(schema, operation) {
+    console.log('元素已删除:', {
+      elementId: operation.elementId,
+      parentId: operation.parentId,
+      removedElement: operation.element,
+    });
+  },
+  
+  onAfterUpdateProps(schema, operation) {
+    console.log('属性已更新:', {
+      elementId: operation.elementId,
+      changedProps: operation.props,
+      oldProps: operation.oldProps,
+    });
+  },
+}));
 ```
 
 ### EditorHooks - 编辑器交互钩子

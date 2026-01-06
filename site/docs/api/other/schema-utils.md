@@ -15,11 +15,14 @@ import { SchemaUtils } from '@tangramino/engine';
 向 Schema 中插入新元素作为指定元素的子元素。
 
 ```typescript
-const newSchema = SchemaUtils.insertElement(schema, 'container-1', {
+const result = SchemaUtils.insertElement(schema, 'container-1', {
   id: 'button-1',
   type: 'Button',
   props: { text: 'Click me' },
 });
+
+// result.schema: 更新后的 Schema
+// result.operation: { elementId, parentId, index, element }
 ```
 
 | 参数            | 类型            | 说明          |
@@ -28,7 +31,13 @@ const newSchema = SchemaUtils.insertElement(schema, 'container-1', {
 | originElementId | `string`        | 目标父元素 ID |
 | insertElement   | `InsertElement` | 要插入的元素  |
 
-**返回值**: 插入后的新 `Schema`
+**返回值**: `InsertElementResult`
+- `schema`: 插入后的新 Schema
+- `operation`: 插入操作的详细信息
+  - `elementId`: 插入的元素 ID
+  - `parentId`: 父元素 ID
+  - `index`: 插入的索引位置
+  - `element`: 插入的元素数据
 
 ### insertAdjacentElement
 
@@ -36,7 +45,7 @@ const newSchema = SchemaUtils.insertElement(schema, 'container-1', {
 
 ```typescript
 // 在 button-1 之后插入
-const newSchema = SchemaUtils.insertAdjacentElement(
+const result = SchemaUtils.insertAdjacentElement(
   schema,
   'button-1',
   {
@@ -55,14 +64,17 @@ const newSchema = SchemaUtils.insertAdjacentElement(
 | insertElement   | `InsertElement`                         | 要插入的元素 |
 | position        | `'before' \| 'after' \| 'up' \| 'down'` | 插入位置     |
 
-**返回值**: 插入后的新 `Schema`
+**返回值**: `InsertElementResult` (同 insertElement)
 
 ### removeElement
 
 从 Schema 中删除元素及其所有子元素。
 
 ```typescript
-const newSchema = SchemaUtils.removeElement(schema, 'button-1');
+const result = SchemaUtils.removeElement(schema, 'button-1');
+
+// result.schema: 更新后的 Schema
+// result.operation: { elementId, parentId, index, element }
 ```
 
 | 参数      | 类型     | 说明            |
@@ -70,7 +82,13 @@ const newSchema = SchemaUtils.removeElement(schema, 'button-1');
 | schema    | `Schema` | 当前 Schema     |
 | elementId | `string` | 要删除的元素 ID |
 
-**返回值**: 删除后的新 `Schema`
+**返回值**: `RemoveElementResult`
+- `schema`: 删除后的新 Schema
+- `operation`: 删除操作的详细信息
+  - `elementId`: 删除的元素 ID
+  - `parentId`: 父元素 ID
+  - `index`: 原索引位置
+  - `element`: 删除的元素快照（包含所有子元素）
 
 ### moveElement
 
@@ -78,13 +96,15 @@ const newSchema = SchemaUtils.removeElement(schema, 'button-1');
 
 ```typescript
 // 跨级移动：将元素移动到目标元素下
-const newSchema = SchemaUtils.moveElement(schema, 'button-1', 'container-2');
+const result = SchemaUtils.moveElement(schema, 'button-1', 'container-2');
 
 // 同级移动：在同级元素之间移动
-const newSchema = SchemaUtils.moveElement(schema, 'button-1', 'button-3', {
+const result = SchemaUtils.moveElement(schema, 'button-1', 'button-3', {
   mode: 'same-level',
   position: 'before',
 });
+
+// result.operation: { elementId, oldParentId, oldIndex, newParentId, newIndex, mode }
 ```
 
 | 参数             | 类型                                    | 说明                           |
@@ -96,7 +116,15 @@ const newSchema = SchemaUtils.moveElement(schema, 'button-1', 'button-3', {
 | options.mode     | `'same-level' \| 'cross-level'`         | 移动模式，默认 `'cross-level'` |
 | options.position | `'before' \| 'after' \| 'up' \| 'down'` | 插入位置                       |
 
-**返回值**: 移动后的新 `Schema`
+**返回值**: `MoveElementResult`
+- `schema`: 移动后的新 Schema
+- `operation`: 移动操作的详细信息
+  - `elementId`: 移动的元素 ID
+  - `oldParentId`: 原父元素 ID
+  - `oldIndex`: 原索引位置
+  - `newParentId`: 新父元素 ID
+  - `newIndex`: 新索引位置
+  - `mode`: 移动模式
 
 ## 元素查询
 
@@ -155,10 +183,13 @@ const parents = SchemaUtils.getParents(schema, 'button-1');
 更新元素的属性。
 
 ```typescript
-const newSchema = SchemaUtils.setElementProps(schema, 'button-1', {
+const result = SchemaUtils.setElementProps(schema, 'button-1', {
   text: 'Updated text',
   disabled: true,
 });
+
+// result.schema: 更新后的 Schema
+// result.operation: { elementId, props, oldProps }
 ```
 
 | 参数      | 类型                      | 说明         |
@@ -167,7 +198,12 @@ const newSchema = SchemaUtils.setElementProps(schema, 'button-1', {
 | elementId | `string`                  | 元素 ID      |
 | props     | `Record<string, unknown>` | 要更新的属性 |
 
-**返回值**: 更新后的新 `Schema`
+**返回值**: `SetElementPropsResult`
+- `schema`: 更新后的新 Schema
+- `operation`: 更新操作的详细信息
+  - `elementId`: 元素 ID
+  - `props`: 新属性
+  - `oldProps`: 更新前的旧属性
 
 ## 流程图操作
 

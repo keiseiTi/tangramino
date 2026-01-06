@@ -18,11 +18,12 @@ export const portalPlugin = definePlugin<EditorPlugin>(() => {
         ctx = null;
       };
     },
-    onAfterInsert(schema, insertedId) {
-      const element = schema.elements[insertedId];
+    onAfterInsert(schema, operation) {
+      const { elementId } = operation;
+      const element = schema.elements[elementId];
       if (element && isPortal(element.type)) {
         portalElement = {
-          id: insertedId,
+          id: elementId,
           type: element.type,
           props: element.props,
           material: { type: element.type },

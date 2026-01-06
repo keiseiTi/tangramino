@@ -5,6 +5,11 @@
     "activeMatch": "/guide/"
   },
   {
+    "text": "示例",
+    "link": "/examples/collaboration",
+    "activeMatch": "/examples/"
+  },
+  {
     "text": "API",
     "link": "/api/package/engine",
     "activeMatch": "/api/"

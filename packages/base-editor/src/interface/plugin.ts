@@ -57,32 +57,86 @@ export interface MaterialHooks {
 }
 
 /**
- * Schema 操作钩子
+ * 插入操作详情
+ */
+export interface InsertOperation {
+  /** 被插入的元素 ID */
+  elementId: string;
+  /** 父容器 ID */
+  parentId: string;
+  /** 插入位置索引 */
+  index: number;
+  /** 插入的元素数据 */
+  element: InsertElement;
+}
+
+/**
+ * 移动操作详情
+ */
+export interface MoveOperation {
+  /** 被移动的元素 ID */
+  elementId: string;
+  /** 原父容器 ID */
+  oldParentId: string;
+  /** 原位置索引 */
+  oldIndex: number;
+  /** 新父容器 ID */
+  newParentId: string;
+  /** 新位置索引 */
+  newIndex: number;
+  /** 移动模式 */
+  mode: 'same-level' | 'cross-level';
+}
+
+/**
+ * 删除操作详情
+ */
+export interface RemoveOperation {
+  /** 被删除的元素 ID */
+  elementId: string;
+  /** 父容器 ID */
+  parentId: string;
+  /** 删除前的位置索引 */
+  index: number;
+  /** 被删除的元素数据（包含所有子元素） */
+  element: Element;
+}
+
+/**
+ * 属性更新操作详情
+ */
+export interface UpdatePropsOperation {
+  /** 被更新的元素 ID */
+  elementId: string;
+  /** 新属性 */
+  props: Record<string, unknown>;
+  /** 旧属性 */
+  oldProps: Record<string, unknown>;
+}
+
+/**
+ * Schema 操作钩子（操作级）
  */
 export interface SchemaHooks {
   /** 插入前，返回 false 可取消操作 */
-  onBeforeInsert?: (schema: Schema, targetId: string, element: InsertElement) => boolean | void;
+  onBeforeInsert?: (schema: Schema, operation: InsertOperation) => boolean | void;
   /** 插入后 */
-  onAfterInsert?: (schema: Schema, insertedId: string) => void;
+  onAfterInsert?: (schema: Schema, operation: InsertOperation) => void;
 
   /** 移动前，返回 false 可取消操作 */
-  onBeforeMove?: (schema: Schema, sourceId: string, targetId: string) => boolean | void;
+  onBeforeMove?: (schema: Schema, operation: MoveOperation) => boolean | void;
   /** 移动后 */
-  onAfterMove?: (schema: Schema, movedId: string) => void;
+  onAfterMove?: (schema: Schema, operation: MoveOperation) => void;
 
   /** 删除前，返回 false 可取消操作 */
-  onBeforeRemove?: (schema: Schema, targetId: string) => boolean | void;
+  onBeforeRemove?: (schema: Schema, operation: RemoveOperation) => boolean | void;
   /** 删除后 */
-  onAfterRemove?: (schema: Schema, removedId: string) => void;
+  onAfterRemove?: (schema: Schema, operation: RemoveOperation) => void;
 
   /** 属性更新前，返回 false 可取消操作 */
-  onBeforeUpdateProps?: (
-    schema: Schema,
-    targetId: string,
-    props: Record<string, unknown>,
-  ) => boolean | void;
+  onBeforeUpdateProps?: (schema: Schema, operation: UpdatePropsOperation) => boolean | void;
   /** 属性更新后 */
-  onAfterUpdateProps?: (schema: Schema, targetId: string) => void;
+  onAfterUpdateProps?: (schema: Schema, operation: UpdatePropsOperation) => void;
 }
 
 /**

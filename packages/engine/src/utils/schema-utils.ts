@@ -10,13 +10,30 @@ import type {
 } from '../';
 
 /**
+ * 插入操作结果
+ */
+export interface InsertElementResult {
+  schema: Schema;
+  operation: {
+    elementId: string;
+    parentId: string;
+    index: number;
+    element: InsertElement;
+  };
+}
+
+/**
  * 往 schema 里插入元素
  * @param schema
  * @param originElementId
  * @param insertElement
- * @returns 返回插入后的 schema
+ * @returns 返回插入后的 schema 和操作详情
  */
-const insertElement = (schema: Schema, originElementId: string, insertElement: InsertElement) => {
+const insertElement = (
+  schema: Schema,
+  originElementId: string,
+  insertElement: InsertElement,
+): InsertElementResult => {
   const { elements, layout } = schema;
   const newElements: Elements = {
     ...elements,
@@ -34,22 +51,82 @@ const insertElement = (schema: Schema, originElementId: string, insertElement: I
     ...layout.structure,
     [originElementId]: children,
   };
+  const index = children.indexOf(insertElement.id);
   return {
-    ...schema,
-    elements: newElements,
-    layout: { ...layout, structure: newStructure },
+    schema: {
+      ...schema,
+      elements: newElements,
+      layout: { ...layout, structure: newStructure },
+    },
+    operation: {
+      elementId: insertElement.id,
+      parentId: originElementId,
+      index,
+      element: insertElement,
+    },
   };
 };
+
+/**
+ * 删除操作结果
+ */
+export interface RemoveElementResult {
+  schema: Schema;
+  operation: {
+    elementId: string;
+    parentId: string;
+    index: number;
+    element: {
+      id: string;
+      type: string;
+      props: Record<string, unknown>;
+      hidden?: boolean;
+    };
+  };
+}
 
 /**
  * 从 schema 中删除元素
  * @param schema
  * @param elementId
- * @returns 返回删除后的 schema
+ * @returns 返回删除后的 schema 和操作详情
  */
-const removeElement = (schema: Schema, elementId: string) => {
+const removeElement = (schema: Schema, elementId: string): RemoveElementResult => {
   const { elements, layout } = schema;
   const { structure } = layout;
+
+  // 找到父容器和索引位置
+  let parentId = '';
+  let index = -1;
+  for (const pid of Object.keys(structure)) {
+    const children = structure[pid] || [];
+    const idx = children.indexOf(elementId);
+    if (idx > -1) {
+      parentId = pid;
+      index = idx;
+      break;
+    }
+  }
+
+  // 保存被删除的元素信息
+  const elementState = elements[elementId];
+  const removedElement: {
+    id: string;
+    type: string;
+    props: Record<string, unknown>;
+    hidden?: boolean;
+  } = elementState
+    ? {
+        id: elementId,
+        type: elementState.type,
+        props: elementState.props,
+        ...(elementState.hidden !== undefined && { hidden: elementState.hidden }),
+      }
+    : {
+        id: elementId,
+        type: '',
+        props: {},
+      };
 
   // 读取时可用原结构，写入时构造新对象/新数组
   const idsToDelete = new Set<string>([elementId]);
@@ -74,20 +151,28 @@ const removeElement = (schema: Schema, elementId: string) => {
     delete newStructure[id];
   });
 
-  for (const parentId of Object.keys(newStructure)) {
-    const children = newStructure[parentId];
+  for (const pid of Object.keys(newStructure)) {
+    const children = newStructure[pid];
     if (!children) continue;
-    const index = children.indexOf(elementId);
-    if (index > -1) {
+    const idx = children.indexOf(elementId);
+    if (idx > -1) {
       const next = children.filter((cid) => cid !== elementId);
-      newStructure[parentId] = next;
+      newStructure[pid] = next;
     }
   }
 
   return {
-    ...schema,
-    elements: newElements,
-    layout: { ...layout, structure: newStructure },
+    schema: {
+      ...schema,
+      elements: newElements,
+      layout: { ...layout, structure: newStructure },
+    },
+    operation: {
+      elementId,
+      parentId,
+      index,
+      element: removedElement,
+    },
   };
 };
 
@@ -137,14 +222,14 @@ const getParents = (schema: Schema, elementId: string): string[] => {
  * @param targetElementId
  * @param insertElement
  * @param position
- * @returns 返回插入后的 schema
+ * @returns 返回插入后的 schema 和操作详情
  */
 const insertAdjacentElement = (
   schema: Schema,
   targetElementId: string,
   insertElement: InsertElement,
   position: 'before' | 'after' | 'up' | 'down',
-) => {
+): InsertElementResult => {
   const { elements, layout } = schema;
   const { structure } = layout;
 
@@ -166,10 +251,19 @@ const insertAdjacentElement = (
       ...layout.structure,
       [layout.root]: nextChildren,
     };
+    const index = nextChildren.indexOf(insertElement.id);
     return {
-      ...schema,
-      elements: newElements,
-      layout: { ...layout, structure: newStructure },
+      schema: {
+        ...schema,
+        elements: newElements,
+        layout: { ...layout, structure: newStructure },
+      },
+      operation: {
+        elementId: insertElement.id,
+        parentId: layout.root,
+        index,
+        element: insertElement,
+      },
     };
   }
 
@@ -179,9 +273,17 @@ const insertAdjacentElement = (
   if (!parentId) {
     // 没有父级（可能是 root），不支持相邻插入
     return {
-      ...schema,
-      elements: newElements,
-      layout,
+      schema: {
+        ...schema,
+        elements: newElements,
+        layout,
+      },
+      operation: {
+        elementId: insertElement.id,
+        parentId: '',
+        index: -1,
+        element: insertElement,
+      },
     };
   }
 
@@ -189,17 +291,33 @@ const insertAdjacentElement = (
   const idx = siblings.indexOf(targetElementId);
   if (idx === -1) {
     return {
-      ...schema,
-      elements: newElements,
-      layout,
+      schema: {
+        ...schema,
+        elements: newElements,
+        layout,
+      },
+      operation: {
+        elementId: insertElement.id,
+        parentId,
+        index: -1,
+        element: insertElement,
+      },
     };
   }
   // 已经在同一个父级的 children 中存在相同 id 时不再重复插入
   if (siblings.includes(insertElement.id)) {
     return {
-      ...schema,
-      elements: newElements,
-      layout,
+      schema: {
+        ...schema,
+        elements: newElements,
+        layout,
+      },
+      operation: {
+        elementId: insertElement.id,
+        parentId,
+        index: siblings.indexOf(insertElement.id),
+        element: insertElement,
+      },
     };
   }
   const insertIndex = position === 'before' || position === 'up' ? idx : idx + 1;
@@ -211,18 +329,41 @@ const insertAdjacentElement = (
   const newStructure = { ...structure, [parentId]: nextSiblings };
 
   return {
-    ...schema,
-    elements: newElements,
-    layout: { ...layout, structure: newStructure },
+    schema: {
+      ...schema,
+      elements: newElements,
+      layout: { ...layout, structure: newStructure },
+    },
+    operation: {
+      elementId: insertElement.id,
+      parentId,
+      index: insertIndex,
+      element: insertElement,
+    },
   };
 };
+
+/**
+ * 移动操作结果
+ */
+export interface MoveElementResult {
+  schema: Schema;
+  operation: {
+    elementId: string;
+    oldParentId: string;
+    oldIndex: number;
+    newParentId: string;
+    newIndex: number;
+    mode: 'same-level' | 'cross-level';
+  };
+}
 
 /**
  * 移动元素
  * @param schema
  * @param elementId
  * @param targetElementId
- * @returns 返回移动后的 schema
+ * @returns 返回移动后的 schema 和操作详情
  */
 const moveElement = (
   schema: Schema,
@@ -232,13 +373,27 @@ const moveElement = (
     mode?: 'same-level' | 'cross-level';
     position?: 'before' | 'after' | 'up' | 'down';
   },
-): Schema => {
+): MoveElementResult => {
   const { layout } = schema;
   const { structure, root } = layout;
+
+  // 默认返回值（无操作）
+  const noOpResult: MoveElementResult = {
+    schema,
+    operation: {
+      elementId,
+      oldParentId: '',
+      oldIndex: -1,
+      newParentId: '',
+      newIndex: -1,
+      mode: options?.mode ?? 'cross-level',
+    },
+  };
+
   // 基本保护
-  if (!elementId || !targetElementId) return schema;
-  if (elementId === targetElementId) return schema;
-  if (elementId === root) return schema; // 不允许移动根节点
+  if (!elementId || !targetElementId) return noOpResult;
+  if (elementId === targetElementId) return noOpResult;
+  if (elementId === root) return noOpResult; // 不允许移动根节点
 
   // 判断 target 是否是 element 的后代，若是则拒绝以避免产生环
   const isDescendant = (ancestorId: string, nodeId: string): boolean => {
@@ -252,7 +407,7 @@ const moveElement = (
 
   if (isDescendant(elementId, targetElementId)) {
     // 不能将节点移动到它自己的后代下
-    return schema;
+    return noOpResult;
   }
 
   // 工具：查找某个节点的父级 id（第一个匹配的父级）
@@ -264,6 +419,15 @@ const moveElement = (
     }
     return undefined;
   };
+
+  const findElementIndex = (pid: string, id: string): number => {
+    const children = newStructure[pid] || [];
+    return children.indexOf(id);
+  };
+
+  // 记录原始位置
+  const oldParentId = findParentId(elementId) || '';
+  const oldIndex = oldParentId ? findElementIndex(oldParentId, elementId) : -1;
 
   const removeFromParent = (id: string) => {
     for (const pid in newStructure) {
@@ -301,40 +465,85 @@ const moveElement = (
         const insertIndex = shouldInsertBefore ? tIdx : tIdx + 1;
         const next = [...filtered.slice(0, insertIndex), elementId, ...filtered.slice(insertIndex)];
         newStructure[targetParentId] = next;
+        const newIndex = next.indexOf(elementId);
         return {
-          ...schema,
-          layout: { ...layout, structure: newStructure },
+          schema: {
+            ...schema,
+            layout: { ...layout, structure: newStructure },
+          },
+          operation: {
+            elementId,
+            oldParentId,
+            oldIndex,
+            newParentId: targetParentId,
+            newIndex,
+            mode: 'same-level',
+          },
         };
       }
     }
   }
 
+  // 跨级移动
   removeFromParent(elementId);
   const list = newStructure[targetElementId] || [];
+  let newIndex = list.length;
   if (!list.includes(elementId)) {
     const pos = options?.position;
     if (pos === 'up') {
       newStructure[targetElementId] = [elementId, ...list];
+      newIndex = 0;
     } else {
       newStructure[targetElementId] = [...list, elementId];
+      newIndex = list.length;
     }
+  } else {
+    newIndex = list.indexOf(elementId);
   }
 
   return {
-    ...schema,
-    layout: { ...layout, structure: newStructure },
+    schema: {
+      ...schema,
+      layout: { ...layout, structure: newStructure },
+    },
+    operation: {
+      elementId,
+      oldParentId,
+      oldIndex,
+      newParentId: targetElementId,
+      newIndex,
+      mode: 'cross-level',
+    },
   };
 };
+
+/**
+ * 属性更新操作结果
+ */
+export interface SetElementPropsResult {
+  schema: Schema;
+  operation: {
+    elementId: string;
+    props: Record<string, unknown>;
+    oldProps: Record<string, unknown>;
+  };
+}
 
 /**
  * 设置元素属性
  * @param schema
  * @param elementId
  * @param props
- * @returns 新的 schema
+ * @returns 新的 schema 和操作详情
  */
-const setElementProps = (schema: Schema, elementId: string, props: Record<string, unknown>) => {
+const setElementProps = (
+  schema: Schema,
+  elementId: string,
+  props: Record<string, unknown>,
+): SetElementPropsResult => {
   const { elements } = schema;
+  const oldProps = elements[elementId]?.props || {};
+
   if (elements[elementId]) {
     const newElements: Elements = {
       ...elements,
@@ -344,11 +553,25 @@ const setElementProps = (schema: Schema, elementId: string, props: Record<string
       },
     };
     return {
-      ...schema,
-      elements: newElements,
+      schema: {
+        ...schema,
+        elements: newElements,
+      },
+      operation: {
+        elementId,
+        props: { ...elements[elementId].props, ...props },
+        oldProps,
+      },
     };
   }
-  return schema;
+  return {
+    schema,
+    operation: {
+      elementId,
+      props,
+      oldProps: {},
+    },
+  };
 };
 
 /**
@@ -504,7 +727,7 @@ const setGlobalVariables = (schema: Schema, variables: GlobalVariable[]): Schema
 };
 
 /**
- * 规范 schema，确保所有字段都有默认值
+ * 规范 schema,确保所有字段都有默认值
  * @param schema
  * @returns
  */
