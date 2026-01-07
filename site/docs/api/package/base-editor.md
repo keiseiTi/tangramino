@@ -229,35 +229,6 @@ interface Material {
   contextConfig?: ContextConfig;
 }
 ```
-
-### Material 示例
-
-```tsx
-const ButtonMaterial: Material = {
-  Component: Button,
-  title: '按钮',
-  type: 'Button',
-  icon: <ButtonIcon />,
-  defaultProps: {
-    text: '点击我',
-    type: 'primary',
-  },
-  isContainer: false,
-  isBlock: true,
-  editorConfig: {
-    panels: [
-      {
-        title: '基础配置',
-        configs: [
-          { field: 'text', label: '按钮文字', uiType: 'input' },
-          { field: 'type', label: '按钮类型', uiType: 'select' },
-        ],
-      },
-    ],
-  },
-};
-```
-
 ## MaterialComponentProps
 
 物料组件自动注入的 Props。

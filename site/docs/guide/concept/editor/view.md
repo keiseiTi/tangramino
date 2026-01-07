@@ -4,7 +4,7 @@
 
 ## 核心交互
 
-### 1. 编辑态包装 (ElementWrapper)
+### 编辑态包装 (ElementWrapper)
 
 在编辑器中，所有物料组件都被 `ElementWrapper` 包裹。与运行时不同，`ElementWrapper` 会注入特定的编辑态属性：
 
@@ -25,7 +25,7 @@ const extraCompProps: MaterialComponentProps = material.isContainer
     };
 ```
 
-### 2. 拖拽系统 (Drag & Drop)
+### 拖拽系统 (Drag & Drop)
 
 拖拽系统是 Tangramino 编辑器的核心交互能力，基于 [@dnd-kit/core](https://dndkit.com/) 构建，支持物料拖入画布和画布内元素移动。
 
@@ -115,7 +115,7 @@ export const Container = (props: IProps) => {
 />
 ```
 
-### 3. 属性配置 (Attribute Panel)
+### 属性配置 (Attribute Panel)
 
 当选中组件时，编辑器会根据物料配置中的 `editorConfig` 生成属性面板。面板中的修改会实时更新 Schema，进而触发视图的重新渲染。
 

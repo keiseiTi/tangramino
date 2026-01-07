@@ -120,30 +120,3 @@ function App() {
 ```typescript
 type Plugin = (engine: Engine) => void;
 ```
-
-### 插件示例
-
-```typescript
-// 日志插件
-const logPlugin: Plugin = (engine) => {
-  engine.subscribe('ELEMENT_UPDATE', () => {
-    console.log('Elements updated:', engine.elements);
-  });
-};
-
-// 初始化插件
-const initPlugin: Plugin = (engine) => {
-  // 设置初始全局变量
-  engine.setGlobalVariable('appVersion', '1.0.0');
-};
-```
-
-### 使用插件
-
-```tsx
-<ReactView
-  engine={engine}
-  components={components}
-  plugins={[logPlugin, initPlugin]}
-/>
-```
