@@ -187,7 +187,3 @@ See [playground/antd-demo/src/flow-editor](../../playground/antd-demo/src/flow-e
 - Node configuration panel
 - Connection validation
 - Flow execution
-
-## 📄 License
-
-MIT

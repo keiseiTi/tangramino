@@ -2,14 +2,6 @@
 
 基于 CRDT（冲突自由复制数据类型）技术和 WebSocket 实现实时多人协同编辑，支持多用户同时编辑同一文档而无需中央服务器协调。
 
-## 在线演示
-
-[🔗 在新窗口打开协同编辑演练场](https://keiseiti.github.io/tangramino/playground/collab)
-
-:::tip 多人协作测试
-开启多个浏览器标签页访问上述链接，即可体验实时多人协同编辑效果。
-:::
-
 ## 核心特性
 
 - **增量同步**：使用 Loro 的结构化 CRDT 容器，每次操作仅同步变更部分
@@ -17,7 +9,7 @@
 - **离线支持**：用户离线时可继续编辑，重新连接后自动同步
 - **冲突解决**：CRDT 算法自动解决并发编辑冲突
 - **房间隔离**：支持多个独立的协同编辑会话
-- **Peer 管理**：实时显示在线用户列表
+- **Peer 管理**：支持实时显示在线用户列表
 - **自动重试**：连接失败时自动进行指数退避重试
 
 ## 增量同步架构
@@ -40,16 +32,9 @@ LoroMap (root)
 
 ### 操作级钩子实现增量同步
 
-从 v0.1.0 开始，插件系统的 Schema 钩子接收**操作级详细信息**而非仅最终 schema，使插件能够精确执行增量更新：
+插件系统的 Schema 钩子接收**操作级详细信息**而非仅最终 schema，使插件能够精确执行增量更新：
 
 ```typescript
-// ❌ 旧版本（整体同步）
-onAfterInsert(schema, insertedId) {
-  // 只知道元素被插入了，需要重新序列化整个 schema
-  schemaToLoro(schema);
-}
-
-// ✅ 新版本（增量同步，扁平化存储）
 onAfterInsert(schema, operation: InsertOperation) {
   // operation 包含：{ elementId, parentId, index, element }
   // 直接更新对应的扁平化键
@@ -78,6 +63,7 @@ onAfterInsert(schema, operation: InsertOperation) {
 ```
 
 **优势：**
+
 - 每次操作（insert/move/remove/updateProps）只更新对应的 Map/List 容器
 - 避免全量序列化和差异计算的性能开销
 - Loro 自动计算最小化的增量更新补丁（通常只有几十字节）
@@ -130,10 +116,6 @@ interface UpdatePropsOperation {
 npm install socket.io-client
 ```
 
-:::info Loro CRDT 内部集成
-从 v0.1.0 开始，Loro CRDT 已集成到 `@tangramino/base-editor` 中，无需单独安装。
-:::
-
 ### 启动协同编辑
 
 ```typescript
@@ -172,10 +154,10 @@ const EditorPage = () => {
 | 选项          | 类型             | 必需 | 默认值   | 说明                       |
 | ------------- | ---------------- | ---- | -------- | -------------------------- |
 | `serverUrl`   | string           | ✅   | -        | WebSocket 协同服务器地址   |
+| `socketIO`    | SocketIOClient   | ✅   | -        | Socket.IO 客户端工厂函数   |
 | `roomId`      | string           | ✅   | -        | 协同编辑房间 ID            |
 | `peerId`      | string \| bigint | ❌   | 随机生成 | 用户的唯一标识符           |
 | `autoConnect` | boolean          | ❌   | true     | 初始化时是否自动连接服务器 |
-| `socketIO`    | SocketIOClient   | ✅   | -        | Socket.IO 客户端工厂函数   |
 | `maxRetries`  | number           | ❌   | 5        | 最大重试次数               |
 | `retryDelay`  | number           | ❌   | 1000     | 初始重试延迟（毫秒）       |
 
@@ -186,7 +168,7 @@ const EditorPage = () => {
 ### 连接管理
 
 ```typescript
-const { connect, disconnect, isConnected } = useEditorCore();
+const { connect, disconnect, isConnected } = usePluginContext('collaboration');
 
 // 手动连接
 await connect();
@@ -200,12 +182,12 @@ if (isConnected()) {
 }
 ```
 
-### 增量更新方法（高级用法）
+### 增量更新方法
 
 插件导出了细粒度的增量更新方法，允许直接操作 Loro 容器：
 
 ```typescript
-const collab = collaborationPlugin({ /* ... */ });
+const collab = usePluginContext('collaboration');
 
 // 增量更新元素属性（仅同步属性变更）
 collab.updateElementProps?.('elem-1', { width: 200, height: 100 });
@@ -215,7 +197,7 @@ collab.insertElement?.(
   'elem-2',
   { type: 'button', props: { text: 'Click me' } },
   'root',
-  0 // 插入位置
+  0, // 插入位置
 );
 
 // 增量移动元素（仅同步位置变更）
@@ -233,7 +215,7 @@ collab.removeElement?.('elem-1', 'parent-id');
 ### 信息查询
 
 ```typescript
-const { getPeers, getRoomId } = useEditorCore();
+const { getPeers, getRoomId } = usePluginContext('collaboration');
 
 // 获取在线用户列表
 const peers = getPeers(); // ['user-123', 'user-456']
@@ -364,7 +346,7 @@ collaborationPlugin({
 如果需要稍后手动连接（例如等待用户授权）：
 
 ```typescript
-const { connect } = useEditorCore();
+const { connect } = usePluginContext('collaboration');
 
 // 初始化时不连接
 const plugins = [
@@ -401,7 +383,7 @@ collaborationPlugin({
 在 `onInit` 或其他生命周期中监听连接状态变化：
 
 ```typescript
-const { isConnected, getPeers } = useEditorCore();
+const { isConnected, getPeers } = usePluginContext('collaboration');
 
 useEffect(() => {
   const interval = setInterval(() => {
@@ -414,51 +396,6 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, []);
 ```
-
-## 技术栈
-
-- **CRDT 库**：Loro v1.x（支持冲突自由复制，内部集成）
-- **通信**：Socket.IO WebSocket（外部传入，可替换）
-- **后端框架**：Fastify + Node.js
-- **编辑器**：Tangramino Base Editor
-
-### Loro 事件结构
-
-Loro 订阅回调接收的事件对象结构如下：
-
-```typescript
-interface LoroEvent {
-  by: 'local' | 'import' | 'checkout';  // 变更来源
-  origin: string;                        // 来源标识（通常为空字符串）
-  events: Array<{                        // 详细变更列表
-    target: string;                      // 容器ID
-    diff: {                              // 变更差异
-      type: 'map' | 'list';
-      updated?: Record<string, unknown>; // Map更新的键值
-      // ... 其他字段
-    };
-    path: string[];                      // 容器路径
-  }>;
-  from: Array<{ peer: string; counter: number }>;  // 起始版本
-  to: Array<{ peer: string; counter: number }>;    // 结束版本
-}
-```
-
-**关键字段**：
-- `event.by === 'local'`：本地提交的变更，需要发送到服务器
-- `event.by === 'import'`：远程导入的变更，需要更新本地UI
-- `event.by === 'checkout'`：版本切换（历史记录相关）
-
-:::warning 注意
-早期版本的文档可能提到 `event.origin` 和 `event.local` 字段。在 Loro v1.x 中，应使用 `event.by` 字段判断变更来源。
-:::
-
-:::info 为什么 Loro 内部集成而 Socket.IO 外部传入？
-
-- **Loro CRDT**：不同 CRDT 库的 API 差异巨大（Loro、Yjs、Automerge），应用层无法通过简单配置替换。因此直接内置 Loro，简化使用流程。
-- **Socket.IO**：通信层接口相对标准，应用层可以用 WebSocket、WebRTC、HTTP 轮询等方案替换。保持外部传入提供最大灵活性。
-
-:::
 
 ## 使用场景
 
@@ -518,6 +455,7 @@ interface LoroEvent {
 7. 尝试手动调用 `disconnect()` 后重新 `connect()`
 
 **常见问题**：
+
 - **事件名不匹配**：确保客户端监听 `remote-update` 而非 `update`
 - **Loro事件判断错误**：检查是否使用 `event.by` 而非 `event.origin` 或 `event.local`
 - **初始同步标志**：确保 `isInitialSync` 在同步完成后设为 `false`

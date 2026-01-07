@@ -8,7 +8,7 @@ English | [简体中文](./README.zh-CN.md)
 
 **React view layer bindings for Tangramino engine**
 
-Render your JSON Schema to React components automatically. Subscribe to engine events, re-render on changes, and extend with plugins.
+Render your JSON Schema to React components. Subscribe to engine events, re-render on changes, and extend with plugins.
 
 [![npm version](https://img.shields.io/npm/v/@tangramino/react)](https://www.npmjs.com/package/@tangramino/react)
 
@@ -106,7 +106,3 @@ const loggerPlugin: Plugin = (engine) => {
   plugins={[loggerPlugin]}
 />
 ```
-
-## 📄 License
-
-MIT

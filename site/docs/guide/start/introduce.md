@@ -64,9 +64,6 @@ const myPlugin = definePlugin(() => ({
 ```
 你想做什么？
 │
-├─ 渲染 Schema（无编辑）
-│   └→ @tangramino/react
-│
 ├─ 构建页面编辑器
 │   └→ @tangramino/base-editor
 │

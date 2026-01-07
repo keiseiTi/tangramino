@@ -21,7 +21,6 @@
     "@tangramino/react": "workspace:^",
     "@types/qs": "^6.14.0",
     "antd": "^5.27.3",
-    "loro-crdt": "^1.4.11",
     "monaco-editor": "0.54.0",
     "qs": "^6.14.0",
     "react": "^18",

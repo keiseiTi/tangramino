@@ -354,7 +354,3 @@ import { historyPlugin } from '@tangramino/base-editor';
 ## 📦 Complete Example
 
 See [playground/antd-demo](../../playground/antd-demo) for a production-ready implementation.
-
-## 📄 License
-
-MIT

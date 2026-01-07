@@ -413,10 +413,6 @@ pnpm build
 
 This demo serves as both a reference implementation and a testing ground for new features. Contributions are welcome!
 
-## 📄 License
-
-MIT
-
 ---
 
 **Built with ❤️ using Tangramino**

@@ -101,7 +101,3 @@ interface FlowNode {
   renderConfig?: (props) => ReactNode;
 }
 ```
-
-## 📄 License
-
-MIT

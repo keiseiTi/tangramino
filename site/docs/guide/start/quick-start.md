@@ -6,10 +6,10 @@
 
 ```bash
 # 使用 npm
-npm install @tangramino/base-editor @tangramino/engine @tangramino/react
+npm install @tangramino/base-editor
 
 # 或 pnpm
-pnpm add @tangramino/base-editor @tangramino/engine @tangramino/react
+pnpm add @tangramino/base-editor
 ```
 
 ## 2. 定义物料

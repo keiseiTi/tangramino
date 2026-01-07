@@ -103,40 +103,6 @@ const schema = {
 };
 ```
 
-### SchemaUtils
-
-Built-in utilities for schema manipulation:
-
-```typescript
-import { SchemaUtils } from '@tangramino/engine';
-
-// Insert element
-const newSchema = SchemaUtils.insertElement(
-  schema,
-  'root',
-  {
-    type: 'input',
-    props: { placeholder: 'Enter...' },
-  },
-  0,
-);
-
-// Update props
-const updated = SchemaUtils.setElementProps(schema, 'btn-1', {
-  text: 'New Text',
-});
-
-// Move element
-const moved = SchemaUtils.moveElement(schema, 'btn-1', 'header', 0);
-
-// Remove element
-const removed = SchemaUtils.removeElement(schema, 'btn-1');
-
-// Get parent chain
-const parents = SchemaUtils.getParents(schema, 'btn-1');
-// → ['root', 'header']
-```
-
 ## 🔨 API Reference
 
 ### Engine Instance
@@ -235,7 +201,3 @@ function Editor() {
   );
 }
 ```
-
-## 📄 License
-
-MIT

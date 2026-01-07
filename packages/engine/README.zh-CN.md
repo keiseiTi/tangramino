@@ -72,27 +72,6 @@ interface Schema {
 }
 ```
 
-### SchemaUtils 工具
-
-```typescript
-import { SchemaUtils } from '@tangramino/engine';
-
-// 插入元素
-SchemaUtils.insertElement(schema, parentId, element, index?);
-
-// 更新属性
-SchemaUtils.setElementProps(schema, elementId, props);
-
-// 移动元素
-SchemaUtils.moveElement(schema, elementId, newParentId, index?);
-
-// 删除元素
-SchemaUtils.removeElement(schema, elementId);
-
-// 获取父级链
-SchemaUtils.getParents(schema, elementId);
-```
-
 ## 🔨 API 参考
 
 ### 引擎实例方法
@@ -108,6 +87,3 @@ SchemaUtils.getParents(schema, elementId);
 | `on(namespace, event, listener)` | 订阅事件     |
 | `emit(namespace, event, data)`   | 发布事件     |
 
-## 📄 License
-
-MIT

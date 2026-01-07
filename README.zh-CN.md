@@ -3,7 +3,7 @@
 [English](./README.md) | 简体中文
 
 <p align="center">
-  <strong>灵活的 Schema 驱动低代码框架，用于构建可视化编辑器和工作流设计器。</strong>
+  <strong>Schema 驱动的低代码框架，用于构建可视化编辑器和工作流设计器。</strong>
 </p>
 
 <p align="center">
@@ -24,21 +24,20 @@
 
 ## 📦 核心包
 
-| 包名                                                | 描述                              | 版本                                                                                                                  |
-| --------------------------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| [`@tangramino/engine`](./packages/engine)           | 框架无关的 JSON Schema 引擎       | [![npm](https://img.shields.io/npm/v/@tangramino/engine)](https://www.npmjs.com/package/@tangramino/engine)           |
-| [`@tangramino/react`](./packages/react)             | React 绑定，提供 hooks 和视图渲染 | [![npm](https://img.shields.io/npm/v/@tangramino/react)](https://www.npmjs.com/package/@tangramino/react)             |
-| [`@tangramino/base-editor`](./packages/base-editor) | 可视化拖拽编辑器框架              | [![npm](https://img.shields.io/npm/v/@tangramino/base-editor)](https://www.npmjs.com/package/@tangramino/base-editor) |
-| [`@tangramino/flow-editor`](./packages/flow-editor) | 专业的流程图编辑器                | [![npm](https://img.shields.io/npm/v/@tangramino/flow-editor)](https://www.npmjs.com/package/@tangramino/flow-editor) |
+| 包名                                                | 描述                        | 版本                                                                                                                  |
+| --------------------------------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| [`@tangramino/engine`](./packages/engine)           | 框架无关的 JSON Schema 引擎 | [![npm](https://img.shields.io/npm/v/@tangramino/engine)](https://www.npmjs.com/package/@tangramino/engine)           |
+| [`@tangramino/react`](./packages/react)             | React 视图渲染库            | [![npm](https://img.shields.io/npm/v/@tangramino/react)](https://www.npmjs.com/package/@tangramino/react)             |
+| [`@tangramino/base-editor`](./packages/base-editor) | 可视化拖拽编辑器框架        | [![npm](https://img.shields.io/npm/v/@tangramino/base-editor)](https://www.npmjs.com/package/@tangramino/base-editor) |
+| [`@tangramino/flow-editor`](./packages/flow-editor) | 专业的流程图编辑器          | [![npm](https://img.shields.io/npm/v/@tangramino/flow-editor)](https://www.npmjs.com/package/@tangramino/flow-editor) |
 
 ## 🎯 如何选择？
 
 | 你的目标                    | 推荐使用                                       |
 | --------------------------- | ---------------------------------------------- |
-| 将 Schema 渲染为 React 组件 | `@tangramino/react`                            |
 | 构建拖拽页面编辑器          | `@tangramino/base-editor`                      |
 | 构建工作流/流程设计器       | `@tangramino/flow-editor`                      |
-| 自定义实现，完全控制        | `@tangramino/engine` + `@tangramino/react`     |
+| Schema 引擎和React 视图渲染 | `@tangramino/engine` + `@tangramino/react`     |
 | 学习完整示例                | [playground/antd-demo](./playground/antd-demo) |
 
 ## 🏗️ 架构
@@ -62,7 +61,7 @@
 
 ## 🚀 快速开始
 
-### 拖拽编辑器
+### 搭建编辑器
 
 ```bash
 npm install @tangramino/base-editor
@@ -108,35 +107,6 @@ function MaterialPanel() {
 }
 ```
 
-### 纯渲染模式
-
-```tsx
-import { createEngine } from '@tangramino/engine';
-import { ReactView } from '@tangramino/react';
-
-const schema = {
-  elements: {
-    root: { type: 'container', props: {} },
-    'btn-1': { type: 'button', props: { children: '点击我' } },
-  },
-  layout: { root: 'root', structure: { root: ['btn-1'] } },
-};
-
-const engine = createEngine(schema);
-
-function App() {
-  return (
-    <ReactView
-      engine={engine}
-      components={{
-        container: ({ children }) => <div>{children}</div>,
-        button: (props) => <button {...props} />,
-      }}
-    />
-  );
-}
-```
-
 ### 流程编辑器
 
 ```tsx
@@ -162,6 +132,35 @@ function App() {
     <FlowEditor nodes={nodeTypes} value={flowData} onChange={setFlowData}>
       <EditorRenderer />
     </FlowEditor>
+  );
+}
+```
+
+### 基础模式
+
+```tsx
+import { createEngine } from '@tangramino/engine';
+import { ReactView } from '@tangramino/react';
+
+const schema = {
+  elements: {
+    root: { type: 'container', props: {} },
+    'btn-1': { type: 'button', props: { children: '点击我' } },
+  },
+  layout: { root: 'root', structure: { root: ['btn-1'] } },
+};
+
+const engine = createEngine(schema);
+
+function App() {
+  return (
+    <ReactView
+      engine={engine}
+      components={{
+        container: ({ children }) => <div>{children}</div>,
+        button: (props) => <button {...props} />,
+      }}
+    />
   );
 }
 ```
