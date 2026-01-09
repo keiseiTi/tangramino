@@ -1,5 +1,6 @@
 import * as path from 'node:path';
 import { defineConfig } from 'rspress/config';
+import ga from 'rspress-plugin-google-analytics';
 
 export default defineConfig({
   root: path.join(__dirname, 'docs'),
@@ -26,4 +27,9 @@ export default defineConfig({
       },
     ],
   },
+  plugins: [
+    ga({
+      id: 'G-SCTQB72YNV',
+    }),
+  ],
 });
