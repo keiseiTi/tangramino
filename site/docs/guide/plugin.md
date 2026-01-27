@@ -2,7 +2,7 @@
 
 Tangramino 提供了强大的插件系统，允许开发者通过插件机制扩展编辑器的功能。插件可以介入编辑器的生命周期、修改 Schema、转换物料、拦截操作等。
 
-> 完整的插件 API 参考请查看 [插件系统 API](/api/plugin)
+> 完整的插件 API 参考请查看 [插件系统 API](/api/other/plugin)
 
 ## 快速入门
 
@@ -280,6 +280,6 @@ const Editor = () => (
 
 ## 下一步
 
-- 查看完整的 [插件 API 参考](/api/plugin)
-- 了解 [内置插件的详细用法](/api/plugin#内置插件)
-- 学习如何 [创建自定义插件](/api/plugin#创建自定义插件)
+- 查看完整的 [插件 API 参考](/api/other/plugin)
+- 了解 [内置插件的详细用法](/api/other/plugin)
+- 学习如何 [创建自定义插件](/api/other/plugin#defineplugin)
