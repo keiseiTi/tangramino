@@ -16,7 +16,7 @@ export const MaterialPanel = (props: { materialGroups: MaterialGroup[] }) => {
     <div className={cn('w-60 h-full overflow-auto select-none')}>
       <Collapse
         className='w-full'
-        expandIconPosition='end'
+        expandIconPlacement='end'
         ghost
         defaultActiveKey={activeKeys}
         onChange={setActiveKeys}

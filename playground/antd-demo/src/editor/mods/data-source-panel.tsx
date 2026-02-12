@@ -281,7 +281,6 @@ export const DataSourcePanel: React.FC<DataSourcePanelProps> = (props) => {
         }}
         okText='确定'
         cancelText='取消'
-        destroyOnClose
       >
         <Form form={form} layout='vertical'>
           <Form.Item
