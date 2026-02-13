@@ -12,3 +12,5 @@ export const Tabs = (props: IProps) => {
     />
   );
 };
+
+export default Tabs;

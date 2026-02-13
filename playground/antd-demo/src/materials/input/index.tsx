@@ -22,3 +22,5 @@ export const Input = (props: IProps) => {
 
   return <AntdInput value={innerValue} onChange={handleChange} {...restProps} />;
 };
+
+export default Input;

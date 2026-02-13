@@ -1,9 +1,9 @@
 import { OptionsConfig } from '@/components/options-config';
-import { Checkbox } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const CheckboxMaterial: Material = {
-  Component: Checkbox as React.ComponentType,
+  Component: lazy(() => import('./index')),
   title: '复选框',
   type: 'checkbox',
   dropTypes: ['form'],

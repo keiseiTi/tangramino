@@ -69,3 +69,5 @@ export const Form = React.forwardRef<HTMLDivElement, IProps>((props: IProps, ref
     </div>
   );
 });
+
+export default Form;

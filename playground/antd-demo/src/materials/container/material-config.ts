@@ -1,8 +1,8 @@
-import { Container } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const ContainerMaterial: Material = {
-  Component: Container,
+  Component: lazy(() => import('./index')),
   title: '容器',
   type: 'container',
   dropTypes: ['basicPage', 'container'],

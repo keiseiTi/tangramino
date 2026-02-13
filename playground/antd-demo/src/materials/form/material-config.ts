@@ -1,8 +1,8 @@
-import { Form } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const FormMaterial: Material = {
-  Component: Form,
+  Component: lazy(() => import('./index')),
   title: '表单容器',
   type: 'form',
   isContainer: true,

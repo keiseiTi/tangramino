@@ -1,8 +1,8 @@
-import { Modal } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const ModalMaterial: Material = {
-  Component: Modal,
+  Component: lazy(() => import('./index')),
   title: '弹窗容器',
   type: 'modal',
   isContainer: true,

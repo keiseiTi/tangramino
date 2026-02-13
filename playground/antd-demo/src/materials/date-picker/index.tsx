@@ -8,3 +8,5 @@ export const DatePicker = (props: IProps) => {
   const { tg_setContextValues, ...restProps } = props;
   return <AntdDatePicker {...restProps} />;
 };
+
+export default DatePicker;

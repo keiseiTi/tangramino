@@ -69,7 +69,7 @@ export const CanvasEditor = (props: CanvasEditorProps) => {
   }, [materials]);
 
   return (
-    <div style={style} className={className} id='tgCanvasContainer'>
+    <div style={style} className={className}>
       <ReactView engine={engine} components={components} />
       <CanvasOverlay
         style={overlayStyle}

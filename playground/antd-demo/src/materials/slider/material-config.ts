@@ -1,8 +1,8 @@
-import { Slider } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const TimePickerMaterial: Material = {
-  Component: Slider,
+  Component: lazy(() => import('./index')),
   title: '滑动输入条',
   type: 'timePicker',
   dropTypes: ['form'],

@@ -28,3 +28,5 @@ export const Radio = (props: IProps) => {
     </AntdRadio.Group>
   );
 };
+
+export default Radio;

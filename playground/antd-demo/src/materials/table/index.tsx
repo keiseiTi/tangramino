@@ -61,3 +61,5 @@ export const Table = (props: IProps) => {
 
   return <AntdTable rowKey={rowKey} columns={columns} pagination={pagination} {...restProps} />;
 };
+
+export default Table;

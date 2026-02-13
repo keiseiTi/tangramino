@@ -1,8 +1,8 @@
-import { Number } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const NumberMaterial: Material = {
-  Component: Number,
+  Component: lazy(() => import('./index')),
   title: '数字框',
   type: 'number',
   dropTypes: ['form'],

@@ -1,8 +1,8 @@
-import { Input } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const InputMaterial: Material = {
-  Component: Input,
+  Component: lazy(() => import('./index')),
   title: '输入框',
   type: 'input',
   dropTypes: ['form'],

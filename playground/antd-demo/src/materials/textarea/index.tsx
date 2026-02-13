@@ -22,3 +22,5 @@ export const Textarea = (props: IProps) => {
 
   return <AntdInput.TextArea value={innerValue} onChange={handleChange} {...restProps} />;
 };
+
+export default Textarea;

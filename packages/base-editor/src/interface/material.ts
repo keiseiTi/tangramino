@@ -11,7 +11,7 @@ export interface Material {
    * The React component for this material
    * 物料对应的组件
    */
-  Component: React.ComponentType;
+  Component: React.ComponentType | React.LazyExoticComponent<React.ComponentType>;
   /**
    * Display name of the material
    * 物料名称

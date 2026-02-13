@@ -22,3 +22,5 @@ export const Drawer = (props: IProps) => {
     </AntdDrawer>
   );
 };
+
+export default Drawer;

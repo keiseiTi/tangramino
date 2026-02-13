@@ -13,3 +13,5 @@ export const TimePicker = (props: IProps) => {
     />
   );
 };
+
+export default TimePicker;

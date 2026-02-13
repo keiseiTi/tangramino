@@ -31,3 +31,5 @@ export const FloatButtonComponent = (props: IProps) => {
     />
   );
 };
+
+export default FloatButtonComponent;

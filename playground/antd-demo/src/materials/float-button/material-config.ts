@@ -1,8 +1,8 @@
-import { FloatButtonComponent } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const FloatButtonMaterial: Material = {
-  Component: FloatButtonComponent,
+  Component: lazy(() => import('./index')),
   title: '悬浮按钮',
   type: 'floatButton',
   defaultProps: {

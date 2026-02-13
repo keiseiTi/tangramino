@@ -1,4 +1,6 @@
-import { Tabs } from './index';
+import React from 'react';
+
+const Tabs = React.lazy(() => import('./index'));
 import type { Material } from '@/interfaces/material';
 
 const TabsMaterial: Material = {

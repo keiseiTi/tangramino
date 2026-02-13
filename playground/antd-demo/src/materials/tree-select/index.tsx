@@ -12,3 +12,5 @@ export const TreeSelect = (props: IProps) => {
     />
   );
 };
+
+export default TreeSelect;

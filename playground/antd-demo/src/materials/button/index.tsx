@@ -15,3 +15,5 @@ export const Button = (props: IProps) => {
   const { text, tg_setContextValues, ...restProps } = props;
   return <AntdButton {...restProps}>{text}</AntdButton>;
 };
+
+export default Button;

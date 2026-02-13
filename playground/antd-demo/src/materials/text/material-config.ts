@@ -1,4 +1,6 @@
-import { Text } from './index';
+import React from 'react';
+
+const Text = React.lazy(() => import('./index'));
 import type { Material } from '@/interfaces/material';
 
 const TextMaterial: Material = {

@@ -65,3 +65,5 @@ export const Text = (props: IProps) => {
     return <Typography.Text {..._props}>{text}</Typography.Text>;
   }
 };
+
+export default Text;

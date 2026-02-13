@@ -7,3 +7,5 @@ export const Slider = (props: IProps) => {
   const { ...restProps } = props;
   return <AntdSlider {...restProps} />;
 };
+
+export default Slider;

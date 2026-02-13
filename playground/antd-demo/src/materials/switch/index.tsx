@@ -8,3 +8,5 @@ export const Switch = (props: IProps) => {
   const { tg_setContextValues, ...restProps } = props;
   return <AntdSwitch {...restProps} />;
 };
+
+export default Switch;

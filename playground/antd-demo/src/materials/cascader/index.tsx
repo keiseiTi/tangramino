@@ -12,3 +12,5 @@ export const Cascader = (props: IProps) => {
     />
   );
 };
+
+export default Cascader;

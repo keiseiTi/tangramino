@@ -1,8 +1,8 @@
-import { Cascader } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const CascaderMaterial: Material = {
-  Component: Cascader,
+  Component: lazy(() => import('./index')),
   title: '级联选择',
   type: 'cascader',
   dropTypes: ['form'],

@@ -1,4 +1,6 @@
-import { TreeSelect } from './index';
+import React from 'react';
+
+const TreeSelect = React.lazy(() => import('./index'));
 import type { Material } from '@/interfaces/material';
 
 const TreeSelectMaterial: Material = {

@@ -39,3 +39,5 @@ export const BasicPage = React.forwardRef<HTMLDivElement>((props: BasicPageProps
     </div>
   );
 });
+
+export default BasicPage;

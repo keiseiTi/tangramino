@@ -1,9 +1,9 @@
-import { Select } from './index';
 import { OptionsConfig } from '@/components/options-config';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const SelectMaterial: Material = {
-  Component: Select,
+  Component: lazy(() => import('./index')),
   title: '选择器',
   type: 'select',
   dropTypes: ['form'],

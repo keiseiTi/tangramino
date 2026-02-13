@@ -1,9 +1,9 @@
 import { OptionsConfig } from '@/components/options-config';
-import { Radio } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const RadioMaterial: Material = {
-  Component: Radio,
+  Component: lazy(() => import('./index')),
   title: '单选框',
   type: 'radio',
   dropTypes: ['form'],

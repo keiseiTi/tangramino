@@ -14,3 +14,5 @@ export const Upload = (props: IProps) => {
     </AntdUpload>
   );
 };
+
+export default Upload;

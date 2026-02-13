@@ -1,8 +1,8 @@
-import { DatePickerRange } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const DatePickerMaterial: Material = {
-  Component: DatePickerRange,
+  Component: lazy(() => import('./index')),
   title: '日期范围选择器',
   type: 'datePickerRange',
   dropTypes: ['form'],

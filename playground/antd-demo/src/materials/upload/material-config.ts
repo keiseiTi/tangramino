@@ -1,4 +1,6 @@
-import { Upload } from './index';
+import React from 'react';
+
+const Upload = React.lazy(() => import('./index'));
 import type { Material } from '@/interfaces/material';
 
 const UploadMaterial: Material = {
@@ -80,7 +82,6 @@ const UploadMaterial: Material = {
           },
         ],
       },
-
     ],
   },
 };

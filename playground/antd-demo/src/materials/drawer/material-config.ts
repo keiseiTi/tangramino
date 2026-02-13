@@ -1,8 +1,8 @@
-import { Drawer } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const DrawerMaterial: Material = {
-  Component: Drawer,
+  Component: lazy(() => import('./index')),
   title: '抽屉容器',
   type: 'drawer',
   isContainer: true,

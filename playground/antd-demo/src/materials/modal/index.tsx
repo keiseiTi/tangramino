@@ -22,3 +22,5 @@ export const Modal = (props: IProps) => {
     </AntdModal>
   );
 };
+
+export default Modal;

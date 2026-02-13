@@ -1,8 +1,8 @@
-import { Button } from './index';
+import { lazy } from 'react';
 import type { Material } from '@/interfaces/material';
 
 const ButtonMaterial: Material = {
-  Component: Button,
+  Component: lazy(() => import('./index')),
   title: '按钮',
   type: 'button',
   defaultProps: {

@@ -1,4 +1,6 @@
-import { Table } from './index';
+import React from 'react';
+
+const Table = React.lazy(() => import('./index'));
 import type { Material } from '@/interfaces/material';
 import { ColumnConfig } from '@/components/column-config';
 import { PaginationConfig } from '@/components/pagination-config';

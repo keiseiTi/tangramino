@@ -19,3 +19,5 @@ export const Number = (props: IProps) => {
 
   return <AntdInputNumber value={innerValue} onChange={handleChange} {...restProps} />;
 };
+
+export default Number;

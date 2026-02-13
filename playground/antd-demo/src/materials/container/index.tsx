@@ -42,3 +42,5 @@ export const Container = React.forwardRef<HTMLDivElement>((props: IProps, ref) =
 });
 
 Container.displayName = 'Container';
+
+export default Container;

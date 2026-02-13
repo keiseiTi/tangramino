@@ -12,3 +12,5 @@ export const Tree = (props: IProps) => {
     />
   );
 };
+
+export default Tree;
