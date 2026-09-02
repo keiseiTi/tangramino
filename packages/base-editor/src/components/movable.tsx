@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
-import { useEditorCore } from 'src/hooks/use-editor-core';
+import { useEditorCore } from '../hooks/use-editor-core';
 
 interface MovableProps {
   children: React.ReactNode;
