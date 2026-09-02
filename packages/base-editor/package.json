@@ -16,7 +16,6 @@
   "type": "module",
   "files": [
     "dist",
-    "src",
     "types"
   ],
   "scripts": {

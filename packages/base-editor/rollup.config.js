@@ -46,5 +46,6 @@ export default defineConfig({
     'nanoid',
     'zustand',
     'loro-crdt',
+    'react-dom',
   ],
 });
